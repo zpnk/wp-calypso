@@ -7,17 +7,22 @@ var React = require( 'react' );
  */
 var cartValues = require( 'lib/cart-values' ),
 	getRefundPolicy = cartValues.getRefundPolicy,
-	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial;
+	cartItems = cartValues.cartItems;
 
 var SupportingText = React.createClass( {
 
 	creditCardSupportingText: function() {
-		var title,
+		var cart = this.props.cart,
+			title,
 			content;
 
-		title = this.translate( 'Easy Refunds' );
-		content = this.refundText();
+		if ( cartItems.hasFreeTrial( cart ) ) {
+			title = this.translate( 'Why do you need my credit card?' );
+			content = this.translate( 'You will only be charged at the end of the trial. Cancel any time before then and pay nothing.' );
+		} else {
+			title = this.translate( 'Easy Refunds' );
+			content = this.refundText();
+		}
 
 		return this.supportingTextBox( 'credit-card-supporting-text', title, content );
 	},
@@ -70,13 +75,12 @@ var SupportingText = React.createClass( {
 	},
 
 	render: function() {
-		return hasFreeTrial( this.props.cart )
-		? null : (
-				<ul className="supporting-text">
-					{ this.creditCardSupportingText() }
-					{ this.liveChatSupportingText() }
-				</ul>
-			);
+		return (
+			<ul className="supporting-text">
+				{ this.creditCardSupportingText() }
+				{ this.liveChatSupportingText() }
+			</ul>
+		);
 	}
 
 } );

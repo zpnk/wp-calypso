@@ -29,14 +29,9 @@
 	text-align: center;
 	line-height: 16px;
 	display: block;
-	padding: 5px 10px 0 5px;
+	padding: 5px 10px;
 	color: $gray-dark;
 	opacity: .8;
-}
-
-.plan-actions__plan-expiration,
-.plan-actions__trial-period {
-	height: 40px;
 }
 
 .plan-actions.is-placeholder {

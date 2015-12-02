@@ -87,9 +87,7 @@ var TransactionStepsMixin = {
 
 		switch ( step.name ) {
 			case 'input-validation':
-				if ( ! cartItems.hasFreeTrial( cart ) ) {
-					notices.info( isFree( cart ) ? this.translate( 'Submitting' ) : this.translate( 'Submitting payment' ) );
-				}
+				notices.info( ( isFree( cart ) || cartItems.hasFreeTrial( cart ) ) ? this.translate( 'Submitting' ) : this.translate( 'Submitting payment' ) );
 				break;
 
 			case 'received-wpcom-response':

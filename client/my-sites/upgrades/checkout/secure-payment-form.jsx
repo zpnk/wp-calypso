@@ -7,7 +7,6 @@ var React = require( 'react/addons' );
  * Internal dependencies
  */
 var CreditCardPaymentBox = require( './credit-card-payment-box' ),
-	FreeTrialConfirmationBox = require( './free-trial-confirmation-box' ),
 	PayPalPaymentBox = require( './paypal-payment-box' ),
 	CreditsPaymentBox = require( './credits-payment-box' ),
 	FreeCartPaymentBox = require( './free-cart-payment-box' ),
@@ -17,7 +16,6 @@ var CreditCardPaymentBox = require( './credit-card-payment-box' ),
 	cartValues = require( 'lib/cart-values' ),
 	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
 	isFree = cartValues.isFree,
-	hasFreeTrial = cartValues.cartItems.hasFreeTrial,
 	countriesList = require( 'lib/countries-list' ).forPayments(),
 	analytics = require( 'analytics' ),
 	TransactionStepsMixin = require( './transaction-steps-mixin' ),
@@ -45,8 +43,6 @@ var SecurePaymentForm = React.createClass( {
 			return 'credits';
 		} else if ( isFree( cart ) ) {
 			return 'free-cart';
-		} else if ( hasFreeTrial( cart ) ) {
-			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
 		} else {
@@ -79,12 +75,6 @@ var SecurePaymentForm = React.createClass( {
 				<CreditsPaymentBox
 					cart={ this.props.cart }
 					selected={ this.state.visiblePaymentBox === 'credits' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<FreeTrialConfirmationBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'free-trial' }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step } />
 
@@ -141,7 +131,6 @@ var SecurePaymentForm = React.createClass( {
 
 		switch ( this.state.visiblePaymentBox ) {
 			case 'credits':
-			case 'free-trial':
 			case 'free-cart':
 				// FIXME: The endpoint doesn't currently support transactions with no
 				//   payment info, so for now we rely on the credits payment method for

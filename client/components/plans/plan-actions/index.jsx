@@ -9,7 +9,6 @@ var React = require( 'react' ),
  */
 var analytics = require( 'analytics' ),
 	productsValues = require( 'lib/products-values' ),
-	config = require( 'config' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
@@ -51,7 +50,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const canStartTrial = config.isEnabled( 'upgrades/free-trials' ) ? this.props.siteSpecificPlansDetails.can_start_trial : false;
+		const canStartTrial = this.props.siteSpecificPlansDetails.can_start_trial;
 
 		return canStartTrial ? this.newPlanActions() : this.upgradeActions();
 	},
@@ -59,7 +58,7 @@ module.exports = React.createClass( {
 	upgradeActions: function() {
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
+				<button className='button is-primary plan-actions__upgrade-button'
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
 					{ this.translate( 'Upgrade Now' ) }
 				</button>
@@ -160,18 +159,9 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
-						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
+					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
+						{ this.translate( 'Upgrade Now', { context: 'Store action' } ) }
 				</button>
-
-				<small className="plan-actions__trial-period">
-					{ this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
-						context: 'Store action',
-						components: {
-							a: <a href="#"
-								onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
-						} } ) }
-				</small>
 			</div>
 		);
 	},
@@ -201,7 +191,7 @@ module.exports = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( config.isEnabled( 'upgrades/free-trials' ) && ! this.planHasCost() ) {
+		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
 			);
@@ -220,7 +210,7 @@ module.exports = React.createClass( {
 				strong: <strong />,
 				link: <a href='#'
 					className="plan-actions__trial-upgrade-now"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
+					onClick={ this.recordUpgradeTrialNowClick.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
 			},
 			hint;
 
@@ -259,7 +249,6 @@ module.exports = React.createClass( {
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
 				{ this.translate( 'Your current plan', { context: 'Informing the user of their current plan on /plans/' } ) }</span>
-				{ this.freePlanExpiration() }
 			</div>
 		);
 	},

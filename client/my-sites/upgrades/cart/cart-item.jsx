@@ -72,7 +72,8 @@ module.exports = React.createClass( {
 
 		return (
 			<span>
-				{ freeTrialText }
+				{ freeTrialText }<br />
+				{ renewalPrice }
 			</span>
 		);
 	},
