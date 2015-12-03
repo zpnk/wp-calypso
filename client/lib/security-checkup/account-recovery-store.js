@@ -12,12 +12,13 @@ var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	actions = require( './constants' ).actions,
+	steps = require( './constants' ).steps,
 	me = require( 'lib/wp' ).undocumented().me();
 
 var _initialized = false,
 	_loading = false,
 	_phone = {
-		step: 'recoveryPhone',
+		step: steps.RECOVERY_EMAIL,
 		isSendingCode: false,
 		isRemovingPhone: false,
 		isVerifyingPhone: false,
@@ -25,7 +26,7 @@ var _initialized = false,
 		data: {}
 	},
 	_emails = {
-		step: 'recoveryEmail',
+		step: steps.RECOVERY_PHONE,
 		isSavingEmail: false,
 		lastNotice: false,
 		data: {}
@@ -171,12 +172,12 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 	switch ( action.type ) {
 		case actions.ADD_ACCOUNT_RECOVERY_EMAIL:
-			_emails.step = 'addRecoveryEmail';
+			_emails.step = steps.ADD_RECOVERY_EMAIL;
 			emitChange();
 			break;
 
 		case actions.CANCEL_ACCOUNT_RECOVERY_EMAIL:
-			_emails.step = 'recoveryEmail';
+			_emails.step = steps.RECOVERY_EMAIL;
 			emitChange();
 			break;
 
@@ -193,7 +194,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			_emails.step = 'recoveryEmail';
+			_emails.step = steps.RECOVERY_EMAIL;
 			_emails.lastNotice = { type: 'success', message: i18n.translate( 'We have sent you a verification email. please verify.' ) };
 			emitChange();
 			break;
@@ -214,12 +215,12 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case actions.EDIT_ACCOUNT_RECOVERY_PHONE:
-			_phone.step = 'editRecoveryPhone';
+			_phone.step = steps.EDIT_RECOVERY_PHONE;
 			emitChange();
 			break;
 
 		case actions.CANCEL_ACCOUNT_RECOVERY_PHONE:
-			_phone.step = 'recoveryPhone';
+			_phone.step = steps.RECOVERY_PHONE;
 			emitChange();
 			break;
 
@@ -236,7 +237,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			_phone.step = 'verifyRecoveryPhone';
+			_phone.step = steps.VERIFY_RECOVERY_PHONE;
 			emitChange();
 			break;
 
@@ -254,7 +255,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			_phone.data = action.phoneData;
-			_phone.step = 'recoveryPhone';
+			_phone.step = steps.RECOVERY_PHONE;
 			emitChange();
 			break;
 
@@ -271,7 +272,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			_phone.step = 'recoveryPhone';
+			_phone.step = steps.RECOVERY_PHONE;
 			_phone.data = {};
 			emitChange();
 			break;

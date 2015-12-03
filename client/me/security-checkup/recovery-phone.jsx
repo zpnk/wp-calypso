@@ -9,6 +9,7 @@ import isEmpty from 'lodash/lang/isEmpty';
  */
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
 import SecurityCheckupActions from 'lib/security-checkup/actions';
+import SecurityCheckupConstants from 'lib/security-checkup/constants';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
@@ -19,6 +20,11 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import countriesList from 'lib/countries-list';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
+
+/**
+ * Module variables
+ */
+const steps = SecurityCheckupConstants.steps;
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryPhone',
@@ -245,11 +251,11 @@ module.exports = React.createClass( {
 		}
 
 		switch ( this.state.recoveryPhoneStep ) {
-			case 'recoveryPhone':
+			case steps.RECOVERY_PHONE:
 				return this.recoveryPhone();
-			case 'editRecoveryPhone':
+			case steps.EDIT_RECOVERY_PHONE:
 				return this.editRecoveryPhone();
-			case 'verifyRecoveryPhone':
+			case steps.VERIFY_RECOVERY_PHONE:
 				return this.verfiyRecoveryPhone();
 			default:
 				return this.recoveryPhone();

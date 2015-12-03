@@ -21,3 +21,11 @@ module.exports.actions = keyMirror( {
 	DISMISS_ACCOUNT_RECOVERY_EMAILS_NOTICE: null,
 	DISMISS_ACCOUNT_RECOVERY_PHONE_NOTICE: null
 } );
+
+module.exports.steps = keyMirror( {
+	RECOVERY_EMAIL: null,
+	ADD_RECOVERY_EMAIL: null,
+	RECOVERY_PHONE: null,
+	EDIT_RECOVERY_PHONE: null,
+	VERIFY_RECOVERY_PHONE: null
+} );

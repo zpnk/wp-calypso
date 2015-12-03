@@ -10,6 +10,7 @@ import emailValidator from 'email-validator';
  */
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
 import SecurityCheckupActions from 'lib/security-checkup/actions';
+import SecurityCheckupConstants from 'lib/security-checkup/constants';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -19,6 +20,11 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import ActionRemove from 'me/action-remove';
 import Notice from 'components/notice';
+
+/**
+ * Module variables
+ */
+const steps = SecurityCheckupConstants.steps;
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryEmails',
@@ -171,7 +177,7 @@ module.exports = React.createClass( {
 	},
 
 	renderRecoveryEmailActions: function() {
-		if ( this.state.recoveryEmailStep === 'addRecoveryEmail' ) {
+		if ( this.state.recoveryEmailStep === steps.ADD_RECOVERY_EMAIL ) {
 			return(
 				<div className="security-checkup__recovery-email-actions">
 					<FormFieldSet>
