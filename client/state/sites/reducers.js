@@ -17,7 +17,7 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function byId( state = {}, action ) {
+export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case RECEIVE_SITE:
 			state = Object.assign( {}, state, {
@@ -30,5 +30,5 @@ export function byId( state = {}, action ) {
 }
 
 export default combineReducers( {
-	byId
+	items
 } );
