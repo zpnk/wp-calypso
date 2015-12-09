@@ -16,14 +16,17 @@ const PlanStatus = React.createClass( {
 		plan: React.PropTypes.object.isRequired
 	},
 
+	getDaysUntilExpiry() {
+		const { userFacingExpiryMoment } = this.props.plan;
+
+		return userFacingExpiryMoment.diff( this.moment(), 'days' );
+	},
+
 	renderProgressBar() {
 		const { subscribedMoment, userFacingExpiryMoment } = this.props.plan,
-			timeConfig = { hour: 0, minute: 0, second: 0, millisecond: 0 },
-			subscribedDayMoment = subscribedMoment.set( timeConfig ),
 			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
-			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedDayMoment, 'days' ),
-			todayMoment = this.moment().set( timeConfig ),
-			timeUntilExpiryInDays = userFacingExpiryMoment.diff( todayMoment, 'days' ),
+			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedMoment, 'days' ),
+			timeUntilExpiryInDays = this.getDaysUntilExpiry(),
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
@@ -31,6 +34,17 @@ const PlanStatus = React.createClass( {
 				value={ progress }
 				total={ trialPeriodInDays } />
 		);
+	},
+
+	renderDaysRemaining() {
+		if ( this.getDaysUntilExpiry() > 1 ) {
+			return this.translate( '%(daysUntilExpiry)s days remaining', {
+				args: { daysUntilExpiry: this.getDaysUntilExpiry() },
+				context: 'The amount of time until the trial plan expires, e.g. "5 days remaining"'
+			} );
+		}
+
+		return this.translate( '1 day remaining' );
 	},
 
 	render() {
@@ -59,12 +73,7 @@ const PlanStatus = React.createClass( {
 				</CompactCard>
 				<CompactCard>
 					<div className="plan-status__time-until-expiry">
-						{
-							this.translate( '%(timeUntilExpiry)s remaining', {
-								args: { timeUntilExpiry: this.props.plan.userFacingExpiryMoment.toNow( true ) },
-								context: 'The amount of time until the trial plan expires, e.g. "5 days remaining"'
-							} )
-						}
+						{ this.renderDaysRemaining() }
 					</div>
 					<div className="plan-status__progress">
 						{ this.renderProgressBar() }
