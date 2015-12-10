@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	classes = require( 'component-classes' ),
@@ -78,9 +79,7 @@ function init() {
 	} );
 }
 
-function setUpContext( layout ) {
-	var reduxStore = createReduxStore();
-
+function setUpContext( layout, reduxStore ) {
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
 	page( '*', function( context, next ) {
@@ -138,7 +137,7 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, validSections = [];
+	var layoutSection, layout, layoutComponentCreator, reduxStore, validSections = [];
 
 	init();
 
@@ -154,6 +153,8 @@ function boot() {
 
 	translatorJumpstart.init();
 
+	reduxStore = createReduxStore();
+
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
@@ -161,13 +162,13 @@ function boot() {
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
-		layout = React.render( React.createElement( Layout, {
+		layoutComponentCreator = () => React.createElement( Layout, {
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
 			nuxWelcome: nuxWelcome,
 			translatorInvitation: translatorInvitation
-		} ), document.getElementById( 'wpcom' ) );
+		} );
 	} else {
 		analytics.setSuperProps( superProps );
 
@@ -177,11 +178,13 @@ function boot() {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
 
-		layout = React.render(
-			React.createElement( LoggedOutLayout ),
-			document.getElementById( 'wpcom' )
-		);
+		layoutComponentCreator = () => React.createElement( LoggedOutLayout );
 	}
+
+	layout = React.render(
+		React.createElement( ReduxProvider, { store: reduxStore }, layoutComponentCreator ),
+		document.getElementById( 'wpcom' )
+	);
 
 	debug( 'Main layout rendered.' );
 
@@ -193,7 +196,7 @@ function boot() {
 		window.history.replaceState( null, document.title, window.location.pathname );
 	}
 
-	setUpContext( layout );
+	setUpContext( layout, reduxStore );
 
 	page( '*', require( 'lib/route/normalize' ) );
 
