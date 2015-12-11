@@ -9,6 +9,7 @@ import classNames from 'classnames';
  */
 import MasterbarItem from './masterbar-item';
 import MasterbarItemNew from './masterbar-item-new';
+import MasterbarItemNotifications from './masterbar-item-notifications';
 
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
@@ -207,11 +208,12 @@ export default React.createClass( {
 						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 						<span className="masterbar__item-me-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</MasterbarItem>
-					<MasterbarItem url="/notifications" icon="bell" isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
+					{/*<MasterbarItem url="/notifications" icon="bell" isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
 						{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-					</MasterbarItem>
-
-					{ this.renderNotifications() }
+					</MasterbarItem>*/}
+					<MasterbarItemNotifications user={ this.props.user } isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
+						<span className="masterbar__item-notifications-label">{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+					</MasterbarItemNotifications>
 				</header>
 			);
 

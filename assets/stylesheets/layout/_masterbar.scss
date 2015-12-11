@@ -120,6 +120,10 @@ $autobar-height: 20px;
 .masterbar__item-notifications {
 
 	.masterbar__item-content {
+		padding: 0;
+	}
+
+	.masterbar__item-notifications-label {
 		display: none;
 	}
 }
