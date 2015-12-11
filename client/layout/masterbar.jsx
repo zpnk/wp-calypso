@@ -8,6 +8,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import MasterbarItem from './masterbar-item';
+import MasterbarItemNew from './masterbar-item-new';
+
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
@@ -192,9 +194,9 @@ export default React.createClass( {
 						{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</MasterbarItem>
 
-					<MasterbarItem url={ this.getNewPostPath() } icon="create" isActive={ this.checkIsActive( 'post' ) } className="masterbar__item-new">
+					<MasterbarItemNew sites={ this.props.sites } user={ this.props.user } isActive={ this.checkIsActive( 'post' ) } className="masterbar__item-new">
 						{ this.translate( 'New Post' ) }
-					</MasterbarItem>
+					</MasterbarItemNew>
 					<MasterbarItem url="/me" icon="user-circle" isActive={ this.checkIsActive( 'me' ) } className="masterbar__item-me">
 						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 						<span className="masterbar__item-me-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
