@@ -20,7 +20,7 @@ export default React.createClass( {
 		className: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isShowingPopover: false,
 			newNote: 0,
@@ -28,43 +28,26 @@ export default React.createClass( {
 		};
 	},
 
-	toggleNotificationsPopover: function( isShowingPopover ) {
-		if ( isShowingPopover === undefined ) {
-			isShowingPopover = ! this.state.isShowingPopover;
-		}
+	toggleNotificationsPopover( isShowingPopover ) {
+		isShowingPopover = ! this.state.isShowingPopover;
 
-		// Setting state in the context of a touchTap event (i.e.
-		// Site onSelect) prevents link navigation from proceeding
-		/*setTimeout( this.setState.bind( this, {
-			isShowingPopover: isShowingPopover
-		} ), 0 );*/
 		this.setState( {
 			isShowingPopover: ! this.state.isShowingPopover
-		}, function() {
-			if ( this.state.isShowingPopover ) {
-				this.setNotesIndicator( 0 );
-			}
-
-			// focus on main window if we just closed the notes panel
-			if ( ! this.state.isShowingPopover ) {
-				//this.getNotificationLinkDomNode().blur();
-				window.focus();
-			}
-		}.bind( this ) );
+		}, this.toggleNotesFrame );
 	},
 
-	onClick: function( event ) {
+	onClick( event ) {
 		this.toggleNotificationsPopover();
 		event.preventDefault();
 		return;
 	},
 
 	checkToggleNotes( event, forceToggle ) {
-		var target = event ? event.target : false;
-		//var notificationNode = this.getNotificationLinkDomNode();
+		/*var target = event ? event.target : false;
+		var notificationNode = this.getNotificationLinkDomNode();
 
 		// Some clicks should not toggle the notifications frame
-		/*if ( target === notificationNode || target.parentElement === notificationNode ) {
+		if ( target === notificationNode || target.parentElement === notificationNode ) {
 			return;
 		}*/
 
@@ -73,7 +56,16 @@ export default React.createClass( {
 		}
 	},
 
-	toggleNotesFrame( event ) {
+	toggleNotesFrame() {
+		if ( this.state.isShowingPopover ) {
+			this.setNotesIndicator( 0 );
+		} else {
+			//this.getNotificationLinkDomNode().blur();
+			window.focus();
+		}
+	},
+
+	/*toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -91,7 +83,7 @@ export default React.createClass( {
 				window.focus();
 			}
 		}.bind( this ) );
-	},
+	},*/
 
 	getNotificationLinkDomNode() {
 		return this.refs.masterbar.refs.notificationLink.getDOMNode();
@@ -132,12 +124,17 @@ export default React.createClass( {
 		} );
 	},
 
-	render: function() {
-		var classes = classNames( this.props.className );
+	render() {
+		var classes = classNames( this.props.className, {
+			'is-active': this.state.isShowingPopover,
+			'has-unread': this.props.newNote,
+			'is-initial-load': this.props.animationState === -1,
+		} );
 
 		return (
-			<MasterbarItem url="/notifications" icon="bell" onClick={ this.onClick } isActive={ this.props.isActive } className={ classes }>
+			<MasterbarItem url="/notifications" icon="bell" onClick={ this.onClick } isActive={ this.props.isActive } tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) } className={ classes }>
 				{ this.props.children }
+				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.props.animationState ) }></span>
 
 				<Notifications
 					visible={ this.state.isShowingPopover }
