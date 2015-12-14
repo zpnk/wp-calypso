@@ -76,7 +76,7 @@ export default React.createClass( {
 	},
 
 	getNotificationLinkDomNode() {
-		return this.refs.notificationLink.getDOMNode();
+		return this.refs.notificationLink;
 	},
 
 	/**
