@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import classNames from 'classnames';
 
 /**
@@ -76,7 +77,7 @@ export default React.createClass( {
 	},
 
 	getNotificationLinkDomNode() {
-		return this.refs.notificationLink;
+		return ReactDom.findDOMNode( this.refs.notificationLink );
 	},
 
 	/**
