@@ -14,7 +14,7 @@ $autobar-height: 20px;
 		left: 0;
 		top: 0;
 	width: 100%;
-	z-index: 180;
+	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	@include breakpoint( ">660px" ) {
