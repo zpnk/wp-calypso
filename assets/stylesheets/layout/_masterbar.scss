@@ -128,7 +128,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		background: $orange-jazzy;
+		background: white;
 		border: solid 2px $blue-wordpress;
 		border-radius: 50%;
 		display: block;
@@ -159,7 +159,7 @@ $autobar-height: 20px;
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
-
+		background: $orange-jazzy;
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {

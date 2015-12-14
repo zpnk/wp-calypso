@@ -28,65 +28,41 @@ export default React.createClass( {
 		};
 	},
 
-	toggleNotificationsPopover( isShowingPopover ) {
-		isShowingPopover = ! this.state.isShowingPopover;
-
-		this.setState( {
-			isShowingPopover: ! this.state.isShowingPopover
-		}, this.toggleNotesFrame );
-	},
-
-	onClick( event ) {
-		this.toggleNotificationsPopover();
-		event.preventDefault();
-		return;
-	},
-
 	checkToggleNotes( event, forceToggle ) {
-		/*var target = event ? event.target : false;
+		var target = event ? event.target : false;
 		var notificationNode = this.getNotificationLinkDomNode();
 
-		// Some clicks should not toggle the notifications frame
-		if ( target === notificationNode || target.parentElement === notificationNode ) {
+		if ( notificationNode.contains( target ) ) {
 			return;
-		}*/
+		}
 
-		if ( this.state.showNotes || forceToggle === true ) {
-			this.toggleNotesFrame();
+		if ( this.state.isShowingPopover || forceToggle === true ) {
+			this.toggleNotesFrame( event );
 		}
 	},
 
-	toggleNotesFrame() {
-		if ( this.state.isShowingPopover ) {
-			this.setNotesIndicator( 0 );
-		} else {
-			//this.getNotificationLinkDomNode().blur();
-			window.focus();
-		}
-	},
-
-	/*toggleNotesFrame( event ) {
+	toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
 		}
 
 		this.setState( {
-			showNotes: ! this.state.showNotes
-		}, function() {
-			if ( this.state.showNotes ) {
+			isShowingPopover: ! this.state.isShowingPopover
+		}, () => {
+			if ( this.state.isShowingPopover ) {
 				this.setNotesIndicator( 0 );
 			}
 
 			// focus on main window if we just closed the notes panel
-			if ( ! this.state.showNotes ) {
-				//this.getNotificationLinkDomNode().blur();
+			if ( ! this.state.isShowingPopover ) {
+				this.getNotificationLinkDomNode().blur();
 				window.focus();
 			}
-		}.bind( this ) );
-	},*/
+		} );
+	},
 
 	getNotificationLinkDomNode() {
-		return this.refs.masterbar.refs.notificationLink.getDOMNode();
+		return this.refs.notificationLink.getDOMNode();
 	},
 
 	/**
@@ -98,8 +74,8 @@ export default React.createClass( {
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
 	setNotesIndicator( currentUnseenCount ) {
-		var existingUnseenCount = store.get( 'wpnotes_unseen_count' );
-		var newAnimationState = this.state.animationState;
+		let existingUnseenCount = store.get( 'wpnotes_unseen_count' );
+		let newAnimationState = this.state.animationState;
 
 		// Having no record of previously unseen notes is
 		// functionally equal to having a record of none
@@ -127,14 +103,14 @@ export default React.createClass( {
 	render() {
 		var classes = classNames( this.props.className, {
 			'is-active': this.state.isShowingPopover,
-			'has-unread': this.props.newNote,
-			'is-initial-load': this.props.animationState === -1,
+			'has-unread': this.state.newNote,
+			'is-initial-load': this.state.animationState === -1,
 		} );
 
 		return (
-			<MasterbarItem url="/notifications" icon="bell" onClick={ this.onClick } isActive={ this.props.isActive } tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) } className={ classes }>
+			<MasterbarItem ref="notificationLink" url="/notifications" icon="bell" onClick={ this.toggleNotesFrame } isActive={ this.props.isActive } tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) } className={ classes }>
 				{ this.props.children }
-				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.props.animationState ) }></span>
+				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }></span>
 
 				<Notifications
 					visible={ this.state.isShowingPopover }
