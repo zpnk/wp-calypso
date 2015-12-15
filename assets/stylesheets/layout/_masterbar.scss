@@ -87,6 +87,9 @@ $autobar-height: 20px;
 	height: 36px;
 	margin: 5px;
 
+	&.is-active {
+		color: $white;
+	}
 
 	.masterbar__item-content {
 		display: none;
