@@ -23,7 +23,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		let newNote = false;
-		let	user;
+		let user;
 
 		if ( this.props.user ) {
 			user = this.props.user.get();
