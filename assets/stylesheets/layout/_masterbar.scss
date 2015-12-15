@@ -85,7 +85,7 @@ $autobar-height: 20px;
 	border-radius: 3px;
 	color: $blue-wordpress;
 	height: 36px;
-	margin: 5px;
+	margin: 5px 8px;
 
 	&.is-active {
 		color: $white;
@@ -127,6 +127,11 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-notifications {
+	margin-right: 12px;
+
+	@include breakpoint( "<480px" ) {
+		margin-right: 0;
+	}
 
 	.masterbar__item-content {
 		padding: 0;
