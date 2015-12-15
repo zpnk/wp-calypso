@@ -130,6 +130,10 @@ $autobar-height: 20px;
 
 	.masterbar__item-content {
 		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			display: block;
+		}
 	}
 
 	.masterbar__item-notifications-label {
