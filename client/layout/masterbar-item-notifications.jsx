@@ -19,7 +19,7 @@ export default React.createClass( {
 		user: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.function,
+		onClick: React.PropTypes.func,
 	},
 
 	getInitialState() {

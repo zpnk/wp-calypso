@@ -20,8 +20,8 @@ export default React.createClass( {
 
 	propTypes: {
 		user: React.PropTypes.object,
-		section: React.PropTypes.string,
 		sites: React.PropTypes.object,
+		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 	},
 
 	getInitialState() {
