@@ -37,6 +37,10 @@ $autobar-height: 20px;
 	text-decoration: none;
 	transition: all 150ms ease-in;
 
+	&:visited {
+		color: $white;
+	}
+
 	.masterbar__item-content {
 		color: $white;
 		padding: 0 6px;
