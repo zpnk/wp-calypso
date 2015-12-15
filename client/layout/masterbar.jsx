@@ -14,12 +14,6 @@ import MasterbarItemNotifications from './masterbar-item-notifications';
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
-import paths from 'lib/paths';
-
-import MasterbarLoggedOutMenu from './masterbar-logged-out-menu';
-import MasterbarSectionsMenu from './masterbar-sections-menu';
-import Notifications from 'notifications';
-import store from 'store';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
