@@ -37,11 +37,7 @@ export default React.createClass( {
 		} );
 	},
 
-	toggleSitesPopover( isShowingPopover ) {
-		if ( isShowingPopover === undefined ) {
-			isShowingPopover = ! this.state.isShowingPopover;
-		}
-
+	toggleSitesPopover( isShowingPopover = ! this.state.isShowingPopover ) {
 		// Setting state in the context of a touchTap event (i.e. SitePicker
 		// Site onSelect) prevents link navigation from proceeding
 		setTimeout( this.setState.bind( this, {
