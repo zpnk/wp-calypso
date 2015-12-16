@@ -58,7 +58,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const	classes = classNames( 'masterbar', {
+		const classes = classNames( 'masterbar', {
 			collapsible: !! this.props.user,
 		} );
 
