@@ -23,19 +23,11 @@ export default React.createClass( {
 	},
 
 	getInitialState() {
-		let newNote = false;
 		let user = this.props.user.get();
-
-		// User object should be loaded by now, but
-		// if it isn't just wait until the notifications
-		// finish their initial load to set `newNote`
-		if ( user && user.has_unseen_notes ) {
-			newNote = true;
-		}
 
 		return {
 			isShowingPopover: false,
-			newNote: newNote,
+			newNote: user && user.has_unseen_notes,
 			animationState: 0,
 		};
 	},
