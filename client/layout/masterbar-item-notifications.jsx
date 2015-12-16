@@ -16,7 +16,7 @@ export default React.createClass( {
 	displayName: 'MasterbarItemNotifications',
 
 	propTypes: {
-		user: React.PropTypes.object,
+		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
 		onClick: React.PropTypes.func,
@@ -24,11 +24,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		let newNote = false;
-		let user;
-
-		if ( this.props.user ) {
-			user = this.props.user.get();
-		}
+		let user = this.props.user.get();
 
 		// User object should be loaded by now, but
 		// if it isn't just wait until the notifications
