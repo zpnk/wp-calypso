@@ -95,12 +95,6 @@ export default React.createClass( {
 		let existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
-		// Having no record of previously unseen notes is
-		// functionally equal to having a record of none
-		if ( null === existingUnseenCount ) {
-			existingUnseenCount = 0;
-		}
-
 		if ( 0 === currentUnseenCount ) {
 			// If we don't have new notes at load-time, remove the `-1` "init" status
 			newAnimationState = 0;
