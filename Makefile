@@ -80,11 +80,6 @@ run: welcome githooks-commit install build
 node-version:
 	@NPM_GLOBAL_ROOT=$(shell $(NPM) -g root) $(BIN)/check-node-version
 
-# a helper rule to ensure that a specific module is installed,
-# without relying on a generic `npm install` command
-node_modules/%: | node-version
-	@$(NPM) install $(notdir $@)
-
 # ensures that the `node_modules` directory is installed and up-to-date with
 # the dependencies listed in the "package.json" file.
 node_modules: package.json | node-version
@@ -96,13 +91,16 @@ node_modules: package.json | node-version
 test: build
 	@$(BIN)/run-all-tests
 
-lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
+lint: node_modules mixedindentlint
 	@$(NODE_BIN)/eslint --quiet $(JS_FILES)
 
 eslint: lint
 
-eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint
+eslint-branch: node_modules
 	@git diff --name-only $$(git merge-base $$(git rev-parse --abbrev-ref HEAD) master)..HEAD | grep '\.jsx\?$$' | xargs $(NODE_BIN)/eslint
+
+eslint-noisy: node_modules mixedindentlint
+	@$(NODE_BIN)/eslint $(JS_FILES)
 
 # Skip test directories (with the sed regex) for i18nlint in lieu of proper
 # ignore functionality
@@ -110,7 +108,7 @@ i18n-lint:
 	@echo "$(JS_FILES)" | sed 's/\([^ ]*\/test\/[^ ]* *\)//g' | xargs -n1 $(I18NLINT)
 
 # Skip files that are auto-generated
-mixedindentlint: node_modules/mixedindentlint
+mixedindentlint: node_modules
 	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js" --exclude="shared/components/gridicon/index.jsx"
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
