@@ -10,6 +10,7 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
+	Card = require( 'components/card/compact' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmptyContent = require( './empty' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
@@ -31,7 +32,8 @@ var Main = require( 'components/main' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	FollowButtonContainer = require( 'components/follow-button' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -434,6 +436,110 @@ module.exports = React.createClass( {
 
 				{ body }
 
+				<div className="following__secondary">
+					<div className="following__secondary-group following__recently-update">
+						<h3>Recently Updated</h3>
+
+						<Card className="site">
+							<a className="site__content" href="#">
+								<div className="site-icon">
+									<img class="site-icon__img" src="https://secure.gravatar.com/blavatar/4d489613a60c372062e51e1ff4ab88c6?s=120" />
+								</div>
+								<div className="site__info">
+									<div className="site__title">tekArtist</div>
+									<div className="site__domain">3 new posts</div>
+								</div>
+							</a>
+						</Card>
+
+						<Card className="site">
+							<a className="site__content" href="#">
+								<div className="site-icon">
+									<img class="site-icon__img" src="https://secure.gravatar.com/blavatar/16b8a4f8b589432d98234d44cfa199fa?s=120" />
+								</div>
+								<div className="site__info">
+									<div className="site__title">Upvoted</div>
+									<div className="site__domain">7 new posts</div>
+								</div>
+							</a>
+						</Card>
+					</div>
+
+					<div className="following__secondary-group following__recommendations">
+						<h3>You May Like</h3>
+
+						<Card className="site">
+							<a className="site__content" href="#">
+								<div className="site-icon">
+									<img class="site-icon__img" src="https://secure.gravatar.com/blavatar/8cf8667e697d66222dedd2c97b34cec4?s=120" />
+								</div>
+								<div className="site__info">
+									<div className="site__title">Luca Sartoni</div>
+									<div className="site__domain">Followed by sites you&rsquo;ve liked</div>
+								</div>
+							</a>
+
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a className="site__content" href="#">
+								<div className="site-icon">
+									<img class="site-icon__img" src="https://secure.gravatar.com/blavatar/dbc683b4278890de96d0e55f313dfd87?s=120" />
+								</div>
+								<div className="site__info">
+									<div className="site__title">The Bloggess</div>
+									<div className="site__domain">Followed by bloggers you follow</div>
+								</div>
+							</a>
+
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a className="site__content" href="#">
+								<div className="site-icon">
+									<img class="site-icon__img" src="https://secure.gravatar.com/blavatar/1e4e44cc58cc910fc3758acf8e134ae0?s=120" />
+								</div>
+								<div className="site__info">
+									<div className="site__title">Burrito Justice</div>
+									<div className="site__domain">Followed by sites you&rsquo;ve liked</div>
+								</div>
+							</a>
+
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+					</div>
+
+					<div className="following__secondary-group following__trending-tags">
+						<h3>Trending Tags</h3>
+
+						<Card className="site">
+							<a href="#">Christmas</a>
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a href="#">Edinburgh</a>
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a href="#">Trump</a>
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a href="#">Debate</a>
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+
+						<Card className="site">
+							<a href="#">Paris</a>
+							<FollowButtonContainer siteUrl="something.com" />
+						</Card>
+					</div>
+				</div>
 			</Main>
 			);
 	}

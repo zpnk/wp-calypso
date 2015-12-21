@@ -260,3 +260,66 @@
 	font-size: 12px;
 	line-height: 1;
 }
+
+
+// Secondary information for 
+// wider screens.
+.following__secondary {
+	display: none;
+	position: fixed;
+		top: 47px + 32px;
+		right: 32px;
+	width: 20%;
+
+	h3 {
+		font-size: 12px;
+		font-weight: 600;
+		color: $gray;
+		margin-bottom: 8px;
+	}
+
+	.following__secondary-group {
+		margin-bottom: 24px;
+	}
+
+	.card {
+		padding: 0;
+	}
+
+	.site__content {
+		padding: 8px;
+	}
+
+	.follow-button {
+		position: absolute;
+			top: 6px;
+			right: 0;
+		padding-left: 32px;
+
+		.follow-button__label {
+			display: none;
+		}
+	}
+}
+
+// Not sure about this yet...
+.following__recently-update {
+	display: none;
+}
+
+.following__trending-tags {
+	.card {
+		padding: 13px 16px;
+	}
+}
+
+@include breakpoint( ">1040px" ) {
+	.following {
+		max-width: 100%;
+		margin-right: calc( 32px + 20% + 32px + 32px );
+	}
+
+	.following__secondary {
+		display: block;
+	}
+}
