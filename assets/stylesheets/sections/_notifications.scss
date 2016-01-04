@@ -26,6 +26,12 @@
 	}
 }
 
+#primary{
+	@include breakpoint( '>1440px' ) {
+		margin-right: 400px;
+	}
+}
+
 #wpnt-notes-panel2.wide {
 	border-left: 0px;
 	box-shadow: none;
