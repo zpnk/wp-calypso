@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import Main from 'components/main';
 import PlanFeatures from 'my-sites/plans/plan-overview/plan-features';
 import PlanStatus from 'my-sites/plans/plan-overview/plan-status';
@@ -40,6 +41,10 @@ const PlanOverview = React.createClass( {
 				<PlanFeatures
 					plan={ this.props.plan }
 					selectedSite={ this.props.selectedSite } />
+
+				<Card href={ `/plans/${ this.props.selectedSite.slug }/cancel` }>
+					{ this.translate( 'Cancel trial' ) }
+				</Card>
 			</Main>
 		);
 	}

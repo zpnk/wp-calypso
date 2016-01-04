@@ -4,7 +4,6 @@
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
 	defer = require( 'lodash/function/defer' );
 
 /**
@@ -16,6 +15,7 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'analytics' ),
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
@@ -34,6 +34,15 @@ function onSelectPlan( cartItem ) {
 }
 
 module.exports = {
+	cancel: function( context ) {
+		var CancelTrial = require( 'my-sites/plans/cancel-trial' );
+
+		renderWithReduxStore(
+			<CancelTrial selectedSite={ sites.getSelectedSite() } />,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
 
 	plans: function( context ) {
 		var Plans = require( 'my-sites/plans/main' ),
@@ -77,17 +86,16 @@ module.exports = {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		ReactDom.render(
-			<ReduxProvider store={ context.store }>
-				<CartData>
-					<Plans sites={ sites }
-						selectedSite={ site }
-						onSelectPlan={ onSelectPlan }
-						plans={ plans }
-						context={ context } />
-				</CartData>
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<CartData>
+				<Plans sites={ sites }
+					selectedSite={ site }
+					onSelectPlan={ onSelectPlan }
+					plans={ plans }
+					context={ context } />
+			</CartData>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -118,20 +126,19 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			<Main className="plans has-sidebar">
-				<ReduxProvider store={ context.store }>
-					<CartData>
-						<PlansCompare sites={ sites }
-							selectedSite={ site }
-							onSelectPlan={ onSelectPlan }
-							plans={ plans }
-							features={ features }
-							productsList={ productsList } />
-					</CartData>
-				</ReduxProvider>
+				<CartData>
+					<PlansCompare sites={ sites }
+						selectedSite={ site }
+						onSelectPlan={ onSelectPlan }
+						plans={ plans }
+						features={ features }
+						productsList={ productsList } />
+				</CartData>
 			</Main>,
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

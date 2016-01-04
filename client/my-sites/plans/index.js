@@ -49,5 +49,13 @@ module.exports = function() {
 			controller.navigation,
 			plansController.plans
 		);
+
+		page(
+			'/plans/:domain/cancel',
+			adTracking.retarget,
+			controller.siteSelection,
+			controller.navigation,
+			plansController.cancel
+		);
 	}
 };
