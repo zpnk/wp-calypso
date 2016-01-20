@@ -1815,7 +1815,7 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn
  * @api public
  */
 Undocumented.prototype.getExportSettings = function( siteId, fn ) {
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/settings`
 	}, fn );
@@ -1830,7 +1830,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/start`
 	}, advancedSettings, fn );
@@ -1845,7 +1845,7 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
  * @api public
  */
 Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
