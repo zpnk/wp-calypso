@@ -9,7 +9,7 @@
 		left: 50%;
 		top: 8px;
 	transform: translateX( -50% );
-	z-index: 190;
+	z-index: z-index( 'root', '.offline-status' );
 
 	.gridicon {
 		color: $white;
