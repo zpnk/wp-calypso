@@ -71,6 +71,7 @@ export default React.createClass( {
 					type={ this.props.type }
 					isNew={ this.props.isNew }
 					siteSlug={ this.props.site && this.props.site.slug }
+					local={ this.props.post.isLocal }
 				/>
 				<div className="editor-action-bar__last-group">
 					{ this.renderPostVisibility() }

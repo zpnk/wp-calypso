@@ -319,6 +319,26 @@ function boot() {
 	}
 
 	page( '*', function( context, next ) {
+		const currentSection = sections.get().filter(
+			section => some( section.paths,
+				path => ( ( path !== '/' ) && startsWith( context.path, path ) )
+			)
+		)[ 0 ];
+
+		if (
+			reduxStore.getState().application.isOnline === 'OFFLINE' &&
+			currentSection &&
+			'enableOffline' in currentSection &&
+			!currentSection.enableOffline
+		) {
+			page( '/offline' );
+		} else {
+			next();
+		}
+	} );
+	require( 'error-pages' )( reduxStore );
+
+	page( '*', function( context, next ) {
 		// Reset the selected site before each route is executed. This needs to
 		// occur after the sections routes execute to avoid a brief flash where
 		// sites are reset but the next section is waiting to be loaded.

@@ -43,3 +43,15 @@
 		display: none;
 	}
 }
+
+.editor-post-type__local {
+	background: $orange-jazzy;
+	border-radius: 2px;
+	color: white;
+	font-family: $sans;
+	font-weight: 400;
+	font-size: 11px;
+	margin-right: 8px;
+	padding: 2px 8px;
+	text-transform: uppercase;
+}

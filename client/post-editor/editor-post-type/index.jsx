@@ -28,14 +28,16 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			isNew: false,
-			type: 'post'
+			type: 'post',
+			local: false
 		};
 	},
 
 	propTypes: {
 		isNew: React.PropTypes.bool,
 		type: React.PropTypes.string,
-		siteSlug: React.PropTypes.string
+		siteSlug: React.PropTypes.string,
+		local: React.PropTypes.bool
 	},
 
 	getInitialState() {
@@ -80,6 +82,7 @@ export default React.createClass( {
 
 		return (
 			<span className={ classes } ref="postType" onClick={ this.toggleMenu }>
+				{ this.props.isLocal && <span className="editor-post-type__local">{ this.translate( 'Local' ) }</span> }
 				{ this.getLabel() }
 				{ isSwitcherEnabled && (
 					<Gridicon icon="chevron-down" size={ 16 } />

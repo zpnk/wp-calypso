@@ -279,7 +279,8 @@
 		0 1px 2px lighten( $gray, 30% ), inset -4px 0 0 $blue-medium;
 }
 
-.draft__pending-label {
+.draft__pending-label,
+.draft__local {
 	background: $alert-yellow;
 	border-radius: 2px;
 	color: white;
@@ -289,4 +290,8 @@
 	margin-right: 8px;
 	padding: 2px 8px;
 	text-transform: uppercase;
+}
+
+.draft__local {
+	background: $orange-jazzy;
 }
