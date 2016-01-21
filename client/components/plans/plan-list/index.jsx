@@ -71,8 +71,11 @@ module.exports = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
+			// Manually doing this.
+			//showJetpackPlans = true;
+
 			plans = plans.filter( function( plan ) {
-				return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
+				return ( true === ( 'jetpack' === plan.product_type ) );
 			} );
 
 			plansList = plans.map( function( plan ) {

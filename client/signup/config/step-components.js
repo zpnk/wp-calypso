@@ -5,6 +5,7 @@ var UserSignupComponent = require( 'signup/steps/user' ),
 	SiteComponent = require( 'signup/steps/site' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
+	JetpackPlansStepComponent = require( 'signup/steps/jetpack-plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
 	DesignTypeComponent = require( 'signup/steps/design-type' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
@@ -20,5 +21,6 @@ module.exports = {
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
 	'design-type': DesignTypeComponent,
-	'jetpack-user': UserSignupComponent
+	'jetpack-user': UserSignupComponent,
+	'jetpack-plans': JetpackPlansStepComponent
 };

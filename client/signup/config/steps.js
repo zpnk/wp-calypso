@@ -76,6 +76,13 @@ module.exports = {
 			headerText: i18n.translate( 'Create an account for Jetpack' ),
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username', 'siteSlug' ]
+	},
+
+	'jetpack-plans': {
+		stepName: 'plans',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'cartItem' ]
 	}
 };
