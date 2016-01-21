@@ -11,26 +11,28 @@ function mapOptions( state, section, name, mapFunc ) {
 	const rawData = state.siteSettings.exporter.data.get( 'advancedSettings' );
 	if ( !rawData || rawData.count() === 0 ) return [];
 
-	return rawData.get( section ).get( name ).map( mapFunc );
+	return rawData.getIn( [ section, name ] ).map( mapFunc );
 }
 
 export function getAuthorOptions( state, section ) {
 	return mapOptions( state, section, 'authors', ( author ) => ( {
-		value: author.get( 'ID' ), label: author.get( 'name' )
+		value: author.get( 'ID' ),
+		label: author.get( 'name' )
 	} ) );
 }
 
 export function getStatusOptions( state, section ) {
 	return mapOptions( state, section, 'statuses', ( status ) => ( {
-		value: status.get( 'name' ), label: status.get( 'label' )
+		value: status.get( 'name' ),
+		label: status.get( 'label' )
 	} ) );
 }
 
 export function getDateOptions( state, section, endOfMonth ) {
 	return mapOptions( state, section, 'export_date_options', ( date ) => {
-		const year = parseInt( date.get( 'year' ) );
+		const year = parseInt( date.get( 'year' ), 10 );
 		// API months start at 1 (Jan = 1)
-		const month = parseInt( date.get( 'month' ) );
+		const month = parseInt( date.get( 'month' ), 10 );
 		// JS months start at 0 (Jan = 0)
 		const jsMonth = month - 1;
 
@@ -59,7 +61,8 @@ export function getDateOptions( state, section, endOfMonth ) {
 
 export function getCategoryOptions( state, section ) {
 	return mapOptions( state, section, 'categories', ( category ) => ( {
-		value: category.get( 'name' ), label: category.get( 'name' )
+		value: category.get( 'name' ),
+		label: category.get( 'name' )
 	} ) );
 }
 
@@ -83,27 +86,36 @@ export function prepareExportRequest( state, postType ) {
 
 	requestData.content = postType;
 
-	const prepareSetting = ( section, setting ) => {
-		const value = data.get( section ).get( setting );
-		if ( parseInt( value ) === 0 ) {
+	const getSettingValue = ( section, setting ) => {
+		const value = data.getIn( [ section, setting ] );
+		if ( parseInt( value, 10 ) === 0 ) {
 			return undefined;
 		}
 
 		return value;
 	}
 
-	if ( postType === 'posts' ) {
-		requestData.post_author = prepareSetting( 'posts', 'author' );
-		requestData.post_status = prepareSetting( 'posts', 'status' );
-		requestData.post_start_date = prepareSetting( 'posts', 'startDate' );
-		requestData.post_end_date = prepareSetting( 'posts', 'endDate' );
-		requestData.cat = prepareSetting( 'posts', 'category' );
-	} else if ( postType === 'pages' ) {
-		requestData.page_author = prepareSetting( 'pages', 'author' );
-		requestData.page_status = prepareSetting( 'pages', 'status' );
-		requestData.page_start_date = prepareSetting( 'pages', 'startDate' );
-		requestData.page_end_date = prepareSetting( 'pages', 'endDate' );
+	const settingsFor = {
+		posts: [
+			[ 'post_author', 'author' ],
+			[ 'post_status', 'status' ],
+			[ 'post_start_date', 'startDate' ],
+			[ 'post_end_date', 'endDate' ],
+			[ 'cat', 'category' ]
+		],
+		pages: [
+			[ 'page_author', 'author' ],
+			[ 'page_status', 'status' ],
+			[ 'page_start_date', 'startDate' ],
+			[ 'page_end_date', 'endDate' ]
+		]
 	}
+
+	const addRequestParam = ( request, [ requestKey, settingName ] ) => {
+		request[ requestKey ] = getSettingValue( postType, settingName );
+		return request;
+	}
+	settingsFor[ postType ].reduce( addRequestParam, requestData );
 
 	return requestData;
 }

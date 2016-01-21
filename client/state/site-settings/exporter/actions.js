@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import get from 'lodash/object/get';
+
+/**
  * Internal dependencies
  */
 import notices from 'notices';
@@ -72,10 +77,8 @@ export function ensureHasSettings() {
 		const selectedSite = getSelectedSite( state );
 		const currentDataSiteId = getDataState( state ).forSiteId;
 
-		if ( selectedSite ) {
-			if ( selectedSite.ID !== currentDataSiteId ) {
-				dispatch( fetchExportSettings( selectedSite.ID ) );
-			}
+		if ( get( selectedSite, 'ID' ) !== currentDataSiteId ) {
+			dispatch( fetchExportSettings( selectedSite.ID ) );
 		}
 	}
 }
@@ -90,12 +93,14 @@ export function fetchExportSettings( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: FETCH_EXPORTER_ADVANCED_SETTINGS,
-			siteId: siteId
+			siteId
 		} );
 
-		wpcomUndocumented.getExportSettings( siteId, ( error, data ) => {
-			dispatch( receiveExportSettings( siteId, data ) );
-		} );
+		const updateExportSettings = settings => dispatch( receiveExportSettings( siteId, settings ) );
+
+		wpcomUndocumented
+			.getExportSettings( siteId )
+			.then( updateExportSettings );
 	}
 }
 
@@ -109,8 +114,8 @@ export function fetchExportSettings( siteId ) {
 export function receiveExportSettings( siteId, data ) {
 	return {
 		type: RECEIVE_EXPORTER_ADVANCED_SETTINGS,
-		siteId: siteId,
-		data: data
+		siteId,
+		data
 	};
 }
 
