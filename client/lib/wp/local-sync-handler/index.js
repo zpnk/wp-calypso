@@ -64,10 +64,11 @@ export class LocalSyncHandler {
 				responseSent = true;
 				let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
 				if ( isNewPostRequest ) {
-					return self.newLocalPost( params, fn );
+					self.newLocalPost( params, fn );
 				} else {
-					return self.editLocalPost( params, fn );
+					self.editLocalPost( params, fn );
 				}
+				return;
 			};
 
 			// conditions to skip the proxy
@@ -148,6 +149,7 @@ export class LocalSyncHandler {
 		debug( 'generating hash ... ' );
 		let hash = new Hashes.SHA1().hex( key );
 
+		// @TODO remove
 		hash = key;
 		debug( 'key: %o', hash );
 		return hash;
@@ -181,7 +183,9 @@ export class LocalSyncHandler {
 		debug( 'storing data in %o key', key );
 
 		// clean some fields from endpoint response
-		delete data.response._headers;
+		if ( data.response ) {
+			delete data.response._headers;
+		}
 
 		localforage.config( this.config );
 		localforage.setItem( key, data, fn );
@@ -205,12 +209,26 @@ export class LocalSyncHandler {
 	newLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
-		const postId = String( Math.random() ).substr( 2 );
+		const postId = `local.${String( Math.random() ).substr( 2 )}`;
 
-		body.ID = 'local.' + postId;
+		body.ID = postId;
 		body.isLocal = true;
 
+		console.log( `-> data -> `, data );
+
+		// create key for GET POST
+		let postGETKey = this.generateKey( {
+			apiVersion: '1.1',
+			path: `/sites/${data.body.site_ID}/posts/${postId}`,
+			method: 'GET',
+			query: 'context=edit&meta=autosave'
+		} );
+
+		console.log( `-> body -> `, body );
+		this.storeResponse( postGETKey, body );
+
 		debug( 'sending added post %s locally', postId );
+
 		fn( null, body );
 	}
 
