@@ -176,6 +176,7 @@ module.exports = React.createClass( {
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
 						<span className="draft__pending-label">{ this.translate( 'Pending' ) }</span> }
+					{ post.isLocal && <span className="draft__local">{ this.translate( 'Local' ) }</span> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
 						{ post.format === 'aside' ? excerpt : title }
 					</a>
