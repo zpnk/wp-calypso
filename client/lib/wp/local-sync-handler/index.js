@@ -3,6 +3,7 @@
  */
 import localforage from 'localforage';
 import { blackList } from './endpoints-list';
+import { postList } from './endpoints-list';
 import debugFactory from 'debug';
 import Hashes from 'jshashes';
 
@@ -58,7 +59,22 @@ export class LocalSyncHandler {
 
 			console.log( ' ' );
 			debug( 'starting to get resurce ...' );
-			if ( self.inBlacklist( path ) ) {
+
+			if ( self.checkInList( path, postList ) ) {
+				responseSent = true;
+				let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
+				if ( isNewPostRequest ) {
+					return self.newLocalPost( params, fn );
+				} else {
+					return self.editLocalPost( params, fn );
+				}
+			};
+
+			// conditions to skip the proxy
+			//  - endpoint in blacklist
+
+			if ( self.checkInList( path, blackList ) ) {
+				debug( 'skip proxy', '\n' );
 				return handler( params, fn );
 			};
 
@@ -92,12 +108,19 @@ export class LocalSyncHandler {
 						debug( 'data is already stored. overwriting ...' );
 					}
 
-					let storingData = {
-						response: resData,
-						params: cloneParams
-					};
+					// coditions to do not store
+					//  - POST method
 
-					self.storeResponse( key, storingData );
+					const isPostRequest = 'post' === cloneParams.method.toLowerCase();
+
+					if ( ! isPostRequest ) {
+						let storingData = {
+							response: resData,
+							params: cloneParams
+						};
+
+						self.storeResponse( key, storingData );
+					}
 
 					if ( ! responseSent ) {
 						fn( err, resData );
@@ -123,8 +146,9 @@ export class LocalSyncHandler {
 		}
 
 		debug( 'generating hash ... ' );
-		let hash = new Hashes.SHA1().b64( key );
+		let hash = new Hashes.SHA1().hex( key );
 
+		hash = key;
 		debug( 'key: %o', hash );
 		return hash;
 	}
@@ -163,19 +187,35 @@ export class LocalSyncHandler {
 		localforage.setItem( key, data, fn );
 	}
 
-	inBlacklist( path ) {
-		let inBlacklist = false;
+	checkInList( path, list ) {
+		let inList = false;
 
-		for ( let i = 0; i < blackList.length; i++ ) {
-			let pattern = blackList[ i ];
+		for ( let i = 0; i < list.length; i++ ) {
+			let pattern = list[ i ];
 			let re = new RegExp( pattern );
 			if ( re.test( path ) ) {
-				debug( '%o is in the black list', path );
-				inBlacklist = true;
+				inList = true;
 				continue;
 			}
 		}
 
-		return inBlacklist;
+		return inList;
+	}
+
+	newLocalPost( data, fn ) {
+		let body = data.body;
+		// create a random ID
+		const postId = String( Math.random() ).substr( 2 );
+
+		body.ID = 'local.' + postId;
+		body.isLocal = true;
+
+		debug( 'sending added post %s locally', postId );
+		fn( null, body );
+	}
+
+	editLocalPost( data, fn ) {
+		console.log( `-> data -> `, data );
+		fn();
 	}
 }
