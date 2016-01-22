@@ -66,7 +66,7 @@ export class LocalSyncHandler {
 
 			// detect /sites/$site/post/* endpoints
 			if ( 'GET' !== params.method && self.checkInList( path, postList ) ) {
-				return self.handlerPostRequests( params, fn );
+				return self.handlerPostRequests( key, params, fn );
 			};
 
 			// conditions to skip the proxy
@@ -129,6 +129,12 @@ export class LocalSyncHandler {
 						debug( '%o already storaged %o.', path, data );
 						fn( null, data );
 					}
+				}
+
+				// void request for local.XXXXX post
+				if ( /^\/sites\/.+\/local\.\d+$/.test( path ) ) {
+					debug( 'avoid sending request to WP.com for local.XXX post' );
+					return;
 				}
 
 				debug( 'requesting to WP.com' );
@@ -250,20 +256,31 @@ export class LocalSyncHandler {
 		return inList;
 	}
 
-	handlerPostRequests( params, fn ) {
-		const path = params.path;
+	handlerPostRequests( key, params, fn ) {
+		console.log( `-> key -> `, key );
+		console.log( `-> params -> `, params );
+		console.log( ' ' );
 
-		let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
+		let isNewPostRequest = 'POST' === params.method;
+
 		if ( isNewPostRequest ) {
-			// try to sync immediately
-			this._handler( params, ( err, data ) => {
-				console.log( `-> err -> `, err );
-				console.log( `-> data -> `, data );
-			} );
-
+			// add new post locally ...
 			this.addNewLocalPost( params, fn );
+
+			// ... and try to sync immediately
+			this._handler( params, ( err, data ) => {
+				if ( err ) {
+					return console.error( err );
+				}
+
+				if ( data ) {
+					debug( 'new post has been added' );
+
+					console.log( `-> data -> `, data );
+				}
+			} );
 		} else {
-			this.editLocalPost( params, fn );
+			this.editLocalPost( key, params, fn );
 		}
 		return;
 	}
@@ -276,13 +293,9 @@ export class LocalSyncHandler {
 		body.ID = postId;
 		body.isLocal = true;
 
-		// create key for GET POST
-		let postGETKey = this.generateKey( {
-			apiVersion: '1.1',
-			path: `/sites/${data.body.site_ID}/posts/${postId}`,
-			method: 'GET',
-			query: 'context=edit&meta=autosave'
-		} );
+		// create key for GET post endpoint
+		let postGETKey = this.generateGETPostKey( postId, body.site_ID, 'GET' );
+		console.log( `-> postGETKey -> `, postGETKey );
 
 		debug( 'storging new post(%o)', postId );
 		this.storeResponse( postGETKey, body, ( err, newPost ) => {
@@ -300,7 +313,16 @@ export class LocalSyncHandler {
 		} );
 	}
 
-	editLocalPost( data, fn ) {
+	generateGETPostKey( postId, siteId, method ) {
+		return this.generateKey( {
+			apiVersion: '1.1',
+			path: `/sites/${siteId}/posts/${postId}`,
+			method,
+			query: 'context=edit&meta=autosave'
+		} )
+	}
+
+	editLocalPost( key, data, fn ) {
 		console.log( `-> data -> `, data );
 		fn();
 	}
