@@ -5,7 +5,8 @@ var store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/lang/isEqual' ),
+	localforage = require( 'localforage' );
 
 /**
  * Internal dependencies
@@ -207,6 +208,19 @@ User.prototype.clear = function() {
 	this.data = [];
 	delete this.settings;
 	store.clear();
+	//clear the stored redux tree
+	localStorage.setItem( 'redux-state', JSON.stringify( {} ) );
+	//clear proxied requests from the local sync handler
+	//TODO: have local sync handler export clear or config settings
+	localforage.config( {
+		driver: localforage.INDEXEDDB,
+		name: 'calypso',
+		version: 1.0,
+		//size: 4980736,
+		storeName: 'calypso-store',
+		description: 'Calypso app storing fata'
+	} );
+	localforage.clear();
 };
 
 /**
