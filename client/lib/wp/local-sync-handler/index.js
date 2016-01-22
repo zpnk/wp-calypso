@@ -111,8 +111,6 @@ export class LocalSyncHandler {
 									// update found property
 									newData.found = cloneData.found + list.length;
 
-									console.log( list );
-
 									// merge list with posts list
 									newData.posts = list.concat( cloneData.posts );
 
@@ -255,27 +253,46 @@ export class LocalSyncHandler {
 	}
 
 	handlerPostRequests( key, params, fn ) {
-		console.log( `-> key -> `, key );
-		console.log( `-> params -> `, params );
-		console.log( ' ' );
-
 		let isNewPostRequest = 'POST' === params.method;
 
 		if ( isNewPostRequest ) {
 			// add new post locally ...
-			this.addNewLocalPost( params, fn );
-
-			// ... and try to sync immediately
-			this._handler( params, ( err, data ) => {
-				if ( err ) {
-					return console.error( err );
+			this.addNewLocalPost( params, ( localPostErr, localPost ) => {
+				if ( localPostErr ) {
+					throw localPostErr;
 				}
 
-				if ( data ) {
-					debug( 'new post has been added' );
+				fn( null, localPost );
 
-					console.log( `-> data -> `, data );
-				}
+				// * sync process starts here --> *
+				const localId = params.body.ID;
+				const __key = params.body.__key;
+
+				// try to sync immediately
+				// clean local parameters before to send the request
+				let cloneParams = Object.assign( {}, params );
+				[ 'global_ID', '__key' ].forEach( param => {
+					delete cloneParams.body[ param ];
+				} );
+
+				this._handler( params, ( err, data ) => {
+					if ( err ) {
+						return console.error( err );
+					}
+
+					if ( data ) {
+						debug( 'new post has been synced' );
+
+						// override the local post
+						this.storeResponse( __key, data, ( storeErr, storePost ) => {
+							if ( storeErr ) {
+								console.log( storeErr );
+							}
+
+							debug( 'post synced: %o => %o', localId, storePost.ID );
+						} );
+					}
+				} );
 			} );
 		} else {
 			this.editLocalPost( key, params, fn );
@@ -286,7 +303,7 @@ export class LocalSyncHandler {
 	addNewLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
-		const postId = `local.${String( Math.random() ).substr( 2 )}`;
+		const postId = `local.${String( Math.random() ).substr( 2, 6 )}`;
 
 		body.ID = postId;
 		body.isLocal = true;
@@ -294,7 +311,9 @@ export class LocalSyncHandler {
 
 		// create key for GET post endpoint
 		let postGETKey = this.generateGETPostKey( postId, body.site_ID, 'GET' );
-		console.log( `-> postGETKey -> `, postGETKey );
+
+		// store the key in the object itself
+		body.__key = postGETKey;
 
 		debug( 'storging new post(%o)', postId );
 		this.storeResponse( postGETKey, body, ( err, newPost ) => {
