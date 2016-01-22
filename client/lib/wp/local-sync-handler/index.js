@@ -335,7 +335,7 @@ export class LocalSyncHandler {
 			}
 
 			list = list || [];
-			list.push( key );
+			list.unshift( key );
 			localforage.setItem( postsListKey, list, fn );
 		} );
 	}
