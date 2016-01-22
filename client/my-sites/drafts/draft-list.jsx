@@ -27,7 +27,10 @@ var DraftList = React.createClass( {
 		trackScrollPage: React.PropTypes.func,
 		onTitleClick: React.PropTypes.func,
 		showAllActionsMenu: React.PropTypes.bool,
-		selectedId: React.PropTypes.number
+		selectedId: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.number
+		] )
 	},
 
 	getDefaultProps: function() {
@@ -72,7 +75,10 @@ var Drafts = React.createClass( {
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		showAllActionsMenu: React.PropTypes.bool,
-		selectedId: React.PropTypes.number
+		selectedId: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.number
+		] )
 	},
 
 	getDefaultProps: function() {
