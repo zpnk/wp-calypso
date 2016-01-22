@@ -50,10 +50,12 @@ function isJpphpBundle( product ) {
 }
 
 function isFreePlan( product ) {
+	var freePlans = [ 'free_plan', 'jetpack_free' ];
+
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'free_plan';
+	return ( freePlans.indexOf( product.product_slug ) >= 0 );
 }
 
 function isFreeTrial( product ) {

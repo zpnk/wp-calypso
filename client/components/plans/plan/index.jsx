@@ -162,6 +162,7 @@ module.exports = React.createClass( {
 	},
 
 	getPlanActions: function() {
+		console.log( this.props );
 		return (
 			<PlanActions
 				plan={ this.props.plan }
