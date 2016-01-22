@@ -28,6 +28,11 @@ function getPostID( context ) {
 		return null;
 	}
 
+	// handle local posts with local-{number}
+	if ( /^local\.\d+/.test( context.params.post ) ) {
+		return context.params.post;
+	}
+
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
 }
