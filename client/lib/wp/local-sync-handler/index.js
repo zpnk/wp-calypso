@@ -122,7 +122,7 @@ export class LocalSyncHandler {
 					}
 
 					if ( cloneParams.metaAPI && cloneParams.metaAPI.accessAllUsersBlogs ) {
-						debug( 'skip proxy handler request ');
+						debug( 'skip proxy handler request ' );
 						return fn( null, resData );
 					}
 
@@ -252,16 +252,38 @@ export class LocalSyncHandler {
 
 		// create key for GET POST
 		let postGETKey = this.generateKey( {
-			apiVersion: '1.1',
+			apiVersion: data.apiVersion,
 			path: `/sites/${data.body.site_ID}/posts/${postId}`,
 			method: 'GET',
 			query: 'context=edit&meta=autosave'
 		} );
-		this.storeResponse( postGETKey, body );
 
-		debug( 'sending added post %s locally', postId );
+		debug( 'storging new post(%o)', postId );
+		this.storeResponse( postGETKey, body, ( newPostErr, newPost ) => {
+			if ( newPostErr ) {
+				throw newPostErr;
+			}
 
-		fn( null, body );
+			// add post to local posts list
+			localforage.getItem( 'local-posts-list', ( err, list ) => {
+				if ( err ) {
+					throw err;
+				}
+
+				list = list = [];
+				list.push( postGETKey );
+
+				localforage.setItem( 'local-posts-list', list, ( addItemError, updatedList ) => {
+					if ( err ) {
+						throw err;
+					}
+
+					console.log( `-> updatedList -> `, updatedList );
+
+					fn( null, newPost );
+				} );
+			} );
+		} );
 	}
 
 	editLocalPost( data, fn ) {
