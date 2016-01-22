@@ -122,6 +122,7 @@ export class LocalSyncHandler {
 					}
 
 					if ( cloneParams.metaAPI && cloneParams.metaAPI.accessAllUsersBlogs ) {
+						debug( 'skip proxy handler request ');
 						return fn( null, resData );
 					}
 
