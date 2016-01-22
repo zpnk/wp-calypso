@@ -13,7 +13,8 @@ export function connectionLost() {
 			, {
 				showDismiss: true,
 				isPersistent: true,
-				id: 'connectionLost'
+				id: 'connectionLost',
+				duration: 5000
 			} )
 		);
 		dispatch( { type: CONNECTION_LOST } );
