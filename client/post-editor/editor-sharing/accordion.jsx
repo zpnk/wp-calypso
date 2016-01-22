@@ -24,7 +24,8 @@ module.exports = React.createClass( {
 		post: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
 		connections: React.PropTypes.array,
-		fetchConnections: React.PropTypes.func
+		fetchConnections: React.PropTypes.func,
+		offline: React.PropTypes.bool
 	},
 
 	getSubtitle: function() {
@@ -109,6 +110,7 @@ module.exports = React.createClass( {
 				title={ this.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="share" /> }
+				offline={ this.props.offline }
 				className={ classes }>
 				<AccordionSection>
 					{ ! hideSharing && (

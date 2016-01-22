@@ -13,6 +13,7 @@ module.exports = React.createClass( {
 		onToggle: React.PropTypes.func,
 		title: React.PropTypes.string.isRequired,
 		subtitle: React.PropTypes.string,
+		offline: React.PropTypes.bool,
 		icon: React.PropTypes.oneOfType( [
 			React.PropTypes.string,
 			React.PropTypes.element
@@ -33,6 +34,10 @@ module.exports = React.createClass( {
 
 	toggleExpanded: function() {
 		var isExpanded = ! this.state.isExpanded;
+
+		if ( this.props.offline ) {
+			return;
+		}
 
 		this.setState( {
 			isExpanded: isExpanded
@@ -71,6 +76,7 @@ module.exports = React.createClass( {
 					{ this.renderIcon() }
 					<span className="accordion__title">{ this.props.title }</span>
 					{ this.renderSubtitle() }
+					{ this.props.offline && <svg className="gridicon accordion__offline-icon" height={ 24 } width={ 24 } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M12.736 3.184L7.834 12.57l5.106.035-2.592 7.904 7.265-10.502-5.65.083.773-6.906z" /></g></svg> }
 				</button>
 			</header>
 		);
@@ -78,7 +84,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var classes = classNames( 'accordion', this.props.className, {
-			'is-expanded': this.state.isExpanded
+			'is-expanded': this.state.isExpanded,
+			'is-offline': this.props.offline
 		} );
 
 		return (

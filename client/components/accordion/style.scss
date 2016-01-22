@@ -131,3 +131,18 @@ $accordion-background-expanded: $white;
 .accordion__section:last-child {
 	margin-bottom: 0;
 }
+
+.accordion__offline-icon {
+	color: $gray;
+	position: absolute;
+		right: 16px;
+		top: 16px;
+}
+
+.accordion.is-offline .accordion__toggle {
+	color: lighten( $gray, 10% );
+	cursor: default;
+	&::after {
+		display: none;
+	}
+}
