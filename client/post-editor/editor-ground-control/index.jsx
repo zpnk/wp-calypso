@@ -5,6 +5,8 @@ var noop = require( 'lodash/utility/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -27,7 +29,7 @@ function isPostEmpty( props ) {
 	return ( props.isNew && ! props.isDirty ) || ! props.hasContent;
 }
 
-module.exports = React.createClass( {
+const EditorGroundControl = React.createClass( {
 	displayName: 'EditorGroundControl',
 	propTypes: {
 		hasContent: React.PropTypes.bool,
@@ -312,16 +314,9 @@ module.exports = React.createClass( {
 		this.setState( { showDateTooltip: false } );
 	},
 
-	render: function() {
+	renderGroundControlContent: function() {
 		return (
-			<Card className="editor-ground-control">
-				<Site
-					site={ this.props.site }
-					indicator={ false }
-					homeLink={ true }
-					externalLink={ true }
-				/>
-				<hr className="editor-ground-control__separator" />
+			<div>
 				<div className="editor-ground-control__status">
 					<StatusLabel
 						post={ this.props.savedPost }
@@ -397,8 +392,35 @@ module.exports = React.createClass( {
 						this.schedulePostPopover()
 					}
 				</div>
+			</div>
+		);
+	},
+
+	render: function() {
+		return (
+			<Card className="editor-ground-control">
+				<Site
+					site={ this.props.site }
+					indicator={ false }
+					homeLink={ true }
+					externalLink={ true }
+				/>
+				<hr className="editor-ground-control__separator" />
+				{ this.props.connection === 'OFFLINE' ?
+					<div className="editor-ground-control__offline">
+						You are working offline. Your changes will sync once you are back online.
+					</div>
+					: this.renderGroundControlContent()
+				}
 			</Card>
 		);
 	}
 } );
 
+export default connect(
+	( state ) => {
+		return {
+			connection: state.application.isOnline
+		};
+	}
+)( EditorGroundControl );
