@@ -76,6 +76,7 @@ class EditorSharingContainer extends Component {
 				isNew={ isNew }
 				connections={ connections }
 				fetchConnections={ this.fetchConnections.bind( this ) }
+				offline={ this.props.connection === 'OFFLINE' }
 				className="editor-drawer__accordion" />
 		);
 	}
@@ -95,7 +96,8 @@ export default connect(
 		return {
 			hasFetchedConnections: site && hasFetchedConnections( state, site.ID ),
 			connections: site ? getConnectionsBySiteIdAvailableToCurrentUser( state, site.ID, ownProps.currentUserID ) : null,
-			site
+			site,
+			connection: state.application.isOnline
 		};
 	}
 )( EditorSharingContainer );
