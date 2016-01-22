@@ -84,11 +84,11 @@ export class LocalSyncHandler {
 				}
 
 				if ( data ) {
+					responseSent = true;
+
 					// handle /site/$site/posts endpoint
 					if ( /^\/sites\/.+\/posts$/.test( path ) ) {
 						debug( '%o detected', '/sites/$site/posts' );
-
-						responseSent = true;
 
 						// detect type 'post', status 'draft'
 						if (
@@ -113,14 +113,13 @@ export class LocalSyncHandler {
 									// merge list with posts list
 									cloneData.posts = list.concat( cloneData.posts );
 
-									console.log( `-> cloneData -> `, cloneData );
 									fn( null, cloneData );
 								}
 							} );
-						} else {
-							debug( '%o already storaged %o.', path, data );
-							fn( null, data );
 						}
+					} else {
+						debug( '%o already storaged %o.', path, data );
+						fn( null, data );
 					}
 				}
 
@@ -266,14 +265,14 @@ export class LocalSyncHandler {
 	addNewLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
-		const postId = Number( `0.${String( Math.random() ).substr( 2 )}` );
+		const postId = `local.${String( Math.random() ).substr( 2 )}`;
 
 		body.ID = postId;
 		body.isLocal = true;
 
 		// create key for GET POST
 		let postGETKey = this.generateKey( {
-			apiVersion: data.apiVersion,
+			apiVersion: '1.1',
 			path: `/sites/${data.body.site_ID}/posts/${postId}`,
 			method: 'GET',
 			query: 'context=edit&meta=autosave'
