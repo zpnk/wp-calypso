@@ -105,20 +105,18 @@ export class LocalSyncHandler {
 									debug( 'add lodal posts to response' );
 
 									// clone the response
-									let cloneData = Object.assign( {}, data );
+									const cloneData = Object.assign( {}, data );
+									let newData = { posts: [], found: 0 };
 
 									// update found property
-									cloneData.found += list.length;
+									newData.found = cloneData.found + list.length;
+
+									console.log( list );
 
 									// merge list with posts list
-									cloneData.posts = list.concat( cloneData.posts );
-									console.log( `-> cloneData -> `, cloneData );
+									newData.posts = list.concat( cloneData.posts );
 
-									cloneData.posts.forEach( post => {
-										console.log( `-> post.ID -> `, post.ID );
-									} );
-
-									fn( null, cloneData );
+									fn( null, newData );
 								}
 							} );
 						} else {
@@ -292,6 +290,7 @@ export class LocalSyncHandler {
 
 		body.ID = postId;
 		body.isLocal = true;
+		body.global_ID = postId;
 
 		// create key for GET post endpoint
 		let postGETKey = this.generateGETPostKey( postId, body.site_ID, 'GET' );
