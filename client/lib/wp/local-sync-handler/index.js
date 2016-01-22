@@ -4,6 +4,7 @@
 import localforage from 'localforage';
 import { blackList } from './endpoints-list';
 import { postList } from './endpoints-list';
+import queryString from 'qs';
 import debugFactory from 'debug';
 import Hashes from 'jshashes';
 
@@ -41,6 +42,7 @@ export class LocalSyncHandler {
 		}
 
 		this.config = Object.assign( {}, defaultConfig, config );
+		this._handler = handler;
 		return this.wrapper( handler );
 	}
 
@@ -50,6 +52,7 @@ export class LocalSyncHandler {
 		return function( params, fn ) {
 			const cloneParams = Object.assign( {}, params );
 			const path = params.path;
+			let qs = params.query ? queryString.parse( params.query ) : {};
 
 			// response has been sent flag
 			let responseSent = false;
@@ -57,18 +60,11 @@ export class LocalSyncHandler {
 			// generate an unique resource key
 			const key = self.generateKey( params );
 
-			console.log( ' ' );
-			debug( 'starting to get resurce ...' );
+			debug( 'starting to get resource ...' );
 
-			if ( self.checkInList( path, postList ) ) {
-				responseSent = true;
-				let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
-				if ( isNewPostRequest ) {
-					self.newLocalPost( params, fn );
-				} else {
-					self.editLocalPost( params, fn );
-				}
-				return;
+			// detect /sites/$site/post/* endpoints
+			if ( 'GET' !== params.method && self.checkInList( path, postList ) ) {
+				return self.handlerPostRequests( params, fn );
 			};
 
 			// conditions to skip the proxy
@@ -86,6 +82,23 @@ export class LocalSyncHandler {
 				}
 
 				if ( data ) {
+					// handle /site/$site/posts endpoint
+					if ( /^\/sites\/.+\/posts$/.test( path ) ) {
+						debug( '%o detected', '/sites/$site/posts' );
+
+						// detect type 'post', status 'draft'
+						if (
+							'post' === qs.type &&
+							/draft/.test( qs.status ) &&
+							! qs.page_handle
+						) {
+							console.log( `-> data -> `, data );
+							console.log( 'METELO !!!' );
+						}
+
+						console.log( ' ' );
+					}
+
 					debug( '%o already storaged %o. Let\'s be optimistic.', path, data );
 					fn( null, data );
 					responseSent = true;
@@ -157,8 +170,8 @@ export class LocalSyncHandler {
 
 	retrieveResponse( key, fn = () => {} ) {
 		localforage.config( this.config );
-
 		debug( 'getting data from %o key', key );
+
 		localforage.getItem( key, ( err, data ) => {
 			if ( err ) {
 				return fn( err )
@@ -180,6 +193,7 @@ export class LocalSyncHandler {
 	 * @param {Function} [fn] - callback
 	 */
 	storeResponse( key, data, fn = () => {} ) {
+		localforage.config( this.config );
 		debug( 'storing data in %o key', key );
 
 		// clean some fields from endpoint response
@@ -187,7 +201,6 @@ export class LocalSyncHandler {
 			delete data.response._headers;
 		}
 
-		localforage.config( this.config );
 		localforage.setItem( key, data, fn );
 	}
 
@@ -206,6 +219,26 @@ export class LocalSyncHandler {
 		return inList;
 	}
 
+	handlerPostRequests( params, fn ) {
+		console.log( `-> params -> `, params );
+		const path = params.path;
+
+		let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
+		if ( isNewPostRequest ) {
+			/*
+			this._handler( params, ( err, data ) => {
+				console.log( `-> err -> `, err );
+				console.log( `-> data -> `, data );
+			} );
+			*/
+
+			this.newLocalPost( params, fn );
+		} else {
+			this.editLocalPost( params, fn );
+		}
+		return;
+	}
+
 	newLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
@@ -214,8 +247,6 @@ export class LocalSyncHandler {
 		body.ID = postId;
 		body.isLocal = true;
 
-		console.log( `-> data -> `, data );
-
 		// create key for GET POST
 		let postGETKey = this.generateKey( {
 			apiVersion: '1.1',
@@ -223,8 +254,6 @@ export class LocalSyncHandler {
 			method: 'GET',
 			query: 'context=edit&meta=autosave'
 		} );
-
-		console.log( `-> body -> `, body );
 		this.storeResponse( postGETKey, body );
 
 		debug( 'sending added post %s locally', postId );
