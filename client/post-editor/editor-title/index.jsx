@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/object/omit';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,9 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
 
-export default React.createClass( {
-	displayName: 'EditorTitle',
-
+const EditorTitle = React.createClass( {
 	propTypes: {
 		post: PropTypes.object,
 		site: PropTypes.object,
@@ -104,7 +103,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classes }>
-				{ post && post.ID && ! PostUtils.isPage( post ) &&
+				{ post && post.ID && ! PostUtils.isPage( post ) && this.props.connection === 'ONLINE' &&
 					<EditorPermalink
 						slug={ post.slug }
 						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
@@ -127,3 +126,11 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			connection: state.application.isOnline
+		};
+	}
+)( EditorTitle );
