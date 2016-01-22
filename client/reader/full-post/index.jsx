@@ -290,7 +290,7 @@ FullPostDialog = React.createClass( {
 	},
 
 	handleClickOutside: function( event ) {
-		event.preventDefault();
+		//event.preventDefault();
 	},
 
 	render: function() {
