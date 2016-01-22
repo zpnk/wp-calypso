@@ -20,7 +20,7 @@ const defaultConfig = {
 	version: 1.0,
 	//size: 4980736,
 	storeName: 'calypso-store',
-	description: 'Calypso app storing fata'
+	description: 'Calypso app storing data'
 };
 
 /**
@@ -125,8 +125,9 @@ export class LocalSyncHandler {
 						return fn( null, resData );
 					}
 
-					// do not store in POST requests
-					const isPostRequest = 'post' === cloneParams.method.toLowerCase();
+					const isPostRequest = cloneParams &&
+						cloneParams.method &&
+						'post' === cloneParams.method.toLowerCase();
 
 					if ( ! isPostRequest ) {
 						let storingData = {
@@ -176,7 +177,7 @@ export class LocalSyncHandler {
 		localforage.getItem( key, ( err, data ) => {
 			if ( err ) {
 				return fn( err )
-			};
+			}
 
 			if ( ! data ) {
 				return fn();
