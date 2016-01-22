@@ -12,6 +12,7 @@ var config = require( 'config' ),
 	PollerPool = require( 'lib/data-poller' )
 
 import { connectionLost, connectionRestored, connectionInit } from 'state/application/actions';
+import { sync as syncOfflineQueue } from 'lib/wp/local-sync-handler/queue-handler';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
@@ -38,6 +39,7 @@ NetworkConnectionApp = {
 
 		changeCallback = function() {
 			if ( connected ) {
+				syncOfflineQueue();
 				debug( 'Showing notice "Connection restored".' );
 				reduxStore.dispatch( connectionRestored() );
 			} else {
