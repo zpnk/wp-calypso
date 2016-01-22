@@ -12,6 +12,8 @@ import SignupForm from 'components/signup-form'
 import signupUtils from 'signup/utils'
 import SignupActions from 'lib/signup/actions';
 
+var qs = require( 'querystring' );
+
 export default React.createClass( {
 
 	displayName: 'User',
@@ -35,6 +37,7 @@ export default React.createClass( {
 
 		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
 			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
+			queryArgs.jetpackRedirectArgs = qs.parse( queryArgs.jetpackRedirect );
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {

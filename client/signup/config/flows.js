@@ -129,7 +129,7 @@ const flows = {
 
 	jetpack: {
 		steps: [ 'jetpack-user', 'jetpack-plans' ],
-		destination: '/'
+		destination: getCheckoutDestination
 	},
 
 	'free-trial': {

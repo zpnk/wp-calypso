@@ -80,7 +80,7 @@ module.exports = {
 	},
 
 	'jetpack-plans': {
-		stepName: 'plans',
+		stepName: 'jetpack-plans',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'cartItem' ]

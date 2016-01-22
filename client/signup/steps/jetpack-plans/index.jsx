@@ -66,7 +66,7 @@ module.exports = React.createClass( {
 		SignupActions.submitSignupStep( {
 			processingMessage: isEmpty( cartItem ) ? this.translate( 'Free plan selected' ) : this.translate( 'Adding your plan' ),
 			stepName: this.props.stepName,
-			stepSectionName: this.props.stepSectionName,
+			//stepSectionName: this.props.stepSectionName,
 			cartItem
 		}, [], { cartItem } );
 
