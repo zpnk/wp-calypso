@@ -143,7 +143,7 @@ module.exports = React.createClass( {
 
 		site = this.props.sites.getSite( post.site_ID );
 
-		if ( utils.userCan( 'edit_post', post ) ) {
+		if ( utils.userCan( 'edit_post', post ) || post.isLocal ) {
 			editPostURL = utils.getEditURL( post, site );
 		}
 
