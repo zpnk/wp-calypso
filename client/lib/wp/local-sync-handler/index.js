@@ -112,10 +112,18 @@ export class LocalSyncHandler {
 
 									// merge list with posts list
 									cloneData.posts = list.concat( cloneData.posts );
+									console.log( `-> cloneData -> `, cloneData );
+
+									cloneData.posts.forEach( post => {
+										console.log( `-> post.ID -> `, post.ID );
+									} );
 
 									fn( null, cloneData );
 								}
 							} );
+						} else {
+							// no `draft` posts list
+							fn( null, data );
 						}
 					} else {
 						debug( '%o already storaged %o.', path, data );
@@ -243,17 +251,15 @@ export class LocalSyncHandler {
 	}
 
 	handlerPostRequests( params, fn ) {
-		console.log( `-> params -> `, params );
 		const path = params.path;
 
 		let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
 		if ( isNewPostRequest ) {
-			/*
+			// try to sync immediately
 			this._handler( params, ( err, data ) => {
 				console.log( `-> err -> `, err );
 				console.log( `-> data -> `, data );
 			} );
-			*/
 
 			this.addNewLocalPost( params, fn );
 		} else {
