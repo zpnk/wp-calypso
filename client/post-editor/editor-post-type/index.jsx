@@ -82,7 +82,7 @@ export default React.createClass( {
 
 		return (
 			<span className={ classes } ref="postType" onClick={ this.toggleMenu }>
-				{ this.props.isLocal && <span className="editor-post-type__local">{ this.translate( 'Local' ) }</span> }
+				{ this.props.local && <span className="editor-post-type__local">{ this.translate( 'Local' ) }</span> }
 				{ this.getLabel() }
 				{ isSwitcherEnabled && (
 					<Gridicon icon="chevron-down" size={ 16 } />
