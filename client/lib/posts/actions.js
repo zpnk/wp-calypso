@@ -147,7 +147,7 @@ PostActions = {
 
 		postHandle = wpcom.site( site.ID ).post( postId );
 
-		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
+		postHandle.get( { context: 'edit', meta: 'autosave', apiVersion: '1.2' }, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_TO_EDIT',
 				error: error,

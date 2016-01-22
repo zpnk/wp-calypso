@@ -167,7 +167,10 @@ function boot() {
 	}
 	reduxStore = createReduxStore( initialState );
 	reduxStore.subscribe( function() {
-		localStorage.setItem( 'redux-state', JSON.stringify( reduxStore.getState() ) );
+		let state = Object.assign( {}, reduxStore.getState() );
+		delete state.application;
+		delete state.themes;
+		localStorage.setItem( 'redux-state', JSON.stringify( state ) );
 	} );
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
