@@ -8,10 +8,12 @@ import queryString from 'qs';
 import debugFactory from 'debug';
 import Hashes from 'jshashes';
 
+const debug = debugFactory( 'local-sync-handler' );
+
 // expose localforage just to development
 window.LF = localforage;
 
-const debug = debugFactory( 'local-sync-handler' );
+const postsListKey = 'local-posts-list';
 
 // default config object
 const defaultConfig = {
@@ -86,21 +88,40 @@ export class LocalSyncHandler {
 					if ( /^\/sites\/.+\/posts$/.test( path ) ) {
 						debug( '%o detected', '/sites/$site/posts' );
 
+						responseSent = true;
+
 						// detect type 'post', status 'draft'
 						if (
 							'post' === qs.type &&
 							/draft/.test( qs.status ) &&
 							! qs.page_handle
 						) {
-							console.log( `-> data -> `, data );
+							self.getLocalPostsList( ( listErr, list ) => {
+								if ( listErr ) {
+									throw listErr;
+								}
+
+								if ( list && list.length ) {
+									debug( 'add lodal posts to response' );
+
+									// clone the response
+									let cloneData = Object.assign( {}, data );
+
+									// update found property
+									cloneData.found += list.length;
+
+									// merge list with posts list
+									cloneData.posts = list.concat( cloneData.posts );
+
+									console.log( `-> cloneData -> `, cloneData );
+									fn( null, cloneData );
+								}
+							} );
+						} else {
+							debug( '%o already storaged %o.', path, data );
+							fn( null, data );
 						}
-
-						console.log( ' ' );
 					}
-
-					debug( '%o already storaged %o. Let\'s be optimistic.', path, data );
-					fn( null, data );
-					responseSent = true;
 				}
 
 				debug( 'requesting to WP.com' );
@@ -245,7 +266,7 @@ export class LocalSyncHandler {
 	addNewLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
-		const postId = `local.${String( Math.random() ).substr( 2 )}`;
+		const postId = Number( `0.${String( Math.random() ).substr( 2 )}` );
 
 		body.ID = postId;
 		body.isLocal = true;
@@ -280,7 +301,6 @@ export class LocalSyncHandler {
 	}
 
 	addNewPostKeyToLocalList( key, fn ) {
-		const postsListKey = 'local-posts-list';
 		// add post to local posts list
 		localforage.config( this.config );
 		localforage.getItem( postsListKey, ( err, list ) => {
@@ -291,6 +311,30 @@ export class LocalSyncHandler {
 			list = list || [];
 			list.push( key );
 			localforage.setItem( postsListKey, list, fn );
+		} );
+	}
+
+	getLocalPostsList( fn ) {
+		localforage.config( this.config );
+		localforage.getItem( postsListKey, ( err, list ) => {
+			if ( err ) {
+				throw err;
+			}
+
+			let c = 0;
+			let localPosts = [];
+
+			list.forEach( key => {
+				c++;
+				this.retrieveResponse( key, ( errPost, post ) => {
+					if ( err ) {
+						throw err;
+					}
+
+					localPosts.push( post );
+					--c || fn( null, localPosts );
+				} );
+			} );
 		} );
 	}
 }
