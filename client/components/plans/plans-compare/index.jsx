@@ -158,6 +158,10 @@ var PlansCompare = React.createClass( {
 			site = this.props.selectedSite,
 			showJetpackPlans = site ? site.jetpack : false;
 
+		if ( this.props.isJetpackSignup ) {
+			showJetpackPlans = true;
+		}
+
 		plans = plans.filter( function( plan ) {
 			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 		} );

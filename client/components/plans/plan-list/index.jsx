@@ -49,6 +49,8 @@ module.exports = React.createClass( {
 		if ( this.props.sites ) {
 			site = this.props.sites.getSelectedSite();
 			showJetpackPlans = site && site.jetpack;
+		} else if ( this.props.isJetpackSignup ) {
+			showJetpackPlans = true;
 		}
 
 		if ( ! this.props.isInSignup ) {
@@ -71,13 +73,9 @@ module.exports = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			// Manually doing this.
-			//showJetpackPlans = true;
-
 			plans = plans.filter( function( plan ) {
-				return ( true === ( 'jetpack' === plan.product_type ) );
+				return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 			} );
-
 			plansList = plans.map( function( plan ) {
 				return (
 					<Plan

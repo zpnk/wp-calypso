@@ -460,6 +460,9 @@ function getItemForPlan( plan, properties ) {
 		case 'jetpack_business':
 			return businessPlan( plan.product_slug, properties );
 
+		case 'jetpack_free':
+			return planItem( plan.product_slug, false );
+
 		default:
 			throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
 	}

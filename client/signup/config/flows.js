@@ -128,7 +128,7 @@ const flows = {
 	},
 
 	jetpack: {
-		steps: [ 'jetpack-plans', 'jetpack-user' ],
+		steps: [ 'jetpack-user', 'jetpack-plans' ],
 		destination: '/'
 	},
 
