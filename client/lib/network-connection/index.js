@@ -11,7 +11,7 @@ var debug = require( 'debug' )( 'calypso:network-connection' ),
 var config = require( 'config' ),
 	PollerPool = require( 'lib/data-poller' )
 
-import { connectionLost, connectionRestored } from 'state/application/actions';
+import { connectionLost, connectionRestored, connectionInit } from 'state/application/actions';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
@@ -46,9 +46,12 @@ NetworkConnectionApp = {
 			}
 		};
 
-		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !!navigator.onLine : true;
+		if ( typeof navigator !== 'undefined' && 'onLine' in navigator ) {
+			connected = navigator.onLine;
+			reduxStore.dispatch( connectionInit( connected ) );
+		}
 
+		if ( config.isEnabled( 'desktop' ) ) {
 			window.addEventListener( 'online', this.emitConnected.bind( this ) );
 			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
 		} else {

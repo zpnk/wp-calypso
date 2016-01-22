@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
+import { CONNECTION_LOST, CONNECTION_RESTORED, CONNECTION_INIT } from 'state/action-types';
 import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
 import i18n from 'lib/mixins/i18n';
 
@@ -34,4 +34,8 @@ export function connectionRestored() {
 		);
 		dispatch( { type: CONNECTION_RESTORED } );
 	};
+}
+
+export function connectionInit( isOnline ) {
+	return { type: CONNECTION_INIT, isOnline };
 }
