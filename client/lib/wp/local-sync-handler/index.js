@@ -93,7 +93,6 @@ export class LocalSyncHandler {
 							! qs.page_handle
 						) {
 							console.log( `-> data -> `, data );
-							console.log( 'METELO !!!' );
 						}
 
 						console.log( ' ' );
@@ -122,9 +121,11 @@ export class LocalSyncHandler {
 						debug( 'data is already stored. overwriting ...' );
 					}
 
-					// coditions to do not store
-					//  - POST method
+					if ( cloneParams.metaAPI && cloneParams.metaAPI.accessAllUsersBlogs ) {
+						return fn( null, resData );
+					}
 
+					// do not store in POST requests
 					const isPostRequest = 'post' === cloneParams.method.toLowerCase();
 
 					if ( ! isPostRequest ) {
