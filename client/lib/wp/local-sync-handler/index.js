@@ -235,14 +235,14 @@ export class LocalSyncHandler {
 			} );
 			*/
 
-			this.newLocalPost( params, fn );
+			this.addNewLocalPost( params, fn );
 		} else {
 			this.editLocalPost( params, fn );
 		}
 		return;
 	}
 
-	newLocalPost( data, fn ) {
+	addNewLocalPost( data, fn ) {
 		let body = data.body;
 		// create a random ID
 		const postId = `local.${String( Math.random() ).substr( 2 )}`;
@@ -259,29 +259,17 @@ export class LocalSyncHandler {
 		} );
 
 		debug( 'storging new post(%o)', postId );
-		this.storeResponse( postGETKey, body, ( newPostErr, newPost ) => {
-			if ( newPostErr ) {
-				throw newPostErr;
+		this.storeResponse( postGETKey, body, ( err, newPost ) => {
+			if ( err ) {
+				throw err;
 			}
 
-			// add post to local posts list
-			localforage.getItem( 'local-posts-list', ( err, list ) => {
-				if ( err ) {
-					throw err;
+			this.addNewPostKeyToLocalList( postGETKey, postListErr => {
+				if ( postListErr ) {
+					throw postListErr;
 				}
 
-				list = list = [];
-				list.push( postGETKey );
-
-				localforage.setItem( 'local-posts-list', list, ( addItemError, updatedList ) => {
-					if ( err ) {
-						throw err;
-					}
-
-					console.log( `-> updatedList -> `, updatedList );
-
-					fn( null, newPost );
-				} );
+				fn( null, newPost );
 			} );
 		} );
 	}
@@ -289,5 +277,20 @@ export class LocalSyncHandler {
 	editLocalPost( data, fn ) {
 		console.log( `-> data -> `, data );
 		fn();
+	}
+
+	addNewPostKeyToLocalList( key, fn ) {
+		const postsListKey = 'local-posts-list';
+		// add post to local posts list
+		localforage.config( this.config );
+		localforage.getItem( postsListKey, ( err, list ) => {
+			if ( err ) {
+				throw err;
+			}
+
+			list = list || [];
+			list.push( key );
+			localforage.setItem( postsListKey, list, fn );
+		} );
 	}
 }
