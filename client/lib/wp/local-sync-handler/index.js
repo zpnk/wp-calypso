@@ -60,7 +60,10 @@ export class LocalSyncHandler {
 			console.log( ' ' );
 			debug( 'starting to get resurce ...' );
 
+			console.log( `-> key -> `, key );
+
 			if ( self.checkInList( path, postList ) ) {
+				console.log('SE MEEEEETIO !!!!');
 				responseSent = true;
 				let isNewPostRequest = /^\/sites\/.*\/new/.test( path );
 				if ( isNewPostRequest ) {
