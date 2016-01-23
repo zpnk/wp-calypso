@@ -253,7 +253,7 @@ export class LocalSyncHandler {
 	}
 
 	handlerPostRequests( key, params, fn ) {
-		let isNewPostRequest = 'POST' === params.method;
+		let isNewPostRequest = /\/posts\/new$/.test( params.path );
 
 		if ( isNewPostRequest ) {
 			// add new post locally ...
@@ -331,6 +331,34 @@ export class LocalSyncHandler {
 		} );
 	}
 
+	editLocalPost( key, data, fn ) {
+		// get post ID and siteId from the url
+		let localId = data.path.match( /local\.\d+$/ );
+		let siteId = data.path.match( /\/sites\/(.+)\/posts\/local\.\d+$/ );
+		localId = localId ? localId[ 0 ] : null;
+		siteId = siteId ? siteId[ 1 ] : null;
+
+		if ( ! localId ) {
+			console.log( 'No local ID!' );
+		}
+
+		// create key for GET post endpoint
+		let getKey = this.generateGETPostKey( localId, siteId, 'GET' );
+
+		// get the post from local storage
+		this.retrieveResponse( getKey, ( err, localPost ) => {
+			if ( err ) {
+				console.log( err );
+			}
+
+			// update data of the local post
+			let updatedData = Object.assign( {}, localPost, data.body );
+			this.storeResponse( getKey, updatedData, fn );
+		} );
+
+		fn();
+	}
+
 	generateGETPostKey( postId, siteId, method ) {
 		return this.generateKey( {
 			apiVersion: '1.1',
@@ -338,11 +366,6 @@ export class LocalSyncHandler {
 			method,
 			query: 'context=edit&meta=autosave'
 		} )
-	}
-
-	editLocalPost( key, data, fn ) {
-		console.log( `-> data -> `, data );
-		fn();
 	}
 
 	addNewPostKeyToLocalList( key, fn ) {
