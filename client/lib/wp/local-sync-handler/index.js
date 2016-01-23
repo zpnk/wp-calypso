@@ -342,13 +342,17 @@ export class LocalSyncHandler {
 	editLocalPost( key, data, fn ) {
 		// get post ID and siteId from the url
 		let localId = data.path.match( /posts\/(local\.\d+)$/ );
-		let siteId = data.path.match( /\/sites\/(.+)\/posts\/local\.\d+$/ );
+		let postId = data.path.match( /posts\/(\d+)$/ );
+		let siteId = data.path.match( /\/sites\/(.+)\/posts\/.+$/ );
 
 		localId = localId ? localId[ 1 ] : null;
+		postId = postId ? postId[ 1 ] : null;
 		siteId = siteId ? siteId[ 1 ] : null;
 
+		const ID = localId || postId;
+
 		// create key for GET post endpoint
-		let getKey = this.generateGETPostKey( localId, siteId, 'GET' );
+		let getKey = this.generateGETPostKey( ID, siteId, 'GET' );
 
 		// get the post from local storage
 		this.retrieveResponse( getKey, ( err, localPost ) => {
