@@ -275,6 +275,7 @@ export class LocalSyncHandler {
 					delete cloneParams.body[ param ];
 				} );
 
+				debug( 'try to sync the new added post (%o)', localId );
 				this._handler( params, ( err, data ) => {
 					if ( err ) {
 						return console.error( err );
