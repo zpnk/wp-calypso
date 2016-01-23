@@ -237,6 +237,13 @@ export class LocalSyncHandler {
 		localforage.setItem( key, data, fn );
 	}
 
+	removeResponse( key, fn = () => {} ) {
+		localforage.config( this.config );
+		debug( 'removing %o key', key );
+
+		localforage.removeItem( key, fn );
+	}
+
 	checkInList( path, list ) {
 		let inList = false;
 
@@ -334,14 +341,11 @@ export class LocalSyncHandler {
 
 	editLocalPost( key, data, fn ) {
 		// get post ID and siteId from the url
-		let localId = data.path.match( /local\.\d+$/ );
+		let localId = data.path.match( /posts\/(local\.\d+)$/ );
 		let siteId = data.path.match( /\/sites\/(.+)\/posts\/local\.\d+$/ );
-		localId = localId ? localId[ 0 ] : null;
-		siteId = siteId ? siteId[ 1 ] : null;
 
-		if ( ! localId ) {
-			console.log( 'No local ID!' );
-		}
+		localId = localId ? localId[ 1 ] : null;
+		siteId = siteId ? siteId[ 1 ] : null;
 
 		// create key for GET post endpoint
 		let getKey = this.generateGETPostKey( localId, siteId, 'GET' );
@@ -354,7 +358,22 @@ export class LocalSyncHandler {
 
 			// update data of the local post
 			let updatedData = Object.assign( {}, localPost, data.body );
-			this.storeResponse( getKey, updatedData, fn );
+
+			if ( localPost.ID === localId ) {
+				debug( 'same Id ...' );
+				return this.storeResponse( getKey, updatedData, fn );
+			}
+
+			// * backend process * delete local.xxx stored data
+			this.removeResponse( getKey, removeErr => {
+				if ( removeErr ) {
+					console.log( `-> removeErr -> `, removeErr );
+				}
+
+				// create a new one record with the real Post ID
+				let realKey = this.generateGETPostKey( localPost.ID, siteId, 'GET' );
+				this.storeResponse( realKey, updatedData, fn );
+			} );
 		} );
 
 		fn();

@@ -3,6 +3,6 @@ export const blackList = [
 ];
 
 export const postList = [
-	'^/sites/.*/posts/local\.\d*',
+	'^/sites/.*/posts/\d*',
 	'^/sites/.*/posts/new'
 ];
