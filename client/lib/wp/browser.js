@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { LocalSyncHandler } from './local-sync-handler';
+import { SyncHandler } from './sync-handler';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wp' );
 
@@ -17,12 +17,12 @@ let wpcom;
 if ( config.isEnabled( 'oauth' ) ) {
 	const oauthToken = require( 'lib/oauth-token' );
 	const xhrHandler = require( 'lib/wpcom-xhr-wrapper' );
-	const requestHandler = new LocalSyncHandler( xhrHandler );
+	const requestHandler = new SyncHandler( xhrHandler );
 
 	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
 } else {
 	const proxyHandler = require( 'wpcom-proxy-request' );
-	const requestHandler = new LocalSyncHandler( proxyHandler );
+	const requestHandler = new SyncHandler( proxyHandler );
 
 	wpcom = wpcomUndocumented( requestHandler );
 

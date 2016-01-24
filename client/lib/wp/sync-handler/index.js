@@ -1,19 +1,22 @@
+
 /**
  * Module dependencies
  */
 import localforage from 'localforage';
 import { blackList } from './endpoints-list';
-import { postList } from './endpoints-list';
 import queryString from 'qs';
-import debugFactory from 'debug';
 import Hashes from 'jshashes';
 
-const debug = debugFactory( 'local-sync-handler' );
+import { syncPost } from './sync-post';
+//import { postsList } from './sync-posts-list';
 
-// expose localforage just to development
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:local-sync-handler' );
+
+// expose localforage just for development
 window.LF = localforage;
 
-const postsListKey = 'local-posts-list';
+const QUEUE_KEY = 'local-posts-list';
 
 // default config object
 const defaultConfig = {
@@ -26,11 +29,11 @@ const defaultConfig = {
 };
 
 /**
- * LocalSyncHandler class
+ * SyncHandler class
  */
-export class LocalSyncHandler {
+export class SyncHandler {
 	/**
-	 * Create a LocalSyncHandler instance
+	 * Create a SyncHandler instance
 	 *
 	 * @param {Object} [config] - sync config
 	 * @param {Function} handler - wpcom handler function
@@ -44,7 +47,7 @@ export class LocalSyncHandler {
 		}
 
 		this.config = Object.assign( {}, defaultConfig, config );
-		this._handler = handler;
+		this.reqHandler = handler;
 		return this.wrapper( handler );
 	}
 
@@ -52,8 +55,13 @@ export class LocalSyncHandler {
 		const self = this;
 
 		return function( params, fn ) {
+			if ( params.metaAPI && params.metaAPI.accessAllUsersBlogs ) {
+				debug( 'skip proxy handler request ' );
+				return self.reqHandler( params, fn );
+			}
+
 			const cloneParams = Object.assign( {}, params );
-			const path = params.path;
+			const { path } = cloneParams;
 			let qs = params.query ? queryString.parse( params.query ) : {};
 
 			// response has been sent flag
@@ -64,9 +72,9 @@ export class LocalSyncHandler {
 
 			debug( 'starting to get resource ...' );
 
-			// detect /sites/$site/post/* endpoints
-			if ( 'GET' !== params.method && self.checkInList( path, postList ) ) {
-				return self.handlerPostRequests( key, params, fn );
+			// detect post edition request
+			if ( syncPost( cloneParams, self, fn ) ) {
+				return;
 			};
 
 			// conditions to skip the proxy
@@ -77,7 +85,7 @@ export class LocalSyncHandler {
 				return handler( params, fn );
 			};
 
-			self.retrieveResponse( key, function( err, data ) {
+			self.retrieveRecord( key, function( err, data ) {
 				if ( err ) {
 					// @TODO improve error handling here
 					console.error( err );
@@ -119,11 +127,11 @@ export class LocalSyncHandler {
 							} );
 						} else {
 							// no `draft` posts list
-							fn( null, data );
+							fn( null, data.body );
 						}
 					} else {
 						debug( '%o already storaged %o.', path, data );
-						fn( null, data );
+						fn( null, data.body );
 					}
 				}
 
@@ -151,22 +159,22 @@ export class LocalSyncHandler {
 						debug( 'data is already stored. overwriting ...' );
 					}
 
-					if ( cloneParams.metaAPI && cloneParams.metaAPI.accessAllUsersBlogs ) {
-						debug( 'skip proxy handler request ' );
-						return fn( null, resData );
-					}
-
 					const isPostRequest = cloneParams &&
 						cloneParams.method &&
 						'post' === cloneParams.method.toLowerCase();
 
 					if ( ! isPostRequest ) {
 						let storingData = {
-							response: resData,
+							__sync: {
+								key,
+								synced: new Date().toString(),
+								syncing: false
+							},
+							body: resData,
 							params: cloneParams
 						};
 
-						self.storeResponse( key, storingData );
+						self.storeRecord( key, storingData );
 					}
 
 					if ( ! responseSent ) {
@@ -197,11 +205,12 @@ export class LocalSyncHandler {
 
 		// @TODO remove
 		hash = key;
+
 		debug( 'key: %o', hash );
 		return hash;
 	}
 
-	retrieveResponse( key, fn = () => {} ) {
+	retrieveRecord( key, fn = () => {} ) {
 		localforage.config( this.config );
 		debug( 'getting data from %o key', key );
 
@@ -210,11 +219,7 @@ export class LocalSyncHandler {
 				return fn( err )
 			}
 
-			if ( ! data ) {
-				return fn();
-			}
-
-			fn( null, data.response || data );
+			fn( null, data );
 		} );
 	}
 
@@ -222,22 +227,16 @@ export class LocalSyncHandler {
 	 * Store the WP.com REST-API response with the given key.
 	 *
 	 * @param {String} key - local forage key identifier
-	 * @param {Object} data - REST-API endoint response
+	 * @param {Object} data - object data to store
 	 * @param {Function} [fn] - callback
 	 */
-	storeResponse( key, data, fn = () => {} ) {
+	storeRecord( key, data, fn = () => {} ) {
 		localforage.config( this.config );
 		debug( 'storing data in %o key', key );
-
-		// clean some fields from endpoint response
-		if ( data.response ) {
-			delete data.response._headers;
-		}
-
 		localforage.setItem( key, data, fn );
 	}
 
-	removeResponse( key, fn = () => {} ) {
+	removeRecord( key, fn = () => {} ) {
 		localforage.config( this.config );
 		debug( 'removing %o key', key );
 
@@ -259,172 +258,40 @@ export class LocalSyncHandler {
 		return inList;
 	}
 
-	handlerPostRequests( key, params, fn ) {
-		let isNewPostRequest = /\/posts\/new$/.test( params.path );
-
-		if ( isNewPostRequest ) {
-			// add new post locally ...
-			this.addNewLocalPost( params, ( localPostErr, localPost ) => {
-				if ( localPostErr ) {
-					throw localPostErr;
-				}
-
-				fn( null, localPost );
-
-				// * sync process starts here --> *
-				const localId = params.body.ID;
-				const __key = params.body.__key;
-
-				// try to sync immediately
-				// clean local parameters before to send the request
-				let cloneParams = Object.assign( {}, params );
-				[ 'global_ID', '__key' ].forEach( param => {
-					delete cloneParams.body[ param ];
-				} );
-
-				debug( 'try to sync the new added post (%o)', localId );
-				this._handler( params, ( err, data ) => {
-					if ( err ) {
-						return console.error( err );
-					}
-
-					if ( data ) {
-						debug( 'new post has been synced' );
-
-						// override the local post
-						this.storeResponse( __key, data, ( storeErr, storePost ) => {
-							if ( storeErr ) {
-								console.log( storeErr );
-							}
-
-							debug( 'post synced: %o => %o', localId, storePost.ID );
-						} );
-					}
-				} );
-			} );
-		} else {
-			this.editLocalPost( key, params, fn );
-		}
-		return;
-	}
-
-	addNewLocalPost( data, fn ) {
-		let body = data.body;
-		// create a random ID
-		const postId = `local.${String( Math.random() ).substr( 2, 6 )}`;
-
-		body.ID = postId;
-		body.isLocal = true;
-		body.global_ID = postId;
-
-		// create key for GET post endpoint
-		let postGETKey = this.generateGETPostKey( postId, body.site_ID, 'GET' );
-
-		// store the key in the object itself
-		body.__key = postGETKey;
-
-		debug( 'storging new post(%o)', postId );
-		this.storeResponse( postGETKey, body, ( err, newPost ) => {
-			if ( err ) {
-				throw err;
-			}
-
-			this.addNewPostKeyToLocalList( postGETKey, postListErr => {
-				if ( postListErr ) {
-					throw postListErr;
-				}
-
-				fn( null, newPost );
-			} );
-		} );
-	}
-
-	editLocalPost( key, data, fn ) {
-		// get post ID and siteId from the url
-		let localId = data.path.match( /posts\/(local\.\d+)$/ );
-		let postId = data.path.match( /posts\/(\d+)$/ );
-		let siteId = data.path.match( /\/sites\/(.+)\/posts\/.+$/ );
-
-		localId = localId ? localId[ 1 ] : null;
-		postId = postId ? postId[ 1 ] : null;
-		siteId = siteId ? siteId[ 1 ] : null;
-
-		const ID = localId || postId;
-
-		// create key for GET post endpoint
-		let getKey = this.generateGETPostKey( ID, siteId, 'GET' );
-
-		// get the post from local storage
-		this.retrieveResponse( getKey, ( err, localPost ) => {
-			if ( err ) {
-				console.log( err );
-			}
-
-			// update data of the local post
-			let updatedData = Object.assign( {}, localPost, data.body );
-
-			if ( localPost.ID === localId ) {
-				debug( 'same Id ...' );
-				return this.storeResponse( getKey, updatedData, fn );
-			}
-
-			// * backend process * delete local.xxx stored data
-			this.removeResponse( getKey, removeErr => {
-				if ( removeErr ) {
-					console.log( `-> removeErr -> `, removeErr );
-				}
-
-				// create a new one record with the real Post ID
-				let realKey = this.generateGETPostKey( localPost.ID, siteId, 'GET' );
-				this.storeResponse( realKey, updatedData, fn );
-			} );
-		} );
-
-		fn();
-	}
-
-	generateGETPostKey( postId, siteId, method ) {
-		return this.generateKey( {
-			apiVersion: '1.1',
-			path: `/sites/${siteId}/posts/${postId}`,
-			method,
-			query: 'context=edit&meta=autosave'
-		} )
-	}
-
-	addNewPostKeyToLocalList( key, fn ) {
+	addTaskToQueue( key, fn ) {
 		// add post to local posts list
 		localforage.config( this.config );
-		localforage.getItem( postsListKey, ( err, list ) => {
+		localforage.getItem( QUEUE_KEY, ( err, list ) => {
 			if ( err ) {
 				throw err;
 			}
 
 			list = list || [];
 			list.unshift( key );
-			localforage.setItem( postsListKey, list, fn );
+			debug( '%o key added to queue list. count: ', key, list.length );
+			localforage.setItem( QUEUE_KEY, list, fn );
 		} );
 	}
 
 	getLocalPostsList( fn ) {
 		localforage.config( this.config );
-		localforage.getItem( postsListKey, ( err, list ) => {
+		localforage.getItem( QUEUE_KEY, ( err, list ) => {
 			if ( err ) {
 				throw err;
 			}
 
 			let c = 0;
-			let localPosts = [];
+			let localQueue = [];
 
 			list.forEach( key => {
 				c++;
-				this.retrieveResponse( key, ( errPost, post ) => {
+				this.retrieveRecord( key, ( errPost, post ) => {
 					if ( err ) {
 						throw err;
 					}
 
-					localPosts.push( post );
-					--c || fn( null, localPosts );
+					localQueue.push( post );
+					--c || fn( null, localQueue );
 				} );
 			} );
 		} );
