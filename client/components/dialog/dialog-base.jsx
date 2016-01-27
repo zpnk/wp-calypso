@@ -140,8 +140,10 @@ var DialogBase = React.createClass( {
 
 		this.props.onClickOutside( event );
 
+		// Dropping this lets you click on the sidebar. Not sure if
+		// I should remove this whole thing or what? -shaun
 		if ( ! event.defaultPrevented ) {
-			this._close();
+			//this._close();
 		}
 	},
 

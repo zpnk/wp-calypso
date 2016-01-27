@@ -289,6 +289,7 @@ FullPostDialog = React.createClass( {
 		this.props.onClose( action );
 	},
 
+	// Can we safely remove this? With it here, you can click the sidebar. -shaun
 	handleClickOutside: function( event ) {
 		//event.preventDefault();
 	},
