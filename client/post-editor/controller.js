@@ -28,6 +28,11 @@ function getPostID( context ) {
 		return null;
 	}
 
+	// handle local posts with local.{number}
+	if ( /^local\.\d+/.test( context.params.post ) ) {
+		return context.params.post;
+	}
+
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
 }
@@ -98,6 +103,9 @@ module.exports = {
 	post: function( context ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
+
+		console.trace();
+		console.log( `-> postID -> `, postID );
 
 		function startEditing() {
 			const site = sites.getSite( route.getSiteFragment( context.path ) );
