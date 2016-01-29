@@ -18,7 +18,7 @@
 	padding: 0px 2px;
 
 	&:hover {
-		color: $gray;
+		color: $gray-light;
 	}
 
 	@include breakpoint( ">960px" ) {
