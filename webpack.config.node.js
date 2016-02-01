@@ -16,15 +16,21 @@ var webpack = require( 'webpack' ),
 function getExternals() {
 	var externals = {};
 
-	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
-	// with modules that are incompatible with webpack bundling.
-	fs.readdirSync( 'node_modules' )
-		.filter( function( module ) {
-			return ['.bin'].indexOf( module ) === -1;
-		} )
-		.forEach( function( module ) {
-			externals[module] = 'commonjs ' + module;
-		} );
+	if ( process.env.CALYPSO_ENV === 'desktop' ) {
+		externals['express'] = 'commonjs express';
+		externals['superagent'] = 'commonjs superagent';
+		externals['webpack'] = 'commonjs webpack';
+	} else {
+		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
+		// with modules that are incompatible with webpack bundling.
+		fs.readdirSync( 'node_modules' )
+			.filter( function( module ) {
+				return ['.bin'].indexOf( module ) === -1;
+			} )
+			.forEach( function( module ) {
+				externals[module] = 'commonjs ' + module;
+			} );
+	}
 
 	// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 	externals['webpack.config'] = 'commonjs webpack.config';
@@ -73,8 +79,7 @@ module.exports = {
 	},
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } )
+//		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } )
 	],
 	externals: getExternals()
 };
-
