@@ -369,7 +369,9 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	detectHistoryNavigation.start();
-	page.start();
+	page.start( {
+		decodeURLComponents: false
+	} );
 }
 
 window.AppBoot = function() {
