@@ -127,39 +127,40 @@ describe( 'sync-handler', () => {
 	} );
 
 	describe( 'hasPaginationChanged', () => {
+		let changeSpy;
 		before( () => {
-			sinon.spy( hasPaginationChanged );
+			changeSpy = sinon.spy( hasPaginationChanged );
 		} );
 		it( 'should not call hasPaginationChanged for non-whitelisted requests', () => {
 			const { simpleRequest } = testRequestData;
 			wpcom( simpleRequest, () => {} );
-			expect( hasPaginationChanged ).not.to.have.been.called;
+			expect( changeSpy ).not.to.have.been.called;
 		} );
 		it( 'should call hasPaginationChanged once for whitelisted request', () => {
 			const { postRequest } = testRequestData;
 			wpcom( postRequest, () => {} );
-			expect( hasPaginationChanged ).to.have.been.calledOnce;
+			expect( changeSpy ).to.have.been.calledOnce;
 		} );
 		it( 'should return false if requestResponse has no page handle', () => {
 			const { postResponseWithNoHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithNoHandle, null );
-			expect( result ).to.equal( false );
+			hasPaginationChanged( postResponseWithNoHandle, null );
+			expect( changeSpy.returned( false ) );
 		} );
 		it( 'should return false for call with identical response', () => {
 			const { postResponseWithHandle } = testResponseData;
 			const localResponse = Object.assign( {}, postResponseWithHandle );
-			const result = hasPaginationChanged( postResponseWithHandle, localResponse );
-			expect( result ).to.equal( false );
+			hasPaginationChanged( postResponseWithHandle, localResponse );
+			expect( changeSpy.returned( false ) );
 		} );
 		it( 'should return true if page handle is different', () => {
 			const { postResponseWithHandle, postResponseNewHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithHandle, postResponseNewHandle );
-			expect( result ).to.equal( true );
+			hasPaginationChanged( postResponseWithHandle, postResponseNewHandle );
+			expect( changeSpy.returned( true ) );
 		} )
 		it( 'should return true call with empty local response', () => {
 			const { postResponseWithHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithHandle, null );
-			expect( result ).to.equal( true );
+			hasPaginationChanged( postResponseWithHandle, null );
+			expect( changeSpy.returned( true ) );
 		} )
 	} );
 } );
