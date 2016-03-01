@@ -4,7 +4,7 @@
 import config from 'config';
 import Hashes from 'jshashes';
 import debugFactory from 'debug';
-import { omit } from 'lodash/omit';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -238,15 +238,14 @@ export class SyncHandler {
 	 */
 	storeRecord( key, data ) {
 		debug( 'storing data in %o key\n', key );
-		const args = [ key ];
+		let pageSeriesKey;
 		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
-			const pageSeriesKey = generateKey( omit( data.params, 'next_page' ) );
-			args.push( pageSeriesKey );
+			pageSeriesKey = generateKey( omit( data.params, 'next_page' ) );
 		}
 
 		// add this record to history
 		return cacheIndex
-			.addItem.apply( null, args )
+			.addItem( key, pageSeriesKey )
 			.then( localforage.setItem( key, data ) );
 	}
 
