@@ -63,6 +63,7 @@ export const cacheIndex = {
 	 * If the pair key-timestamp already exists it will be updated.
 	 *
 	 * @param {String} key - record key
+	 * @param {String} [pageSeriesKey] - key for records in a given page-series
 	 * @return {Promise} promise
 	 */
 	addItem( key, pageSeriesKey = null ) {
