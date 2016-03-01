@@ -3,11 +3,11 @@
  */
 import debugFactory from 'debug';
 import ms from 'ms';
-
 import negate from 'lodash/negate';
 import matchesProperty from 'lodash/matchesProperty';
 import filter from 'lodash/filter';
 import difference from 'lodash/difference';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -65,12 +65,16 @@ export const cacheIndex = {
 	 * @param {String} key - record key
 	 * @return {Promise} promise
 	 */
-	addItem( key ) {
+	addItem( key, pageSeriesKey = null ) {
 		return this.getAllExcluding( key ).then( records => {
 			debug( 'adding %o record', key );
+			const record = { key, timestamp: Date.now() };
+			if ( pageSeriesKey ) {
+				record.pageSeriesKey = pageSeriesKey
+			}
 			return localforage.setItem( RECORDS_LIST_KEY, [
 				...records,
-				{ key, timestamp: Date.now() }
+				record
 			] );
 		} );
 	},
@@ -84,13 +88,13 @@ export const cacheIndex = {
 
 	dropOlderThan( lifetime ) {
 		const dropElders = records => {
-			const droppedRecords = filter( records, rec => {
+			const removeRecords = filter( records, rec => {
 				return Date.now() - lifetime > rec.timestamp;
 			} );
 
 			return {
-				droppedRecords,
-				filteredRecords: difference( records, droppedRecords )
+				removeRecords,
+				retainRecords: difference( records, removeRecords )
 			}
 		};
 
@@ -132,17 +136,42 @@ export const cacheIndex = {
 
 		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
 
-		return this.dropOlderThan( lifetime ).then( data => {
-			const { droppedRecords, filteredRecords } = data;
+		return this.dropOlderThan( lifetime ).then( this.removeRecordsByList );
+	},
 
-			if ( ! droppedRecords.length ) {
-				return debug( 'No records to prune' );
+	removeRecordsByList( data ) {
+		return new Promise( ( resolve ) => {
+			const { removeRecords, retainRecords } = data;
+			if ( ! removeRecords.length ) {
+				return debug( 'No records to remove' );
 			}
-
-			const droppedPromises = droppedRecords.map( item => localforage.removeItem( item.key ) );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, filteredRecords )
+			const droppedPromises = removeRecords.map( item => {
+				localforage.removeItem( item.key )
+			} );
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainRecords )
 			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
-				.then( debug( '%o records removed', droppedRecords.length + 1 ) );
+			.then( () => {
+				debug( '%o records removed', removeRecords.length + 1 )
+				resolve();
+			} );
 		} );
+	},
+
+	clearPageSeries( reqParams ) {
+		return new Promise( ( resolve ) => {
+			const { generateKey } = require( './' );
+			const pageSeriesKey = generateKey( omit( reqParams, 'next_page' ) );
+			const pickPageSeries = ( records ) => {
+				const removeRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
+				return {
+					removeRecords,
+					retainRecords: difference( records, removeRecords ),
+				}
+			}
+			this.getAll()
+			.then( pickPageSeries )
+			.then( this.removeRecordsByList )
+			.then( resolve );
+		} )
 	}
 }

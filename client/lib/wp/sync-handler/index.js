@@ -4,6 +4,7 @@
 import config from 'config';
 import Hashes from 'jshashes';
 import debugFactory from 'debug';
+import { omit } from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -210,7 +211,7 @@ export class SyncHandler {
 				}
 				const { serverResponse, localResponse } = combinedResponse;
 				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
-					// clearPageResultsForSite( reqParams )
+					cacheIndex.clearPageSeries( reqParams )
 				}
 				return serverResponse;
 			};
@@ -237,10 +238,15 @@ export class SyncHandler {
 	 */
 	storeRecord( key, data ) {
 		debug( 'storing data in %o key\n', key );
+		const args = [ key ];
+		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
+			const pageSeriesKey = generateKey( omit( data.params, 'next_page' ) );
+			args.push( pageSeriesKey );
+		}
 
 		// add this record to history
 		return cacheIndex
-			.addItem( key )
+			.addItem.apply( null, args )
 			.then( localforage.setItem( key, data ) );
 	}
 
