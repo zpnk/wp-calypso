@@ -100,9 +100,9 @@ export const cacheIndex = {
 
 		return new Promise( ( resolve, reject ) => {
 			this.getAll()
-			.then( dropElders )
-			.then( resolve )
-			.catch( reject );
+				.then( dropElders )
+				.then( resolve )
+				.catch( reject );
 		} );
 	},
 
@@ -169,9 +169,9 @@ export const cacheIndex = {
 				}
 			}
 			this.getAll()
-			.then( pickPageSeries )
-			.then( this.removeRecordsByList )
-			.then( resolve );
+				.then( pickPageSeries )
+				.then( this.removeRecordsByList )
+				.then( resolve );
 		} )
 	}
 }

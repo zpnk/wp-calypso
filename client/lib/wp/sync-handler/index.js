@@ -246,14 +246,14 @@ export class SyncHandler {
 		// add this record to history
 		return cacheIndex
 			.addItem( key, pageSeriesKey )
-			.then( localforage.setItem( key, data ) );
+				.then( localforage.setItem( key, data ) );
 	}
 
 	removeRecord( key ) {
 		debug( 'removing %o key\n', key );
 		return localforage
 			.removeItem( key )
-			.then( cacheIndex.removeItem( key ) );
+				.then( cacheIndex.removeItem( key ) );
 	}
 }
 
