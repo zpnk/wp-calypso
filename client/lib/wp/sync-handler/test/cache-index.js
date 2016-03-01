@@ -6,7 +6,7 @@ import rewire from 'rewire';
 import mockery from 'mockery';
 import ms from 'ms';
 
-let cacheIndex, cacheIndexModule, localData, RECORDS_LIST_KEY;
+let cacheIndex, cacheIndexModule, localData, generateKey, RECORDS_LIST_KEY;
 
 const clearLocal = () => localData = {};
 const setRecordsList = recordsList => localData[ 'records-list' ] = recordsList;
@@ -48,6 +48,7 @@ describe( 'cache-index', () => {
 		} );
 		mockery.registerMock( 'lib/localforage', localforageMock );
 		cacheIndexModule = rewire( '../cache-index' );
+		( { generateKey } = require( '../' ) );
 		cacheIndex = cacheIndexModule.cacheIndex;
 		RECORDS_LIST_KEY = cacheIndexModule.__get__( 'RECORDS_LIST_KEY' );
 	} );
@@ -62,9 +63,9 @@ describe( 'cache-index', () => {
 		beforeEach( clearLocal );
 
 		it( 'should return empty array for empty localforage', () => {
-			cacheIndex.getAll()
+			return cacheIndex.getAll()
 			.then( ( res ) => {
-				expect( res ).to.equal( null );
+				expect( res ).to.equal( undefined );
 			} );
 		} );
 		it( 'should return index from localforage and nothing else', () => {
@@ -73,7 +74,7 @@ describe( 'cache-index', () => {
 				test2: 2,
 			};
 			localData[ RECORDS_LIST_KEY ] = 3;
-			cacheIndex.getAll()
+			return cacheIndex.getAll()
 			.then( ( res ) => {
 				expect( res ).to.equal( 3 );
 			} );
@@ -82,12 +83,12 @@ describe( 'cache-index', () => {
 
 	describe( '#addItem', () => {
 		it( 'should add item to empty index', () => {
-			cacheIndex.addItem( 'testKey' )
+			return cacheIndex.addItem( 'testKey' )
 			.then( () => {
 				const currentIndex = localData[ 'records-list' ];
 				expect( currentIndex ).to.be.an( 'array' );
-				expect( currentIndex[0] ).to.have.property( 'key', 'timestamp' );
-				expect( currentIndex[0].key ).to.equal( 'testKey' );
+				expect( currentIndex[0] ).to.have.property( 'key', 'testKey' );
+				expect( currentIndex[0] ).to.have.property( 'timestamp' );
 			} );
 		} );
 	} );
@@ -99,10 +100,10 @@ describe( 'cache-index', () => {
 				{ key: 'key2' },
 				{ key: 'key3' },
 			] );
-			cacheIndex.removeItem( 'key2' )
+			return cacheIndex.removeItem( 'key2' )
 			.then( () => {
 				const currentIndex = localData[ 'records-list' ];
-				expect( currentIndex ).to.equal( [ { key: 'key1' }, { key: 'key3' } ] );
+				expect( currentIndex ).to.eql( [ { key: 'key1' }, { key: 'key3' } ] );
 			} );
 		} );
 	} );
@@ -119,11 +120,12 @@ describe( 'cache-index', () => {
 				{ key: 'key1', timestamp: now },
 				{ key: 'key2', timestamp: yesterday },
 			] );
-			cacheIndex.pruneRecordsFrom( '1 hour' )
+			return cacheIndex.pruneRecordsFrom( '1 hour' )
 			.then( () => {
 				const currentIndex = localData[ 'records-list' ];
-				expect( currentIndex ).to.equal( [ { key: 'key1', timestamp: now } ] );
-				expect( localData ).to.have.property( 'key1', RECORDS_LIST_KEY );
+				expect( currentIndex ).to.eql( [ { key: 'key1', timestamp: now } ] );
+				expect( localData ).to.have.property( 'key1', 'test1' );
+				expect( localData ).to.have.property( RECORDS_LIST_KEY );
 				expect( localData ).to.not.have.property( 'key2' );
 			} );
 		} );
@@ -132,11 +134,33 @@ describe( 'cache-index', () => {
 	describe( '#clearAll', () => {
 		it( 'should clear all sync records and nothing else', () => {
 			localData = { test: 1, 'sync-record-test': 2 }
-			cacheIndex.addItem( 'sync-record-test' )
+			return cacheIndex.addItem( 'sync-record-test' )
 			.then( cacheIndex.clearAll )
 			.then( () => {
-				expect( localData ).to.equal( { test: 1 } );
+				expect( localData ).to.eql( { test: 1 } );
 			} )
+		} );
+	} );
+
+	describe( '#clearPageSeries', () => {
+		it( 'should clear records with matching pageSeriesKey and leave other records intact', () => {
+			const testParams = {
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/sites/example.wordpress.com/posts',
+			};
+			const testParamsNextPage = Object.assign( { next_page: 'someValue' }, testParams );
+			const pageSeriesKey = generateKey( testParams );
+			const now = Date.now();
+			localData = { test: 1, test2: 2 }
+			setRecordsList( [
+				{ key: 'test2', pageSeriesKey: pageSeriesKey, timestamp: now },
+				{ key: 'test', timestamp: now },
+			] );
+			return cacheIndex.clearPageSeries( testParamsNextPage )
+			.then( () => {
+				expect( localData ).to.eql( { test: 1, [ RECORDS_LIST_KEY ]: [ { key: 'test', timestamp: now } ] } );
+			} );
 		} );
 	} );
 } );
