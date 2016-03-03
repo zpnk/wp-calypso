@@ -58,6 +58,8 @@ var FeedStream = function( spec ) {
 		orderBy: 'date',
 		_isLastPage: false,
 		_isFetchingNextPage: false,
+		lastDate: false,
+		firstDate: false,
 		keyMaker: spec.keyMaker,
 		onNextPageFetch: spec.onNextPageFetch || noop,
 		onGapFetch: spec.onGapFetch || noop,
@@ -204,42 +206,11 @@ assign( FeedStream.prototype, {
 	},
 
 	getLastItemWithDate: function() {
-		var i, key, date;
-
-		i = this.postKeys.length - 1;
-		if ( i === -1 ) {
-			return;
-		}
-
-		do {
-			key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
-			}
-			--i;
-		} while ( ! date && i !== -1 );
-
-		return date;
+		return this.lastDate && this.lastDate.toISOString();
 	},
 
 	getFirstItemWithDate: function() {
-		var i, key, date;
-
-		if ( this.postKeys.length === 0 ) {
-			return;
-		}
-
-		i = 0;
-
-		do {
-			key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
-			}
-			++i;
-		} while ( ! date && i < this.postKeys.length );
-
-		return date;
+		return this.firstDate && this.firstDate.toISOString();
 	},
 
 	/**
@@ -418,6 +389,24 @@ assign( FeedStream.prototype, {
 			return;
 		}
 
+		// grab dates off the first and last post
+		const firstNewPost = FeedPostStore.get( this.keyMaker( posts[0] ) ),
+			lastNewPost = FeedPostStore.get( this.keyMaker( posts[ posts.length - 1 ] ) );
+
+		if ( firstNewPost[ this.dateProperty ] ) {
+			const newFirstDate = moment( firstNewPost[ this.dateProperty ] );
+			if ( ! this.firstDate || newFirstDate.isAfter( this.firstDate ) ) {
+				this.firstDate = newFirstDate;
+			}
+		}
+
+		if ( lastNewPost[ this.dateProperty ] ) {
+			const newLastDate = moment( lastNewPost[ this.dateProperty ] );
+			if ( ! this.lastDate || newLastDate.isBefore( this.lastDate ) ) {
+				this.lastDate = newLastDate;
+			}
+		}
+
 		postKeys = this.filterNewPosts( posts );
 
 		if ( postKeys.length ) {
@@ -479,6 +468,7 @@ assign( FeedStream.prototype, {
 			this.selectedIndex = -1;
 		}
 		this.pendingPostKeys = [];
+		this.firstDate = this.pendingDateAfter;
 		this.pendingDateAfter = null;
 		this.emit( 'change' );
 	},

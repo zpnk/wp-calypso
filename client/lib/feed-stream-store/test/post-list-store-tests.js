@@ -66,15 +66,32 @@ describe( 'FeedPostList', function() {
 				id: 'test',
 				fetcher: fetcherStub,
 				keyMaker: function( post ) {
-					return post;
+					return {
+						feedId: post.feed_ID,
+						postId: post.ID
+					};
 				}
 			} );
 		} );
 
-		it( 'should receive a page', function() {
-			store.receivePage( 'test', null, { posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 1, ID: 2 } ] } );
+		describe( 'pages', function() {
+			beforeEach( function() {
+				let feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
+				feedPostStoreStub.withArgs( sinon.match.has( 'postId', 1 ) ).returns( { date: '1999-12-31T23:58:00Z' } );
+				feedPostStoreStub.withArgs( sinon.match.has( 'postId', 2 ) ).returns( { date: '1999-12-31T23:57:00Z' } );
+			} );
 
-			expect( store.get() ).to.have.lengthOf( 2 );
+			afterEach( function() {
+				FeedPostStore.get.restore();
+			} );
+
+			it( 'should receive a page', function() {
+				store.receivePage( 'test', null, { posts: [ { feed_ID: 1, ID: 1, date: '2016-01-01T00:00:01Z' }, { feed_ID: 1, ID: 2, date: '2016-01-01T00:00:00Z' } ] } );
+
+				expect( store.get() ).to.have.lengthOf( 2 );
+				expect( store.getFirstItemWithDate() ).to.equal( '1999-12-31T23:58:00.000Z' );
+				expect( store.getLastItemWithDate() ).to.equal( '1999-12-31T23:57:00.000Z' )
+			} );
 		} );
 
 		describe( 'updates', function() {
@@ -147,12 +164,15 @@ describe( 'FeedPostList', function() {
 					return post;
 				}
 			} );
+			feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 			store.receivePage( 'test', null, { posts: [
 				{ feed_ID: 1, ID: 1 },
 				{ feed_ID: 1, ID: 2 },
 				{ feed_ID: 1, ID: 3 },
 				{ feed_ID: 1, ID: 4 } ]
 			} );
+			FeedPostStore.get.restore();
+			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
 		} );
 		afterEach( function() {
 			FeedPostStore.get.restore();
