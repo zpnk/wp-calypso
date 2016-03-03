@@ -6,7 +6,12 @@ import rewire from 'rewire';
 import mockery from 'mockery';
 import ms from 'ms';
 
-let cacheIndex, cacheIndexModule, localData, generateKey, RECORDS_LIST_KEY;
+/**
+ * Internal dependencies
+ */
+import { generateKey } from '../utils';
+
+let cacheIndex, cacheIndexModule, localData, RECORDS_LIST_KEY;
 
 const clearLocal = () => localData = {};
 const setRecordsList = recordsList => localData[ 'records-list' ] = recordsList;
@@ -48,7 +53,6 @@ describe( 'cache-index', () => {
 		} );
 		mockery.registerMock( 'lib/localforage', localforageMock );
 		cacheIndexModule = rewire( '../cache-index' );
-		( { generateKey } = require( '../' ) );
 		cacheIndex = cacheIndexModule.cacheIndex;
 		RECORDS_LIST_KEY = cacheIndexModule.__get__( 'RECORDS_LIST_KEY' );
 	} );
