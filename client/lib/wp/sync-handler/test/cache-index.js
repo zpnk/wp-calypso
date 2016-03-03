@@ -66,7 +66,7 @@ describe( 'cache-index', () => {
 	describe( '#getAll', () => {
 		beforeEach( clearLocal );
 
-		it( 'should return empty array for empty localforage', () => {
+		it( 'should return undefined for empty localforage', () => {
 			return cacheIndex.getAll()
 			.then( ( res ) => {
 				expect( res ).to.equal( undefined );
