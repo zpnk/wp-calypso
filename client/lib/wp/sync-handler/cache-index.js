@@ -89,13 +89,13 @@ export const cacheIndex = {
 
 	dropOlderThan( lifetime ) {
 		const dropElders = records => {
-			const removeRecords = filter( records, rec => {
+			const removedRecords = filter( records, rec => {
 				return Date.now() - lifetime > rec.timestamp;
 			} );
 
 			return {
-				removeRecords,
-				retainRecords: difference( records, removeRecords )
+				removedRecords,
+				retainedRecords: difference( records, removedRecords )
 			}
 		};
 
@@ -142,17 +142,17 @@ export const cacheIndex = {
 
 	removeRecordsByList( data ) {
 		return new Promise( ( resolve ) => {
-			const { removeRecords, retainRecords } = data;
-			if ( ! removeRecords.length ) {
+			const { removedRecords, retainedRecords } = data;
+			if ( ! removedRecords.length ) {
 				return debug( 'No records to remove' );
 			}
-			const droppedPromises = removeRecords.map( item => {
+			const droppedPromises = removedRecords.map( item => {
 				localforage.removeItem( item.key )
 			} );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainRecords )
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainedRecords )
 			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
 			.then( () => {
-				debug( '%o records removed', removeRecords.length + 1 )
+				debug( '%o records removed', removedRecords.length + 1 )
 				resolve();
 			} );
 		} );
@@ -163,10 +163,10 @@ export const cacheIndex = {
 			const { generateKey } = require( './' );
 			const pageSeriesKey = generateKey( omit( reqParams, 'next_page' ) );
 			const pickPageSeries = ( records ) => {
-				const removeRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
+				const removedRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
 				return {
-					removeRecords,
-					retainRecords: difference( records, removeRecords ),
+					removedRecords,
+					retainedRecords: difference( records, removedRecords ),
 				}
 			}
 			this.getAll()
