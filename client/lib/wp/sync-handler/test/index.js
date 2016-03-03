@@ -4,8 +4,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import mockery from 'mockery';
+import { generateKey } from '../utils';
 
-let wpcom, SyncHandler, generateKey, hasPaginationChanged, localData, responseData;
+let wpcom, SyncHandler, hasPaginationChanged, localData, responseData;
 
 const localforageMock = {
 	getLocalForage() {
@@ -63,7 +64,7 @@ describe( 'sync-handler', () => {
 			return responseData[ key ];
 		};
 
-		( { SyncHandler, generateKey, hasPaginationChanged } = require( '../' ) );
+		( { SyncHandler, hasPaginationChanged } = require( '../' ) );
 		wpcom = new SyncHandler( handlerMock );
 	} );
 
