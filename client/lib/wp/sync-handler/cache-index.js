@@ -13,6 +13,7 @@ import omit from 'lodash/omit';
  * Internal dependencies
  */
 import { getLocalForage } from 'lib/localforage';
+import { generateKey } from './utils';
 
 /**
  * Module variables
@@ -160,7 +161,6 @@ export const cacheIndex = {
 
 	clearPageSeries( reqParams ) {
 		return new Promise( ( resolve ) => {
-			const { generateKey } = require( './' );
 			const pageSeriesKey = generateKey( omit( reqParams, 'next_page' ) );
 			const pickPageSeries = ( records ) => {
 				const removedRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
