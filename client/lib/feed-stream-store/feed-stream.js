@@ -416,8 +416,8 @@ assign( FeedStream.prototype, {
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 			this.page++;
-			this.emit( 'change' );
 		}
+		this.emit( 'change' );
 	},
 
 	receiveUpdates: function( id, error, data ) {
