@@ -11,7 +11,7 @@ import mockery from 'mockery';
 import { generateKey } from '../utils';
 import * as testData from './data';
 
-let wpcom, SyncHandler, hasPaginationChanged, localData, responseData;
+let wpcom, SyncHandler, hasPaginationChanged, localData, responseData, clearPageSeries;
 
 const localforageMock = {
 	getLocalForage() {
@@ -44,6 +44,7 @@ describe( 'sync-handler', () => {
 			return responseData[ key ];
 		};
 		( { SyncHandler, hasPaginationChanged } = require( '../' ) );
+		( { clearPageSeries } = require( '../cache-index' ) );
 		wpcom = new SyncHandler( handlerMock );
 	} );
 	beforeEach( () => {
@@ -150,11 +151,17 @@ describe( 'sync-handler', () => {
 			const { postListResponseBody, postListResponseBodyFresh } = testData;
 			const result = hasPaginationChanged( postListResponseBody, postListResponseBodyFresh );
 			expect( result ).to.equal( true );
-		} )
-		it( 'should return true call with empty local response', () => {
+		} );
+		it( 'should return false with empty local response', () => {
 			const { postListResponseBody } = testData;
 			const result = hasPaginationChanged( postListResponseBody, null );
-			expect( result ).to.equal( true );
-		} )
+			expect( result ).to.equal( false );
+		} );
+		it( 'should call clearPageSeries if page handle is different', () => {
+			const { postListResponseBody, postListResponseBodyFresh } = testData;
+			const clearPageSeriesSpy = sinon.spy( clearPageSeries );
+			hasPaginationChanged( postListResponseBody, postListResponseBodyFresh );
+			expect( clearPageSeriesSpy ).to.have.been.calledOnce;
+		} );
 	} );
 } );
