@@ -4,6 +4,11 @@
 import Hashes from 'jshashes';
 import debugFactory from 'debug';
 
+/**
+ * Internal dependencies
+ */
+import { SYNC_RECORD_NAMESPACE } from './constants';
+
 const debug = debugFactory( 'calypso:sync-handler' );
 /**
  * Generate a key from the given param object
@@ -23,7 +28,7 @@ export const generateKey = ( params, applyHash = true ) => {
 		key = new Hashes.SHA1().hex( key );
 	}
 
-	key = 'sync-record-' + key;
+	key = SYNC_RECORD_NAMESPACE + key;
 
 	debug( 'key: %o', key );
 	return key;

@@ -14,6 +14,7 @@ import omit from 'lodash/omit';
  */
 import { getLocalForage } from 'lib/localforage';
 import { generateKey } from './utils';
+import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 
 /**
  * Module variables
@@ -21,17 +22,13 @@ import { generateKey } from './utils';
 const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler:cache' );
 
-const RECORDS_LIST_KEY = 'records-list';
-const SYNC_RECORD_REGEX = /^sync-record-\w+$/;
-const LIFETIME = '2 days';
-
 /**
  * Check it the given key is a `sync-record-` key
  *
  * @param {String} key - record key
  * @return {Boolean} `true` if it's a sync-record-<key>
  */
-const isSyncRecordKey = key => SYNC_RECORD_REGEX.test( key );
+const isSyncRecordKey = key => key.indexOf( SYNC_RECORD_NAMESPACE ) === 0;
 
 export const cacheIndex = {
 	getAll() {
