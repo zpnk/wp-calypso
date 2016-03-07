@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import rewire from 'rewire';
 import mockery from 'mockery';
 import ms from 'ms';
 
@@ -10,8 +9,9 @@ import ms from 'ms';
  * Internal dependencies
  */
 import { generateKey } from '../utils';
+import { RECORDS_LIST_KEY } from '../constants';
 
-let cacheIndex, cacheIndexModule, localData, RECORDS_LIST_KEY;
+let cacheIndex, localData;
 
 const clearLocal = () => localData = {};
 const setRecordsList = recordsList => localData[ 'records-list' ] = recordsList;
@@ -52,9 +52,7 @@ describe( 'cache-index', () => {
 			warnOnUnregistered: false
 		} );
 		mockery.registerMock( 'lib/localforage', localforageMock );
-		cacheIndexModule = rewire( '../cache-index' );
-		cacheIndex = cacheIndexModule.cacheIndex;
-		RECORDS_LIST_KEY = cacheIndexModule.__get__( 'RECORDS_LIST_KEY' );
+		( { cacheIndex } = require( '../cache-index' ) );
 	} );
 
 	after( function() {
