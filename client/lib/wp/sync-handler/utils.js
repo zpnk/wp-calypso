@@ -3,6 +3,8 @@
  */
 import Hashes from 'jshashes';
 import debugFactory from 'debug';
+import qs from 'querystring';
+import deterministicStringify from 'lib/deterministic-stringify';
 
 /**
  * Internal dependencies
@@ -21,7 +23,8 @@ export const generateKey = ( params, applyHash = true ) => {
 	var key = `${params.apiVersion || ''}-${params.method}-${params.path}`;
 
 	if ( params.query ) {
-		key += '-' + params.query;
+		// sort parameters alphabetically
+		key += '-' + deterministicStringify( qs.parse( params.query ) );
 	}
 
 	if ( applyHash ) {
