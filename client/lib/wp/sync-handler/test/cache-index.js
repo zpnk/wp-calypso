@@ -65,13 +65,14 @@ describe( 'cache-index', () => {
 	describe( '#getAll', () => {
 		beforeEach( clearLocal );
 
-		it( 'should return undefined for empty localforage', () => {
+		it( 'should return undefined for empty localforage', ( done ) => {
 			return cacheIndex.getAll()
 			.then( ( res ) => {
 				expect( res ).to.equal( undefined );
+				done();
 			} );
 		} );
-		it( 'should return index from localforage and nothing else', () => {
+		it( 'should return index from localforage and nothing else', ( done ) => {
 			const { recordsList } = testData;
 			localData = {
 				someStoredRecord: 1,
@@ -81,12 +82,13 @@ describe( 'cache-index', () => {
 			return cacheIndex.getAll()
 			.then( ( res ) => {
 				expect( res ).to.equal( recordsList );
+				done();
 			} );
 		} );
 	} );
 
 	describe( '#addItem', () => {
-		it( 'should add item to empty index', () => {
+		it( 'should add item to empty index', ( done ) => {
 			const key = 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0';
 			return cacheIndex.addItem( key )
 			.then( () => {
@@ -94,12 +96,13 @@ describe( 'cache-index', () => {
 				expect( currentIndex ).to.be.an( 'array' );
 				expect( currentIndex[0] ).to.have.property( 'key', key );
 				expect( currentIndex[0] ).to.have.property( 'timestamp' );
+				done();
 			} );
 		} );
 	} );
 
 	describe( '#removeItem', () => {
-		it( 'should remove item from a populated index', () => {
+		it( 'should remove item from a populated index', ( done ) => {
 			const { recordsList } = testData;
 			const key = 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0';
 			setRecordsList( recordsList );
@@ -107,12 +110,13 @@ describe( 'cache-index', () => {
 			.then( () => {
 				const currentIndex = localData[ RECORDS_LIST_KEY ];
 				expect( currentIndex.length ).to.eql( 2 );
+				done();
 			} );
 		} );
 	} );
 
 	describe( '#pruneRecordsFrom', () => {
-		it( 'should prune old records', () => {
+		it( 'should prune old records', ( done ) => {
 			const {
 				postListParams,
 				postListParamsDifferent,
@@ -138,23 +142,25 @@ describe( 'cache-index', () => {
 				expect( localData ).to.have.property( key1, postListLocalRecord );
 				expect( localData ).to.have.property( RECORDS_LIST_KEY );
 				expect( localData ).to.not.have.property( key2 );
+				done();
 			} );
 		} );
 	} );
 
 	describe( '#clearAll', () => {
-		it( 'should clear all sync records and nothing else', () => {
+		it( 'should clear all sync records and nothing else', ( done ) => {
 			const { localDataFull } = testData;
 			localData = Object.assign( { someRecord: 1 }, localDataFull );
 			return cacheIndex.clearAll()
 			.then( () => {
 				expect( localData ).to.eql( { someRecord: 1 } );
+				done();
 			} )
 		} );
 	} );
 
 	describe( '#clearPageSeries', () => {
-		it( 'should clear records with matching pageSeriesKey and leave other records intact', () => {
+		it( 'should clear records with matching pageSeriesKey and leave other records intact', ( done ) => {
 			const { postListParams, postListParamsDifferent, postListLocalRecord, postListParamsNextPage } = testData;
 			const postPageOneKey = generateKey( postListParams );
 			const postPageTwoKey = generateKey( postListParamsNextPage );
@@ -175,6 +181,7 @@ describe( 'cache-index', () => {
 			return cacheIndex.clearPageSeries( postListParamsNextPage )
 			.then( () => {
 				expect( localData ).to.eql( { someOtherRecord: 1, [ postListDifferentKey ]: postListLocalRecord, [ RECORDS_LIST_KEY ]: [ { key: postListDifferentKey, timestamp: now } ] } );
+				done();
 			} );
 		} );
 	} );
