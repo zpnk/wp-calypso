@@ -30,6 +30,9 @@ export const hasPaginationChanged = ( res, localResponseBody ) => {
 	if ( ! res || ! res.meta || ! res.meta.next_page ) {
 		return false;
 	}
+	if ( ! localResponseBody ) {
+		return false;
+	}
 	if ( localResponseBody && localResponseBody.meta && localResponseBody.meta.next_page === res.meta.next_page ) {
 		return false;
 	}
@@ -181,13 +184,13 @@ export class SyncHandler {
 				}
 			};
 
-			const checkPagination = combinedResponse => {
+			const adjustPagination = combinedResponse => {
 				if ( ! combinedResponse ) {
 					return;
 				}
 				const { serverResponse, localResponse } = combinedResponse;
 				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
-					cacheIndex.clearPageSeries( reqParams )
+					cacheIndex.clearPageSeries( reqParams );
 				}
 				return serverResponse;
 			};
@@ -196,7 +199,7 @@ export class SyncHandler {
 				.then( localResponseHandler, recordErrorHandler )
 				.then( networkFetch )
 				.then( cacheResponse, networkErrorHandler )
-				.then( checkPagination );
+				.then( adjustPagination );
 		};
 	}
 
