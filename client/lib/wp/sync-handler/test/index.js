@@ -43,20 +43,16 @@ describe( 'sync-handler', () => {
 			callback( null, responseData[ key ] );
 			return responseData[ key ];
 		};
-
 		( { SyncHandler, hasPaginationChanged } = require( '../' ) );
 		wpcom = new SyncHandler( handlerMock );
 	} );
-
 	beforeEach( () => {
 		responseData = {};
 		localData = {};
 	} );
-
 	after( function() {
 		mockery.disable();
 	} );
-
 	it( 'should call callback with local response', () => {
 		const { postListParams, postListLocalRecord, postListResponseBody } = testData;
 		const key = generateKey( postListParams );
@@ -65,7 +61,6 @@ describe( 'sync-handler', () => {
 		wpcom( postListParams, callback );
 		expect( callback.calledWith( null, postListResponseBody ) );
 	} );
-
 	it( 'should call callback with request response', () => {
 		const { postListParams, postListResponseBodyFresh } = testData;
 		const key = generateKey( postListParams );
@@ -75,7 +70,6 @@ describe( 'sync-handler', () => {
 		expect( callback ).to.have.been.calledOnce;
 		expect( callback.calledWith( null, postListResponseBodyFresh ) );
 	} );
-
 	it( 'should call callback twice with local and request responses', () => {
 		const {
 			postListParams,
@@ -94,6 +88,10 @@ describe( 'sync-handler', () => {
 	} );
 
 	describe( 'generateKey', () => {
+		beforeEach( () => {
+			responseData = {};
+			localData = {};
+		} );
 		it( 'should return the same key for identical request', () => {
 			const { postListParams } = testData;
 			const secondRequest = Object.assign( {}, postListParams );
@@ -110,11 +108,22 @@ describe( 'sync-handler', () => {
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.not.equal( key2 );
 		} );
+		it( 'should return the same key if parameters are in different order', () => {
+			const { postListParams, postListParamsDifferentOrder } = testData;
+			const key1 = generateKey( postListParams );
+			const key2 = generateKey( postListParamsDifferentOrder );
+			expect( typeof key1 ).to.equal( 'string' );
+			expect( key1 ).to.equal( key2 );
+		} );
 	} );
 
 	describe( 'hasPaginationChanged', () => {
 		before( () => {
 			sinon.spy( hasPaginationChanged );
+		} );
+		beforeEach( () => {
+			responseData = {};
+			localData = {};
 		} );
 		it( 'should not call hasPaginationChanged for non-whitelisted requests', () => {
 			const { nonWhiteListedRequest } = testData;

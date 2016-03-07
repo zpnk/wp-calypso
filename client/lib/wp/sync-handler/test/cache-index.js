@@ -10,11 +10,12 @@ import ms from 'ms';
  */
 import { generateKey } from '../utils';
 import { RECORDS_LIST_KEY } from '../constants';
+import * as testData from './data';
 
 let cacheIndex, localData;
 
 const clearLocal = () => localData = {};
-const setRecordsList = recordsList => localData[ 'records-list' ] = recordsList;
+const setRecordsList = recordsList => localData[ RECORDS_LIST_KEY ] = recordsList;
 
 const localforageMock = {
 	getLocalForage() {
@@ -71,25 +72,27 @@ describe( 'cache-index', () => {
 			} );
 		} );
 		it( 'should return index from localforage and nothing else', () => {
+			const { recordsList } = testData;
 			localData = {
-				test: 1,
-				test2: 2,
+				someStoredRecord: 1,
+				someOtherRecord: 2,
 			};
-			localData[ RECORDS_LIST_KEY ] = 3;
+			localData[ RECORDS_LIST_KEY ] = recordsList;
 			return cacheIndex.getAll()
 			.then( ( res ) => {
-				expect( res ).to.equal( 3 );
+				expect( res ).to.equal( recordsList );
 			} );
 		} );
 	} );
 
 	describe( '#addItem', () => {
 		it( 'should add item to empty index', () => {
-			return cacheIndex.addItem( 'testKey' )
+			const key = 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0';
+			return cacheIndex.addItem( key )
 			.then( () => {
-				const currentIndex = localData[ 'records-list' ];
+				const currentIndex = localData[ RECORDS_LIST_KEY ];
 				expect( currentIndex ).to.be.an( 'array' );
-				expect( currentIndex[0] ).to.have.property( 'key', 'testKey' );
+				expect( currentIndex[0] ).to.have.property( 'key', key );
 				expect( currentIndex[0] ).to.have.property( 'timestamp' );
 			} );
 		} );
@@ -97,71 +100,81 @@ describe( 'cache-index', () => {
 
 	describe( '#removeItem', () => {
 		it( 'should remove item from a populated index', () => {
-			setRecordsList( [
-				{ key: 'key1' },
-				{ key: 'key2' },
-				{ key: 'key3' },
-			] );
-			return cacheIndex.removeItem( 'key2' )
+			const { recordsList } = testData;
+			const key = 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0';
+			setRecordsList( recordsList );
+			return cacheIndex.removeItem( key )
 			.then( () => {
-				const currentIndex = localData[ 'records-list' ];
-				expect( currentIndex ).to.eql( [ { key: 'key1' }, { key: 'key3' } ] );
+				const currentIndex = localData[ RECORDS_LIST_KEY ];
+				expect( currentIndex.length ).to.eql( 2 );
 			} );
 		} );
 	} );
 
 	describe( '#pruneRecordsFrom', () => {
 		it( 'should prune old records', () => {
+			const {
+				postListParams,
+				postListParamsDifferent,
+				postListLocalRecord,
+			} = testData;
+			const postListSecondRecord = Object.assign( {}, postListLocalRecord );
+			const key1 = generateKey( postListParams );
+			const key2 = generateKey( postListParamsDifferent );
 			const now = Date.now();
 			const yesterday = now - ms( '1 day' );
 			localData = {
-				key1: 'test1',
-				key2: 'test2',
+				[key1]: postListLocalRecord,
+				[key2]: postListSecondRecord,
 			};
 			setRecordsList( [
-				{ key: 'key1', timestamp: now },
-				{ key: 'key2', timestamp: yesterday },
+				{ key: key1, timestamp: now },
+				{ key: key2, timestamp: yesterday },
 			] );
 			return cacheIndex.pruneRecordsFrom( '1 hour' )
 			.then( () => {
-				const currentIndex = localData[ 'records-list' ];
-				expect( currentIndex ).to.eql( [ { key: 'key1', timestamp: now } ] );
-				expect( localData ).to.have.property( 'key1', 'test1' );
+				const currentIndex = localData[ RECORDS_LIST_KEY ];
+				expect( currentIndex ).to.eql( [ { key: key1, timestamp: now } ] );
+				expect( localData ).to.have.property( key1, postListLocalRecord );
 				expect( localData ).to.have.property( RECORDS_LIST_KEY );
-				expect( localData ).to.not.have.property( 'key2' );
+				expect( localData ).to.not.have.property( key2 );
 			} );
 		} );
 	} );
 
 	describe( '#clearAll', () => {
 		it( 'should clear all sync records and nothing else', () => {
-			localData = { test: 1, 'sync-record-test': 2 }
-			return cacheIndex.addItem( 'sync-record-test' )
-			.then( cacheIndex.clearAll )
+			const { localDataFull } = testData;
+			localData = Object.assign( { someRecord: 1 }, localDataFull );
+			return cacheIndex.clearAll()
 			.then( () => {
-				expect( localData ).to.eql( { test: 1 } );
+				expect( localData ).to.eql( { someRecord: 1 } );
 			} )
 		} );
 	} );
 
 	describe( '#clearPageSeries', () => {
 		it( 'should clear records with matching pageSeriesKey and leave other records intact', () => {
-			const testParams = {
-				apiVersion: '1.1',
-				method: 'GET',
-				path: '/sites/example.wordpress.com/posts',
-			};
-			const testParamsNextPage = Object.assign( { next_page: 'someValue' }, testParams );
-			const pageSeriesKey = generateKey( testParams );
+			const { postListParams, postListParamsDifferent, postListLocalRecord, postListParamsNextPage } = testData;
+			const postPageOneKey = generateKey( postListParams );
+			const postPageTwoKey = generateKey( postListParamsNextPage );
+			const postListDifferentKey = generateKey( postListParamsDifferent );
+			const pageSeriesKey = postPageOneKey;
 			const now = Date.now();
-			localData = { test: 1, test2: 2 }
+			localData = {
+				someOtherRecord: 1,
+				[ postPageOneKey ]: postListLocalRecord,
+				[ postPageTwoKey ]: Object.assign( {}, postListLocalRecord ),
+				[ postListDifferentKey ]: Object.assign( {}, postListLocalRecord ),
+			};
 			setRecordsList( [
-				{ key: 'test2', pageSeriesKey: pageSeriesKey, timestamp: now },
-				{ key: 'test', timestamp: now },
+				{ key: postPageOneKey, pageSeriesKey: pageSeriesKey, timestamp: now },
+				{ key: postPageTwoKey, pageSeriesKey: pageSeriesKey, timestamp: now },
+				{ key: postListDifferentKey, timestamp: now },
 			] );
-			return cacheIndex.clearPageSeries( testParamsNextPage )
+			return cacheIndex.clearPageSeries( postListParamsNextPage )
 			.then( () => {
-				expect( localData ).to.eql( { test: 1, [ RECORDS_LIST_KEY ]: [ { key: 'test', timestamp: now } ] } );
+				expect( localData ).to.eql( { someOtherRecord: 1, [ postListDifferentKey ]: postListLocalRecord, [ RECORDS_LIST_KEY ]: [ { key: postListDifferentKey, timestamp: now } ] } );
 			} );
 		} );
 	} );
