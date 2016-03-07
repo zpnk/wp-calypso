@@ -58,31 +58,39 @@ describe( 'sync-handler', () => {
 	} );
 
 	it( 'should call callback with local response', () => {
-		const key = generateKey( testData.postListParams );
+		const { postListParams, postListLocalRecord, postListResponseBody } = testData;
+		const key = generateKey( postListParams );
 		const callback = sinon.spy();
-		localData[ key ] = testData.postListLocalRecord;
-		wpcom( testData.postListParams, callback );
-		expect( callback.calledWith( null, testData.postListResponseBody ) );
+		localData[ key ] = postListLocalRecord;
+		wpcom( postListParams, callback );
+		expect( callback.calledWith( null, postListResponseBody ) );
 	} );
 
 	it( 'should call callback with request response', () => {
-		const key = generateKey( testData.postListParams );
+		const { postListParams, postListResponseBodyFresh } = testData;
+		const key = generateKey( postListParams );
 		const callback = sinon.spy();
-		responseData[ key ] = testData.postListResponseBodyFresh;
-		wpcom( testData.postListParams, callback );
+		responseData[ key ] = postListResponseBodyFresh;
+		wpcom( postListParams, callback );
 		expect( callback ).to.have.been.calledOnce;
-		expect( callback.calledWith( null, testData.postListResponseBodyFresh ) );
+		expect( callback.calledWith( null, postListResponseBodyFresh ) );
 	} );
 
 	it( 'should call callback twice with local and request responses', () => {
-		const key = generateKey( testData.postListParams );
+		const {
+			postListParams,
+			postListLocalRecord,
+			postListResponseBody,
+			postListResponseBodyFresh
+		} = testData;
+		const key = generateKey( postListParams );
 		const callback = sinon.spy();
-		localData[ key ] = testData.postListLocalRecord;
-		responseData[ key ] = testData.postListResponseBodyFresh;
-		wpcom( testData.postListParams, callback );
+		localData[ key ] = postListLocalRecord;
+		responseData[ key ] = postListResponseBodyFresh;
+		wpcom( postListParams, callback );
 		expect( callback ).to.have.been.calledTwice;
-		expect( callback.calledWith( null, testData.postListResponseBody ) );
-		expect( callback.calledWith( null, testData.postListResponseBodyFresh ) );
+		expect( callback.calledWith( null, postListResponseBody ) );
+		expect( callback.calledWith( null, postListResponseBodyFresh ) );
 	} );
 
 	describe( 'generateKey', () => {
