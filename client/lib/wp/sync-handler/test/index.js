@@ -4,7 +4,12 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import mockery from 'mockery';
+
+/**
+ * Internal dependencies
+ */
 import { generateKey } from '../utils';
+import * as testData from './data';
 
 let wpcom, SyncHandler, hasPaginationChanged, localData, responseData;
 
@@ -25,31 +30,6 @@ const localforageMock = {
 		}
 	}
 };
-
-const testRequestData = {
-	simpleRequest: {
-		method: 'GET',
-		path: '/test'
-	},
-	postRequest: {
-		method: 'GET',
-		path: '/sites/example.wordpress.com/posts',
-	},
-}
-
-const testResponseData = {
-	postResponseWithNoHandle: {},
-	postResponseWithHandle: {
-		meta: {
-			next_page: 'test'
-		}
-	},
-	postResponseNewHandle: {
-		meta: {
-			next_page: 'test2'
-		}
-	}
-}
 
 describe( 'sync-handler', () => {
 	before( () => {
@@ -78,49 +58,46 @@ describe( 'sync-handler', () => {
 	} );
 
 	it( 'should call callback with local response', () => {
-		const { postRequest } = testRequestData;
-		const key = generateKey( postRequest );
+		const key = generateKey( testData.postListParams );
 		const callback = sinon.spy();
-		localData[ key ] = { body: 'test' };
-		wpcom( postRequest, callback );
-		expect( callback.calledWith( null, 'test' ) );
+		localData[ key ] = testData.postListLocalRecord;
+		wpcom( testData.postListParams, callback );
+		expect( callback.calledWith( null, testData.postListResponseBody ) );
 	} );
 
 	it( 'should call callback with request response', () => {
-		const { postRequest } = testRequestData;
-		const key = generateKey( postRequest );
+		const key = generateKey( testData.postListParams );
 		const callback = sinon.spy();
-		responseData[ key ] = { body: 'test' };
-		wpcom( postRequest, callback );
+		responseData[ key ] = testData.postListResponseBodyFresh;
+		wpcom( testData.postListParams, callback );
 		expect( callback ).to.have.been.calledOnce;
-		expect( callback.calledWith( null, 'test' ) );
+		expect( callback.calledWith( null, testData.postListResponseBodyFresh ) );
 	} );
 
 	it( 'should call callback twice with local and request responses', () => {
-		const { postRequest } = testRequestData;
-		const key = generateKey( postRequest );
+		const key = generateKey( testData.postListParams );
 		const callback = sinon.spy();
-		localData[ key ] = { body: 'test1' };
-		responseData[ key ] = ( null, { body: 'test2' } );
-		wpcom( postRequest, callback );
+		localData[ key ] = testData.postListLocalRecord;
+		responseData[ key ] = testData.postListResponseBodyFresh;
+		wpcom( testData.postListParams, callback );
 		expect( callback ).to.have.been.calledTwice;
-		expect( callback.calledWith( null, 'test1' ) );
-		expect( callback.calledWith( null, 'test2' ) );
+		expect( callback.calledWith( null, testData.postListResponseBody ) );
+		expect( callback.calledWith( null, testData.postListResponseBodyFresh ) );
 	} );
 
 	describe( 'generateKey', () => {
 		it( 'should return the same key for identical request', () => {
-			const { simpleRequest } = testRequestData;
-			const secondRequest = Object.assign( {}, simpleRequest );
-			const key1 = generateKey( simpleRequest );
+			const { postListParams } = testData;
+			const secondRequest = Object.assign( {}, postListParams );
+			const key1 = generateKey( postListParams );
 			const key2 = generateKey( secondRequest );
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.equal( key2 );
 		} );
 		it( 'should return unique keys for different requests', () => {
-			const { simpleRequest } = testRequestData;
-			const secondRequest = Object.assign( { query: '?filter=test' }, simpleRequest );
-			const key1 = generateKey( simpleRequest );
+			const { postListParams } = testData;
+			const secondRequest = Object.assign( {}, postListParams, { query: '?filter=test' } );
+			const key1 = generateKey( postListParams );
 			const key2 = generateKey( secondRequest );
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.not.equal( key2 );
@@ -132,34 +109,34 @@ describe( 'sync-handler', () => {
 			sinon.spy( hasPaginationChanged );
 		} );
 		it( 'should not call hasPaginationChanged for non-whitelisted requests', () => {
-			const { simpleRequest } = testRequestData;
-			wpcom( simpleRequest, () => {} );
+			const { nonWhiteListedRequest } = testData;
+			wpcom( nonWhiteListedRequest, () => {} );
 			expect( hasPaginationChanged ).not.to.have.been.called;
 		} );
 		it( 'should call hasPaginationChanged once for whitelisted request', () => {
-			const { postRequest } = testRequestData;
-			wpcom( postRequest, () => {} );
+			const { postListParams } = testData;
+			wpcom( postListParams, () => {} );
 			expect( hasPaginationChanged ).to.have.been.calledOnce;
 		} );
 		it( 'should return false if requestResponse has no page handle', () => {
-			const { postResponseWithNoHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithNoHandle, null );
+			const { postListResponseBodyNoHandle } = testData;
+			const result = hasPaginationChanged( postListResponseBodyNoHandle, null );
 			expect( result ).to.equal( false );
 		} );
 		it( 'should return false for call with identical response', () => {
-			const { postResponseWithHandle } = testResponseData;
-			const localResponse = Object.assign( {}, postResponseWithHandle );
-			const result = hasPaginationChanged( postResponseWithHandle, localResponse );
+			const { postListResponseBody } = testData;
+			const identicalResponse = Object.assign( {}, postListResponseBody );
+			const result = hasPaginationChanged( postListResponseBody, identicalResponse );
 			expect( result ).to.equal( false );
 		} );
 		it( 'should return true if page handle is different', () => {
-			const { postResponseWithHandle, postResponseNewHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithHandle, postResponseNewHandle );
+			const { postListResponseBody, postListResponseBodyFresh } = testData;
+			const result = hasPaginationChanged( postListResponseBody, postListResponseBodyFresh );
 			expect( result ).to.equal( true );
 		} )
 		it( 'should return true call with empty local response', () => {
-			const { postResponseWithHandle } = testResponseData;
-			const result = hasPaginationChanged( postResponseWithHandle, null );
+			const { postListResponseBody } = testData;
+			const result = hasPaginationChanged( postListResponseBody, null );
 			expect( result ).to.equal( true );
 		} )
 	} );
