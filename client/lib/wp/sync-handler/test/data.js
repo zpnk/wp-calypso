@@ -3,6 +3,9 @@
  */
 import { RECORDS_LIST_KEY } from '../constants';
 
+/*
+Request Parameters
+ */
 export const postListParams = {
 	apiVersion: '1.1',
 	method: 'GET',
@@ -26,6 +29,16 @@ export const postListParamsNextPage = {
 
 export const postListParamsDifferent = Object.assign( {}, postListParams, { query: 'filter=test' } );
 
+export const nonWhiteListedRequest = {
+	apiVersion: '1.1',
+	method: 'GET',
+	path: '/not-whitelisted',
+};
+
+/*
+Responses
+ */
+
 export const postListResponseBody = {
 	found: 2,
 	meta: {
@@ -39,18 +52,17 @@ export const postListResponseBody = {
 	],
 };
 
-export const postListLocalRecord = {
-	__sync: {
-		key: 'sync-record-479116342443bd6491db5eea5b56bf69fff8ecab',
-		synced: 1457329263679,
-		syncing: false,
+export const postListResponseBodyPageTwo = {
+	found: 2,
+	meta: {
+		data: {},
+		links: {},
+		next_page: 'value=2014-11-24T13%3A39%3A39-08%3A00&id=9900',
 	},
-	body: postListResponseBody,
-	params: Object.assign( {}, postListParams, {
-		callback: 'q1i5cl2',
-		supports_args: true,
-		supports_progress: true,
-	} ),
+	posts: [
+		{ ID: 9902 },
+		{ ID: 9903 },
+	],
 };
 
 export const postListResponseBodyFresh = {
@@ -67,13 +79,38 @@ export const postListResponseBodyFresh = {
 	]
 }
 
-export const nonWhiteListedRequest = {
-	apiVersion: '1.1',
-	method: 'GET',
-	path: '/not-whitelisted',
-};
+export const nonWhiteListedResponse = {
+	found: 2,
+	meta: {
+		data: {},
+		links: {},
+		next_page: 'value=2014-11-24T13%3A39%3A39-08%3A00&id=9900',
+	},
+	posts: [
+		{ ID: 9900 },
+		{ ID: 9901 },
+	],
+}
 
 export const postListResponseBodyNoHandle = Object.assign( {}, postListResponseBody, { meta: {} } );
+
+/*
+Local Data
+ */
+
+export const postListLocalRecord = {
+	__sync: {
+		key: 'sync-record-479116342443bd6491db5eea5b56bf69fff8ecab',
+		synced: 1457329263679,
+		syncing: false,
+	},
+	body: postListResponseBody,
+	params: Object.assign( {}, postListParams, {
+		callback: 'q1i5cl2',
+		supports_args: true,
+		supports_progress: true,
+	} ),
+};
 
 export const recordsList = [
 	{ key: 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0', timestamp: 1457329204357 },

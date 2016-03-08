@@ -71,10 +71,17 @@ export const cacheIndex = {
 			if ( pageSeriesKey ) {
 				record.pageSeriesKey = pageSeriesKey
 			}
-			return localforage.setItem( RECORDS_LIST_KEY, [
+			console.log( 'setting index:', RECORDS_LIST_KEY, [...records, record] );
+			let test = localforage.setItem( RECORDS_LIST_KEY, [
 				...records,
 				record
 			] );
+			console.log( '### promise', test );
+			return test;
+			// return localforage.setItem( RECORDS_LIST_KEY, [
+			// 	...records,
+			// 	record
+			// ] );
 		} );
 	},
 

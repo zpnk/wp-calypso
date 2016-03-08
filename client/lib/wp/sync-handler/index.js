@@ -145,6 +145,7 @@ export class SyncHandler {
 			 * WP.com server-side response.
 			 *
 			 * @param {Object} combinedResponse - object with local and server responses
+			 * @returns {Object} - returns combinedResponse object for use in then chain
 			 */
 			const cacheResponse = combinedResponse => {
 				const { serverResponse } = combinedResponse;
@@ -167,6 +168,8 @@ export class SyncHandler {
 					// @TODO error handling
 					warn( err );
 				} );
+
+				return combinedResponse;
 			};
 
 			/**
@@ -189,7 +192,8 @@ export class SyncHandler {
 					return;
 				}
 				const { serverResponse, localResponse } = combinedResponse;
-				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
+				const localResponseBody = localResponse ? localResponse.body : {};
+				if ( hasPaginationChanged( serverResponse, localResponseBody ) ) {
 					cacheIndex.clearPageSeries( reqParams );
 				}
 				return serverResponse;
@@ -225,7 +229,10 @@ export class SyncHandler {
 		// add this record to history
 		return cacheIndex
 			.addItem( key, pageSeriesKey )
-				.then( localforage.setItem( key, data ) );
+				.then( ()=>{
+					localforage.setItem( key, data );
+					console.log( '### in promise resolve', key );
+				} );
 	}
 
 	removeRecord( key ) {

@@ -81,6 +81,7 @@ describe( 'cache-index', () => {
 			localData[ RECORDS_LIST_KEY ] = recordsList;
 			return cacheIndex.getAll()
 			.then( ( res ) => {
+				console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!');
 				expect( res ).to.equal( recordsList );
 				done();
 			} );
