@@ -2,7 +2,6 @@
  * External dependencies
  */
 import Hashes from 'jshashes';
-import debugFactory from 'debug';
 import qs from 'querystring';
 import deterministicStringify from 'lib/deterministic-stringify';
 
@@ -11,7 +10,6 @@ import deterministicStringify from 'lib/deterministic-stringify';
  */
 import { SYNC_RECORD_NAMESPACE } from './constants';
 
-const debug = debugFactory( 'calypso:sync-handler' );
 /**
  * Generate a key from the given param object
  *
@@ -32,8 +30,6 @@ export const generateKey = ( params, applyHash = true ) => {
 	}
 
 	key = SYNC_RECORD_NAMESPACE + key;
-
-	debug( 'key: %o', key );
 	return key;
 }
 

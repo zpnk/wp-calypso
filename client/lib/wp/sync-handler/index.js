@@ -73,7 +73,6 @@ export class SyncHandler {
 
 			// whitelist barrier
 			if ( ! isWhitelisted( params ) ) {
-				debug( 'not whitelisted: skip %o request', path );
 				return handler( params, callback );
 			}
 
@@ -154,8 +153,12 @@ export class SyncHandler {
 					return;
 				}
 				const { serverResponse, localResponse } = combinedResponse;
-				if ( hasPaginationChanged( serverResponse, localResponse ) ) {
+				const localResponseBody = localResponse ? localResponse.body : null;
+				if ( hasPaginationChanged( serverResponse, localResponseBody ) ) {
+					debug( 'run clearPageSeries()' );
 					cacheIndex.clearPageSeries( reqParams );
+				} else {
+					debug( 'do not clearPageSeries()' );
 				}
 				return combinedResponse;
 			};
