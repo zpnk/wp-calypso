@@ -7,13 +7,12 @@ import negate from 'lodash/negate';
 import matchesProperty from 'lodash/matchesProperty';
 import filter from 'lodash/filter';
 import difference from 'lodash/difference';
-import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
 import { getLocalForage } from 'lib/localforage';
-import { generateKey } from './utils';
+import { generatePageSeriesKey } from './utils';
 import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 
 /**
@@ -43,6 +42,7 @@ export const cacheIndex = {
 	 * @return {Promise} promise
 	 */
 	getAllExcluding( key ) {
+		debug( 'getAllExcluding()', key );
 		const dropMatches = records => filter( records,
 			negate( matchesProperty( 'key', key ) )
 		);
@@ -66,7 +66,7 @@ export const cacheIndex = {
 	 */
 	addItem( key, pageSeriesKey = null ) {
 		return this.getAllExcluding( key ).then( records => {
-			debug( 'adding %o record', key );
+			debug( '\n\nadding %o record', key, pageSeriesKey, records );
 			const record = { key, timestamp: Date.now() };
 			if ( pageSeriesKey ) {
 				record.pageSeriesKey = pageSeriesKey
@@ -80,7 +80,7 @@ export const cacheIndex = {
 
 	removeItem( key ) {
 		return this.getAllExcluding( key ).then( records => {
-			debug( 'removing %o record', key );
+			debug( '\n\nremoving %o record', key );
 			return localforage.setItem( RECORDS_LIST_KEY, records );
 		} );
 	},
@@ -103,19 +103,18 @@ export const cacheIndex = {
 	},
 
 	removeRecordsByList( data ) {
+		debug( 'removeRecordsByList()', data );
 		return new Promise( ( resolve ) => {
 			const { removedRecords, retainedRecords } = data;
 			if ( ! removedRecords.length ) {
 				debug( 'No records to remove' );
 				resolve();
 			}
-			const droppedPromises = removedRecords.map( item => {
-				localforage.removeItem( item.key )
-			} );
+			const droppedPromises = removedRecords.map( item => localforage.removeItem( item.key ) );
 			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainedRecords )
 			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
 			.then( () => {
-				debug( '%o records removed', removedRecords.length + 1 )
+				debug( '%o records removed', removedRecords.length )
 				resolve();
 			} );
 		} );
@@ -158,12 +157,15 @@ export const cacheIndex = {
 	},
 
 	dropPageSeries( pageSeriesKey ) {
+		debug( 'dropPageSeries()' );
 		const pickPageSeries = ( records ) => {
 			const removedRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
-			return {
+			const combinedResponse = {
 				removedRecords,
 				retainedRecords: difference( records, removedRecords ),
-			}
+			};
+			debug( 'pickPageSeries()', combinedResponse );
+			return combinedResponse;
 		}
 
 		return new Promise( ( resolve, reject ) => {
@@ -175,10 +177,8 @@ export const cacheIndex = {
 	},
 
 	clearPageSeries( reqParams ) {
-		const queryParams = qs.parse( reqParams.query );
-		delete queryParams.page_handle;
-		const paramsWithoutPage = Object.assign( {}, reqParams, { query: qs.stringify( queryParams ) } );
-		const pageSeriesKey = generateKey( paramsWithoutPage );
-		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList );
+		const pageSeriesKey = generatePageSeriesKey( reqParams );
+		debug( 'clearPageSeries()', pageSeriesKey );
+		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList, ( error ) => { debug( 'clearPageSeries failed', error ); } );
 	}
 }

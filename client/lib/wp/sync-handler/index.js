@@ -3,7 +3,6 @@
  */
 import config from 'config';
 import debugFactory from 'debug';
-import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -12,7 +11,7 @@ import warn from 'lib/warn';
 import { getLocalForage } from 'lib/localforage';
 import { isWhitelisted } from './whitelist-handler';
 import { cacheIndex } from './cache-index';
-import { generateKey } from './utils';
+import { generateKey, generatePageSeriesKey } from './utils';
 
 /**
  * Module variables
@@ -88,9 +87,11 @@ export class SyncHandler {
 			 * getting the data locally (localforage)
 			 *
 			 * @param {Object} localRecord - response stored locally
+			 * @returns {Object} localRecord object
 			 */
 			const localResponseHandler = localRecord => {
 				// let's be optimistic
+				debug( 'localResponseHandler()', localRecord );
 				if ( localRecord ) {
 					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
 					// try/catch in case cached record does not match expected schema
@@ -103,6 +104,7 @@ export class SyncHandler {
 				} else {
 					debug( 'No data for [%s] %o - %o', reqParams.method, path, reqParams );
 				}
+				return localRecord;
 			};
 
 			/**
@@ -141,10 +143,44 @@ export class SyncHandler {
 			};
 
 			/**
+			 * clear pageSeries if pagination out of alignment
+			 *
+			 * @param {Object} combinedResponse - object with local and server responses
+			 * @returns {Object} - combinedResponse object
+			 */
+			const adjustPagination = combinedResponse => {
+				debug( 'adjustPagination()', combinedResponse );
+				if ( ! combinedResponse ) {
+					return;
+				}
+				const { serverResponse, localResponse } = combinedResponse;
+				if ( hasPaginationChanged( serverResponse, localResponse ) ) {
+					cacheIndex.clearPageSeries( reqParams );
+				}
+				return combinedResponse;
+			};
+
+			/**
+			 * Handle response gotten form the
+			 * server-side response
+			 *AzSX
+			 * @param {Error} err - error object
+			 */
+			const networkErrorHandler = err => {
+				if ( err ) {
+					// @TODO improve error handling here
+					warn( err );
+					warn( 'request params: %o', reqParams );
+					callback( err );
+				}
+			};
+
+			/**
 			 * Add/Override the data gotten from the
 			 * WP.com server-side response.
 			 *
 			 * @param {Object} combinedResponse - object with local and server responses
+			 * @returns {Object} - combinedResponse object
 			 */
 			const cacheResponse = combinedResponse => {
 				const { serverResponse } = combinedResponse;
@@ -167,39 +203,16 @@ export class SyncHandler {
 					// @TODO error handling
 					warn( err );
 				} );
+
+				return combinedResponse;
 			};
 
-			/**
-			 * Handle response gotten form the
-			 * server-side response
-			 *
-			 * @param {Error} err - error object
-			 */
-			const networkErrorHandler = err => {
-				if ( err ) {
-					// @TODO improve error handling here
-					warn( err );
-					warn( 'request params: %o', reqParams );
-					callback( err );
-				}
-			};
-
-			const adjustPagination = combinedResponse => {
-				if ( ! combinedResponse ) {
-					return;
-				}
-				const { serverResponse, localResponse } = combinedResponse;
-				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
-					cacheIndex.clearPageSeries( reqParams );
-				}
-				return serverResponse;
-			};
 			// request/response workflow
 			this.retrieveRecord( key )
 				.then( localResponseHandler, recordErrorHandler )
 				.then( networkFetch )
-				.then( cacheResponse, networkErrorHandler )
-				.then( adjustPagination );
+				.then( adjustPagination, networkErrorHandler )
+				.then( cacheResponse );
 		};
 	}
 
@@ -219,7 +232,7 @@ export class SyncHandler {
 		debug( 'storing data in %o key\n', key );
 		let pageSeriesKey;
 		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
-			pageSeriesKey = generateKey( omit( data.params, 'next_page' ) );
+			pageSeriesKey = generatePageSeriesKey( data.params );
 		}
 
 		// add this record to history

@@ -36,3 +36,15 @@ export const generateKey = ( params, applyHash = true ) => {
 	debug( 'key: %o', key );
 	return key;
 }
+
+/**
+ * Generate pageSeriesKey from request parameters
+ * @param  {Object} reqParams - request parameters
+ * @return {String}        - pageSeriesKey string
+ */
+export const generatePageSeriesKey = ( reqParams ) => {
+	const queryParams = qs.parse( reqParams.query );
+	delete queryParams.page_handle;
+	const paramsWithoutPage = Object.assign( {}, reqParams, { query: qs.stringify( queryParams ) } );
+	return generateKey( paramsWithoutPage );
+}

@@ -3,6 +3,20 @@
  */
 import { RECORDS_LIST_KEY } from '../constants';
 
+/**
+ * Keys
+ */
+export const postListKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
+export const postListNextPageKey = 'sync-record-e1e623dc2933ed96ead4b0508b053660cd4542c3';
+export const postListDifferentKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
+
+export const postListPageSeriesKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
+export const postListPageSeriesKeyDifferent = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
+
+/*
+ * Request Parameters
+ */
+
 export const postListParams = {
 	apiVersion: '1.1',
 	method: 'GET',
@@ -26,6 +40,16 @@ export const postListParamsNextPage = {
 
 export const postListParamsDifferent = Object.assign( {}, postListParams, { query: 'filter=test' } );
 
+export const nonWhiteListedRequest = {
+	apiVersion: '1.1',
+	method: 'GET',
+	path: '/not-whitelisted',
+};
+
+/*
+ * Response Bodies
+ */
+
 export const postListResponseBody = {
 	found: 2,
 	meta: {
@@ -39,18 +63,31 @@ export const postListResponseBody = {
 	],
 };
 
-export const postListLocalRecord = {
-	__sync: {
-		key: 'sync-record-479116342443bd6491db5eea5b56bf69fff8ecab',
-		synced: 1457329263679,
-		syncing: false,
+export const postListResponseBodyNextPage = {
+	found: 3,
+	meta: {
+		data: {},
+		links: {},
+		next_page: 'value=2014-10-24T13%3A39%3A39-08%3A00&id=9897',
 	},
-	body: postListResponseBody,
-	params: Object.assign( {}, postListParams, {
-		callback: 'q1i5cl2',
-		supports_args: true,
-		supports_progress: true,
-	} ),
+	posts: [
+		{ ID: 9897 },
+		{ ID: 9898 },
+		{ ID: 9899}
+	],
+};
+
+export const postListResponseBodyDifferent = {
+	found: 2,
+	meta: {
+		data: {},
+		links: {},
+		next_page: 'value=2015-11-24T13%3A39%3A39-08%3A00&id=2000',
+	},
+	posts: [
+		{ ID: 2000 },
+		{ ID: 2001 },
+	],
 };
 
 export const postListResponseBodyFresh = {
@@ -67,23 +104,63 @@ export const postListResponseBodyFresh = {
 	]
 }
 
-export const nonWhiteListedRequest = {
-	apiVersion: '1.1',
-	method: 'GET',
-	path: '/not-whitelisted',
-};
-
 export const postListResponseBodyNoHandle = Object.assign( {}, postListResponseBody, { meta: {} } );
 
+/*
+ * Local Data
+ */
+
+export const postListLocalRecord = {
+	__sync: {
+		key: postListKey,
+		synced: 1457329263679,
+		syncing: false,
+	},
+	body: postListResponseBody,
+	params: Object.assign( {}, postListParams ),
+};
+
+export const postListLocalRecordNextPage = {
+	__sync: {
+		key: postListNextPageKey,
+		synced: 1457329263679,
+		syncing: false,
+	},
+	body: postListResponseBodyNextPage,
+	params: Object.assign( {}, postListParamsNextPage ),
+};
+
+export const postListLocalRecordDifferent = {
+	__sync: {
+		key: postListDifferentKey,
+		synced: 1457329263679,
+		syncing: false,
+	},
+	body: postListResponseBodyDifferent,
+	params: Object.assign( {}, postListParamsDifferent ),
+};
+
 export const recordsList = [
-	{ key: 'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0', timestamp: 1457329204357 },
-	{ key: 'sync-record-479116342443bd6491db5eea5b56bf69fff8ecab', timestamp: 1457329263835 },
-	{ key: 'sync-record-c73140d991b14fef79b4763ce6f918cc936505ba', timestamp: 1457329442428 },
+	{
+		key: postListKey,
+		pageSeriesKey: postListPageSeriesKey,
+		timestamp: 1457329204357,
+	},
+	{
+		key: postListNextPageKey,
+		pageSeriesKey: postListPageSeriesKey,
+		timestamp: 1457329263835,
+	},
+	{
+		key: postListDifferentKey,
+		pageSeriesKey: postListPageSeriesKeyDifferent,
+		timestamp: 1457329442428,
+	},
 ];
 
 export const localDataFull = {
-	'sync-record-365dbe1d91c3837b050032189c7b66ee60477bb0': postListLocalRecord,
-	'sync-record-479116342443bd6491db5eea5b56bf69fff8ecab': Object.assign( {}, postListLocalRecord ),
-	'sync-record-c73140d991b14fef79b4763ce6f918cc936505ba': Object.assign( {}, postListLocalRecord ),
+	[ postListKey ]: postListLocalRecord,
+	[ postListNextPageKey ]: postListLocalRecordNextPage,
+	[ postListDifferentKey ]: postListLocalRecordDifferent,
 	[ RECORDS_LIST_KEY ]: recordsList,
 }
