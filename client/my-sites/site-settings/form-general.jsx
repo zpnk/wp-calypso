@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Button = require( 'components/button' ),
-	formBase = require( './form-base' ),
-	RelatedContentPreview = require( 'my-sites/site-settings/related-content-preview' ),
-	LanguageSelector = require( 'components/forms/language-selector' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	SectionHeader = require( 'components/section-header' ),
-	config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	notices = require( 'notices' ),
-	analytics = require( 'analytics' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	Gridicon = require( 'components/gridicon' ),
-	FormInput = require( 'components/forms/form-text-input' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
+import Card from 'components/card';
+import Button from 'components/button';
+import formBase from './form-base';
+import RelatedContentPreview from 'my-sites/site-settings/related-content-preview';
+import LanguageSelector from 'components/forms/language-selector';
+import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import SectionHeader from 'components/section-header';
+import config from 'config';
+import protectForm from 'lib/mixins/protect-form';
+import notices from 'notices';
+import analytics from 'analytics';
+import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
+import Gridicon from 'components/gridicon';
+import FormInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 module.exports = React.createClass( {
 
