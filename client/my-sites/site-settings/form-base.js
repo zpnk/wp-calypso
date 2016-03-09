@@ -12,14 +12,14 @@ var notices = require( 'notices' ),
 
 module.exports = {
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 		if ( this.props.site.settings ) {
 			this.setState( this.getSettingsFromSite() );
 		}
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.updateJetpackSettings();
 	},
 
@@ -27,14 +27,15 @@ module.exports = {
 	 * Jetpack sites have special needs. When we first load a jetpack site's settings page
 	 * or when we switch to a different jetpack site, we may need to get information about
 	 * a module or we may need to get ssh credentials. if these methods exist, call them.
+	 *
+	 * @param {String|Number} site - site identification
 	 */
-	updateJetpackSettings: function( site ) {
+	updateJetpackSettings( site ) {
 		this.getModuleStatus && this.getModuleStatus( site );
 		this.getSshSettings && this.getSshSettings( site );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.site ) {
 			return;
 		}
@@ -67,15 +68,15 @@ module.exports = {
 		if ( nextProps.site.fetchingSettings ) {
 			this.setState( { fetchingSettings: true } );
 		}
-
 	},
 
-	recordClickEventAndStop: function( recordObject, clickEvent ) {
+	recordClickEventAndStop( recordObject, clickEvent ) {
 		this.recordEvent( recordObject );
 		clickEvent.preventDefault();
 	},
 
-	recordEvent: function( eventAction ) {
+	recordEvent( eventAction ) {
+		debug( 'recording event: %o', eventAction );
 		analytics.ga.recordEvent( 'Site Settings', eventAction );
 	},
 
@@ -84,8 +85,9 @@ module.exports = {
 	 * @param  {string} key         - unique key to namespace the event
 	 * @param  {string} eventAction - the description of the action to appear in analytics
 	 */
-	recordEventOnce: function( key, eventAction ) {
-		var newSetting = {};
+	recordEventOnce( key, eventAction ) {
+		debug( 'recording event once: %o - %o', key, eventAction );
+		let newSetting = {};
 		if ( this.state[ 'recordEventOnce-' + key ] ) {
 			return;
 		}
@@ -94,48 +96,47 @@ module.exports = {
 		this.setState( newSetting );
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getSettingsFromSite();
 	},
 
-	handleRadio: function( event ) {
+	handleRadio( event ) {
 		var name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
 
 		updateObj[ name ] = value;
 		this.setState( updateObj );
-
 	},
 
-	toggleJetpackModule: function( module ) {
+	toggleJetpackModule( module ) {
 		var event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
 		notices.clearNotices( 'notices' );
 		this.setState( { togglingModule: true } );
 		this.props.site.toggleModule( module, function( error ) {
-				this.setState( { togglingModule: false } );
-				if ( error ) {
-					debug( 'jetpack module toggle error', error );
-					this.handleError();
-					this.props.site.handleError(
-						error,
-						this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
-						{},
-						module
-					);
-				} else {
-					if( 'protect' === module ) {
-						this.props.site.fetchSettings();
-					}
-					this.getModuleStatus();
+			this.setState( { togglingModule: false } );
+			if ( error ) {
+				debug( 'jetpack module toggle error', error );
+				this.handleError();
+				this.props.site.handleError(
+					error,
+					this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
+					{},
+					module
+				);
+			} else {
+				if ( 'protect' === module ) {
+					this.props.site.fetchSettings();
 				}
-			}.bind( this )
-		);
+				this.getModuleStatus();
+			}
+		}.bind( this )
+	);
 
-		this.recordEvent( "Clicked to " + event + " Jetpack " + module );
+		this.recordEvent( 'Clicked to ' + event + ' Jetpack ' + module );
 	},
 
-	submitForm: function( event ) {
+	submitForm( event ) {
 		var site = this.props.site;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
