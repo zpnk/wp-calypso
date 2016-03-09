@@ -79,6 +79,7 @@ export const cacheIndex = {
 	},
 
 	removeItem( key ) {
+		debug( 'removeItem()', key );
 		return this.getAllExcluding( key ).then( records => {
 			debug( '\n\nremoving %o record', key );
 			return localforage.setItem( RECORDS_LIST_KEY, records );
@@ -179,6 +180,6 @@ export const cacheIndex = {
 	clearPageSeries( reqParams ) {
 		const pageSeriesKey = generatePageSeriesKey( reqParams );
 		debug( 'clearPageSeries()', pageSeriesKey );
-		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList, ( error ) => { debug( 'clearPageSeries failed', error ); } );
+		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList );
 	}
 }
