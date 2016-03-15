@@ -15,6 +15,8 @@ test:
         files:
           - client/**/Makefile
           - server/**/Makefile
+    - NODE_ENV=test NODE_PATH=test:client npm run test-client:
+        parallel: true
     - case $CIRCLE_NODE_INDEX in 0) NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results.xml npm run test-client -- --reporter=mocha-junit-reporter ;; 1) NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results.xml npm run test-server -- --reporter=mocha-junit-reporter ;; esac:
         parallel: true
   post:
