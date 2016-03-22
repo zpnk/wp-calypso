@@ -75,6 +75,7 @@ var FeedStream = function( spec ) {
 assign( FeedStream.prototype, {
 
 	destroy: function() {
+		console.log( 'killing poller for %s', this.id );
 		PollerPool.remove( this.poller );
 	},
 
@@ -265,14 +266,13 @@ assign( FeedStream.prototype, {
 			return;
 		}
 
+		let mostRecentDate, params;
 		if ( ! this.postKeys.length ) {
-			debug( 'skipping poll because we have no posts' );
-			return;
+			mostRecentDate = moment().subtract( 1, 'weeks' ).toISOString();
+		} else {
+			// most recent post
+			mostRecentDate = this.getFirstItemWithDate();
 		}
-
-		// most recent post
-		let mostRecentDate = this.getFirstItemWithDate(),
-			params;
 
 		if ( ! mostRecentDate ) {
 			return;
@@ -463,8 +463,9 @@ assign( FeedStream.prototype, {
 			postById[ postKey.postId ] = true;
 		} );
 
-		const mostRecentPostDate = moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] );
-
+		const mostRecentPostDate = this.postKeys.length
+			? moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] )
+			: moment( 0 );
 		if ( this.pendingDateAfter > mostRecentPostDate ) {
 			this.pendingPostKeys.push( {
 				isGap: true,
