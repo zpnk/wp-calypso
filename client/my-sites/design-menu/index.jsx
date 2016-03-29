@@ -45,8 +45,6 @@ const DesignMenu = React.createClass( {
 	},
 
 	componentWillMount() {
-		// Clear the customizations when we first load
-		this.props.actions.clearCustomizations();
 		// Fetch the preview
 		this.props.actions.fetchPreviewMarkup( this.props.selectedSite.ID, '' );
 	},
@@ -74,12 +72,12 @@ const DesignMenu = React.createClass( {
 		if ( ! this.props.isSaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					this.props.actions.clearCustomizations();
+					this.props.actions.clearCustomizations( this.props.selectedSite.ID );
 					layoutFocus.set( 'sidebar' );
 				}
 			} );
 		}
-		this.props.actions.clearCustomizations();
+		this.props.actions.clearCustomizations( this.props.selectedSite.ID );
 		layoutFocus.set( 'sidebar' );
 	},
 
@@ -96,7 +94,7 @@ const DesignMenu = React.createClass( {
 			debug( 'changing customizations for', id, customizations );
 			const newCustomizations = assign( {}, this.props.customizations, { [ id ]: assign( {}, this.props.customizations[ id ], customizations ) } );
 			debug( 'changed customizations to', newCustomizations );
-			return this.props.actions.updateCustomizations( newCustomizations );
+			return this.props.actions.updateCustomizations( this.props.selectedSite.ID, newCustomizations );
 		}
 	},
 
@@ -158,10 +156,10 @@ const DesignMenu = React.createClass( {
 function mapStateToProps( state ) {
 	const siteId = state.ui.selectedSiteId;
 	const selectedSite = state.sites.items[ siteId ] || {};
-	if ( ! state.preview ) {
+	if ( ! state.preview || ! state.preview[ siteId ] ) {
 		return { state, selectedSite };
 	}
-	return { state, selectedSite, customizations: state.preview.customizations, isSaved: state.preview.isSaved };
+	return { state, selectedSite, customizations: state.preview[ siteId ].customizations, isSaved: state.preview[ siteId ].isSaved };
 }
 
 function mapDispatchToProps( dispatch ) {
