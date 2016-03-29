@@ -28,29 +28,29 @@ export function fetchPreviewMarkup( site, slug, customizations ) {
 		}
 		debug( 'fetching preview markup', site, slug, customizations, 'postData', postData );
 		wpcom.undocumented().fetchPreviewMarkup( site, slug, postData )
-		.then( markup => dispatch( gotMarkup( markup ) ) );
+		.then( markup => dispatch( gotMarkup( site, markup ) ) );
 		// TODO: handle errors
 	}
 }
 
-export function gotMarkup( markup ) {
-	return { type: ActionTypes.PREVIEW_MARKUP_RECEIVE, markup };
+export function gotMarkup( siteId, markup ) {
+	return { type: ActionTypes.PREVIEW_MARKUP_RECEIVE, markup, siteId };
 }
 
-export function clearCustomizations() {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR };
+export function clearCustomizations( siteId ) {
+	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR, siteId };
 }
 
-export function updateCustomizations( customizations ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UPDATE, customizations };
+export function updateCustomizations( siteId, customizations ) {
+	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UPDATE, customizations, siteId };
 }
 
-export function undoCustomization() {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO };
+export function undoCustomization( siteId ) {
+	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO, siteId };
 }
 
-export function customizationsSaved() {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED };
+export function customizationsSaved( siteId ) {
+	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
 }
 
 export function saveCustomizations() {
@@ -61,9 +61,10 @@ export function saveCustomizations() {
 		}
 		const { preview, ui } = getState();
 		const siteId = ui.selectedSiteId;
-		debug( 'saving customizations', preview.customizations );
-		Object.keys( preview.customizations ).map( id => saveCustomizationsFor( id, preview.customizations[ id ], siteId, dispatch ) );
-		dispatch( customizationsSaved() );
+		const customizations = preview[ siteId ].customizations;
+		debug( 'saving customizations', customizations );
+		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
+		dispatch( customizationsSaved( siteId ) );
 	}
 }
 

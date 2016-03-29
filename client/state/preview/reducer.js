@@ -8,15 +8,17 @@ import assign from 'lodash/assign';
  */
 import * as ActionTypes from 'state/action-types';
 
-const initialState = {
+const initialState = {};
+
+const siteInitialState = {
 	previewMarkup: '',
 	previousCustomizations: [],
 	customizations: {},
 	isSaved: true,
 };
 
-export default function( newState = initialState, action ) {
-	const state = assign( {}, initialState, newState );
+function siteReducer( newState = siteInitialState, action ) {
+	const state = assign( {}, siteInitialState, newState );
 	switch ( action.type ) {
 		case ActionTypes.PREVIEW_MARKUP_RECEIVE:
 			return assign( {}, state, { previewMarkup: action.markup } );
@@ -37,6 +39,19 @@ export default function( newState = initialState, action ) {
 			} );
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED:
 			return assign( {}, state, { isSaved: true } );
+	}
+	return state;
+}
+
+export default function( newState = initialState, action ) {
+	const state = assign( {}, initialState, newState );
+	switch ( action.type ) {
+		case ActionTypes.PREVIEW_MARKUP_RECEIVE:
+		case ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR:
+		case ActionTypes.PREVIEW_CUSTOMIZATIONS_UPDATE:
+		case ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO:
+		case ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED:
+			return assign( {}, state, { [ action.siteId ]: siteReducer( state[ action.siteId ], action ) } );
 	}
 	return state;
 }
