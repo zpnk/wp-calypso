@@ -75,7 +75,7 @@ const DesignPreview = React.createClass( {
 
 	undoCustomization() {
 		if ( this.props.actions.undoCustomization ) {
-			this.props.actions.undoCustomization();
+			this.props.actions.undoCustomization( this.props.selectedSiteId );
 		}
 	},
 
@@ -90,14 +90,14 @@ const DesignPreview = React.createClass( {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
 					if ( this.props.actions.clearCustomizations ) {
-						this.props.actions.clearCustomizations();
+						this.props.actions.clearCustomizations( this.props.selectedSiteId );
 					}
 					layoutFocus.set( 'sidebar' );
 				}
 			} );
 		}
 		if ( this.props.actions.clearCustomizations ) {
-			this.props.actions.clearCustomizations();
+			this.props.actions.clearCustomizations( this.props.selectedSiteId );
 		}
 		layoutFocus.set( 'sidebar' );
 	},
@@ -139,11 +139,11 @@ const DesignPreview = React.createClass( {
 } );
 
 function mapStateToProps( state ) {
-	if ( ! state.preview ) {
-		return {};
-	}
 	const selectedSiteId = state.ui.selectedSiteId;
-	const { previewMarkup, customizations, isSaved } = state.preview;
+	if ( ! state.preview || ! state.preview[ selectedSiteId ] ) {
+		return { selectedSiteId };
+	}
+	const { previewMarkup, customizations, isSaved } = state.preview[ selectedSiteId ];
 	return {
 		selectedSiteId,
 		previewMarkup,
