@@ -12,6 +12,7 @@ var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'analytics' ),
+	config = require( 'config' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
 module.exports = {
@@ -20,6 +21,10 @@ module.exports = {
 		var CustomizeComponent = require( 'my-sites/customize/main' ),
 			basePath = route.sectionify( context.path ),
 			siteID = route.getSiteFragment( context.path );
+
+		if ( config.isEnabled( 'native-customizer' ) ) {
+			CustomizeComponent = require( 'my-sites/customize/native' );
+		}
 
 		analytics.pageView.record( basePath, 'Customizer' );
 
