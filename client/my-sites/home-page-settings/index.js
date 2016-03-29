@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import PostSelector from 'my-sites/post-selector';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -14,8 +16,14 @@ import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
+function getSiteSlug( url ) {
+	var slug = url.replace( /^https?:\/\//, '' );
+	return slug.replace( /\//g, '::' );
+}
+
 export default React.createClass( {
 	propTypes: {
+		site: React.PropTypes.object.isRequired,
 		isPageOnFront: React.PropTypes.bool,
 		pageOnFrontId: React.PropTypes.number,
 		pageForPostsId: React.PropTypes.number,
@@ -48,6 +56,14 @@ export default React.createClass( {
 		this.props.onChange( { isPageOnFront: true, pageOnFrontId: post.ID } );
 	},
 
+	getNewPageUrl() {
+		return `/page/${ getSiteSlug( this.props.site.URL ) }`;
+	},
+
+	handleNewPage() {
+		page( this.getNewPageUrl() );
+	},
+
 	render() {
 		return (
 			<Card compact className="home-page-settings">
@@ -69,6 +85,7 @@ export default React.createClass( {
 								order="DESC"
 								selected={ this.state.pageOnFrontId }
 								onChange={ this.handleChangePageOnFront } />
+							<Button onClick={ this.handleNewPage } >{ this.translate( 'Create a new page' ) }</Button>
 					</FormLabel>
 				</FormFieldset>
 			</Card>
