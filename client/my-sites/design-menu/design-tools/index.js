@@ -10,6 +10,7 @@ import assign from 'lodash/assign';
 import { translate } from 'lib/mixins/i18n';
 import SiteTitleControl from 'my-sites/site-title';
 import HeaderImageControl from 'components/header-image';
+import SiteLogoControl from 'components/site-logo';
 import DesignToolList from 'my-sites/design-tool-list';
 import HomePageSettings from 'my-sites/home-page-settings';
 
@@ -34,6 +35,25 @@ const designToolsById = {
 				return preview[ siteId ].customizations.siteTitle;
 			}
 			return { blogname: selectedSite.name, blogdescription: selectedSite.description };
+		},
+	},
+
+	siteLogo: {
+		title: translate( 'Site Logo' ),
+		componentClass: SiteLogoControl,
+		mapStateToProps: state => {
+			if ( ! state.preview ) {
+				return {};
+			}
+			const { ui, preview } = state;
+			const siteId = ui.selectedSiteId;
+			const selectedSite = state.sites.items[ siteId ] || {};
+			if ( preview[ siteId ] && preview[ siteId ].customizations.siteLogo ) {
+				return assign( { site: selectedSite }, preview[ siteId ].customizations.siteLogo );
+			}
+			const logoPostId = get( selectedSite, 'logo.id' );
+			const logoUrl = get( selectedSite, 'logo.url' );
+			return { site: selectedSite, logoPostId, logoUrl };
 		},
 	},
 

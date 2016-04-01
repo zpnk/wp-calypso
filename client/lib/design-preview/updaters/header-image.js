@@ -5,7 +5,6 @@ export default function headerImage( previewDoc, customizations ) {
 	const headerImageSelector = [
 		'.header-image a img[src]',
 		'.header-image img[src]',
-		'.site-branding a img[src]',
 		'.site-header-image img',
 		'.header-image-link img[src]',
 		'img.header-image[src]',
