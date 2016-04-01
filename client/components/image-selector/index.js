@@ -6,30 +6,24 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-// import FormFieldset from 'components/forms/form-fieldset';
-// import FormLabel from 'components/forms/form-label';
-// import ImagePreloader from 'components/image-preloader';
-// import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorMediaModal from 'post-editor/media-modal';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 
-const HeaderImageControl = React.createClass( {
-	// propTypes: {
-	// 	site: React.PropTypes.object.isRequired,
-	// 	headerImageUrl: React.PropTypes.string,
-	// 	onChange: React.PropTypes.func.isRequired,
-	// },
+const ImageSelector = React.createClass( {
+	propTypes: {
+		site: React.PropTypes.object.isRequired,
+		imagePostId: React.PropTypes.number,
+		onRemove: React.PropTypes.func.isRequired,
+		onSave: React.PropTypes.func.isRequired,
+		label: React.PropTypes.string.isRequired,
+	},
 
 	getInitialState() {
 		return {
 			isShowingMedia: false,
 		};
-	},
-
-	removeCurrentImage() {
-		this.props.onChange( { headerImageUrl: null, headerImagePostId: null } );
 	},
 
 	openMediaModal() {
@@ -40,23 +34,20 @@ const HeaderImageControl = React.createClass( {
 		this.setState( { isShowingMedia: false } );
 	},
 
-	setImage( selectedItems ) {
-		if ( selectedItems && selectedItems.length ) {
-			const newImage = selectedItems[0];
-			this.props.onChange( { headerImageUrl: newImage.URL, headerImagePostId: newImage.ID, headerImageWidth: newImage.width, headerImageHeight: newImage.height } );
-		}
+	onClose( items ) {
+		this.props.onSave( items );
 		this.setState( { isShowingMedia: false } );
 	},
 
 	renderCurrentImage: function() {
-		if ( ! this.props.site || ! this.props.headerImagePostId ) {
+		if ( ! this.props.site || ! this.props.imagePostId ) {
 			return;
 		}
 
 		return (
 			<EditorFeaturedImagePreviewContainer
 				siteId={ this.props.site.ID }
-				itemId={ this.props.headerImagePostId } />
+				itemId={ this.props.imagePostId } />
 		);
 	},
 
@@ -65,9 +56,9 @@ const HeaderImageControl = React.createClass( {
 			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 				<EditorMediaModal
 					visible={ this.state.isShowingMedia }
-					onClose={ this.setImage }
+					onClose={ this.onClose }
 					site={ this.props.site }
-					labels={ { confirm: this.translate( 'Set Header Image' ) } }
+					labels={ { confirm: this.props.label } }
 					enabledFilters={ [ 'images' ] }
 					single />
 			</MediaLibrarySelectedData>
@@ -76,13 +67,13 @@ const HeaderImageControl = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-menu-controls__control design-menu-controls__header-image-control">
+			<div className="image-selector">
 				{ this.renderMediaModal() }
 				<EditorDrawerWell
 					onClick={ this.openMediaModal }
-					onRemove={ this.removeCurrentImage }
+					onRemove={ this.props.onRemove }
 					icon="image"
-					label={ this.translate( 'Set Header Image' ) }>
+					label={ this.props.label }>
 					{ this.renderCurrentImage() }
 				</EditorDrawerWell>
 			</div>
@@ -90,4 +81,4 @@ const HeaderImageControl = React.createClass( {
 	}
 } );
 
-export default HeaderImageControl;
+export default ImageSelector;

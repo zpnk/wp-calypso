@@ -35,7 +35,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		const classes = classNames( 'editor-featured-image__preview', {
+		const classes = classNames( 'image-selector__preview', {
 			'is-transient': this.props.image.transient
 		} );
 
