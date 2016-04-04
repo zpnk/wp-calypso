@@ -10,7 +10,7 @@ import wpcom from 'lib/wp';
 import * as ActionTypes from 'state/action-types';
 import * as customizationSaveFunctions from './save-functions';
 
-const debug = debugFactory( 'calypso:preivew-actions' );
+const debug = debugFactory( 'calypso:preview-actions' );
 
 export function fetchPreviewMarkup( site, slug, customizations ) {
 	return function( dispatch ) {
