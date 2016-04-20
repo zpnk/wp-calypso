@@ -13,6 +13,7 @@ import ListManagementError from '../error';
 import EmptyContent from 'components/empty-content';
 import ListManagementSitesListItem from './list-item';
 import Placeholder from 'reader/following-edit/placeholder';
+import ExistingItemSearch from './existing-item-search';
 
 const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
 const stats = require( 'reader/stats' );
@@ -44,7 +45,7 @@ const ListManagementSites = React.createClass( {
 		}
 
 		const newState = {
-			items,
+			items: items && items.toArray(),
 			isLastPage,
 			currentPage,
 			isFetchingItems: ReaderListsItemsStore.isFetching(),
@@ -98,6 +99,10 @@ const ListManagementSites = React.createClass( {
 		stats.recordGaEvent( 'Clicked Item on List Management' );
 	},
 
+	onPickItem() {
+
+	},
+
 	renderItem( item ) {
 		const itemKey = this.getItemRef( item );
 
@@ -111,7 +116,7 @@ const ListManagementSites = React.createClass( {
 			return null;
 		}
 
-		if ( this.props.list && this.state.items.size === 0 && this.state.isLastPage ) {
+		if ( this.props.list && this.state.items.length === 0 && this.state.isLastPage ) {
 			return ( <EmptyContent
 						title={ this.translate( 'This list does not have any sites yet.' ) }
 						illustration={ '/calypso/images/drake/drake-404.svg' }
@@ -120,7 +125,7 @@ const ListManagementSites = React.createClass( {
 
 		return (
 			<InfiniteList
-					items={ this.state.items.toArray() }
+					items={ this.state.items }
 					fetchingNextPage={ this.state.isFetchingItems }
 					lastPage={ this.state.isLastPage }
 					guessedItemHeight={ 300 }
@@ -138,6 +143,7 @@ const ListManagementSites = React.createClass( {
 
 		return (
 			<div>
+				<ExistingItemSearch onPick={ this.onPickItem } />
 				{ this.renderItemList() }
 			</div>
 		);
