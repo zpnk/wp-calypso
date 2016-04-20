@@ -20,13 +20,13 @@ import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
 import WhoisStore from 'lib/domains/whois/store';
-import wp from 'lib/wp';
+import wpcom from 'lib/wp';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'actions:domain-management' );
 
-const sites = sitesFactory(),
-	wpcom = wp.undocumented();
+const sites = sitesFactory();
+const wpcomUndocumented = wpcom.undocumented();
 
 function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 	debug( 'setPrimaryDomain', siteId, domainName );
@@ -34,7 +34,7 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 		type: ActionTypes.PRIMARY_DOMAIN_SET,
 		siteId
 	} );
-	wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
+	wpcomUndocumented.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
@@ -78,7 +78,7 @@ function fetchEmailForwarding( domainName ) {
 		domainName
 	} );
 
-	wpcom.emailForwards( domainName, ( error, data ) => {
+	wpcomUndocumented.emailForwards( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_FETCH_FAILED,
@@ -95,7 +95,7 @@ function fetchEmailForwarding( domainName ) {
 }
 
 function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
-	wpcom.addEmailForward( domainName, mailbox, destination, ( error ) => {
+	wpcomUndocumented.addEmailForward( domainName, mailbox, destination, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_ADD_COMPLETED,
@@ -111,7 +111,7 @@ function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
 }
 
 function deleteEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.deleteEmailForward( domainName, mailbox, ( error ) => {
+	wpcomUndocumented.deleteEmailForward( domainName, mailbox, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
@@ -126,7 +126,7 @@ function deleteEmailForwarding( domainName, mailbox, onComplete ) {
 }
 
 function resendVerificationEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.resendVerificationEmailForward( domainName, mailbox, onComplete );
+	wpcomUndocumented.resendVerificationEmailForward( domainName, mailbox, onComplete );
 }
 
 function fetchDomains( siteId ) {
@@ -147,7 +147,7 @@ function fetchDomains( siteId ) {
 		siteId
 	} );
 
-	wpcom.site( siteId ).domains( function( error, data ) {
+	wpcom.site( siteId ).domainsList( function( error, data ) {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_FAILED,
@@ -176,7 +176,7 @@ function fetchWhois( domainName ) {
 		domainName
 	} );
 
-	wpcom.fetchWhois( domainName, ( error, data ) => {
+	wpcomUndocumented.fetchWhois( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_FETCH_FAILED,
@@ -193,7 +193,7 @@ function fetchWhois( domainName ) {
 }
 
 function updateWhois( domainName, contactInformation, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, ( error, data ) => {
+	wpcomUndocumented.updateWhois( domainName, contactInformation, ( error, data ) => {
 		if ( ! error ) {
 			// update may take a few minutes, we try after 1 minute to see if it is already done
 			setTimeout( () => {
@@ -221,7 +221,7 @@ function fetchDns( domainName ) {
 		domainName
 	} );
 
-	wpcom.fetchDns( domainName, ( error, data ) => {
+	wpcomUndocumented.fetchDns( domainName, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_FETCH_COMPLETED,
@@ -244,7 +244,7 @@ function addDns( domainName, record, onComplete ) {
 		record
 	} );
 
-	wpcom.addDns( domainName, record, ( error ) => {
+	wpcomUndocumented.addDns( domainName, record, ( error ) => {
 		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
 		Dispatcher.handleServerAction( {
 			type,
@@ -263,7 +263,7 @@ function deleteDns( domainName, record, onComplete ) {
 		record,
 	} );
 
-	wpcom.deleteDns( domainName, record, ( error ) => {
+	wpcomUndocumented.deleteDns( domainName, record, ( error ) => {
 		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
 
 		Dispatcher.handleServerAction( {
@@ -288,7 +288,7 @@ function fetchNameservers( domainName ) {
 		domainName
 	} );
 
-	wpcom.nameservers( domainName, ( error, data ) => {
+	wpcomUndocumented.nameservers( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.NAMESERVERS_FETCH_FAILED,
@@ -311,7 +311,7 @@ function updateNameservers( domainName, nameservers, onComplete ) {
 		};
 	} );
 
-	wpcom.updateNameservers( domainName, { nameservers: postData }, ( error ) => {
+	wpcomUndocumented.updateNameservers( domainName, { nameservers: postData }, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
@@ -325,7 +325,7 @@ function updateNameservers( domainName, nameservers, onComplete ) {
 }
 
 function resendIcannVerification( domainName, onComplete ) {
-	wpcom.resendIcannVerification( domainName, ( error ) => {
+	wpcomUndocumented.resendIcannVerification( domainName, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
@@ -350,7 +350,7 @@ function fetchSiteRedirect( siteId ) {
 		siteId
 	} );
 
-	wpcom.getSiteRedirect( siteId, ( error, data ) => {
+	wpcomUndocumented.getSiteRedirect( siteId, ( error, data ) => {
 		if ( data && data.location ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_FETCH_COMPLETED,
@@ -379,7 +379,7 @@ function updateSiteRedirect( siteId, location, onComplete ) {
 		siteId
 	} );
 
-	wpcom.setSiteRedirect( siteId, location, ( error, data ) => {
+	wpcomUndocumented.setSiteRedirect( siteId, location, ( error, data ) => {
 		let success = false;
 
 		if ( data && data.success ) {
@@ -421,7 +421,7 @@ function fetchWapiDomainInfo( domainName ) {
 		domainName
 	} );
 
-	wpcom.fetchWapiDomainInfo( domainName, ( error, status ) => {
+	wpcomUndocumented.fetchWapiDomainInfo( domainName, ( error, status ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED,
@@ -443,7 +443,7 @@ function fetchWapiDomainInfo( domainName ) {
 function requestTransferCode( options, onComplete ) {
 	const { siteId, domainName, unlock, disablePrivacy } = options;
 
-	wpcom.requestTransferCode( options, ( error ) => {
+	wpcomUndocumented.requestTransferCode( options, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -462,7 +462,7 @@ function requestTransferCode( options, onComplete ) {
 }
 
 function enableDomainLocking( options, onComplete ) {
-	wpcom.enableDomainLocking( options, ( error ) => {
+	wpcomUndocumented.enableDomainLocking( options, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -486,7 +486,7 @@ function enableDomainLocking( options, onComplete ) {
 }
 
 function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
-	wpcom.enablePrivacyProtection( domainName, ( error ) => {
+	wpcomUndocumented.enablePrivacyProtection( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -503,7 +503,7 @@ function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 }
 
 function acceptTransfer( domainName, onComplete ) {
-	wpcom.acceptTransfer( domainName, ( error ) => {
+	wpcomUndocumented.acceptTransfer( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -519,7 +519,7 @@ function acceptTransfer( domainName, onComplete ) {
 }
 
 function declineTransfer( domainName, onComplete ) {
-	wpcom.declineTransfer( domainName, ( error ) => {
+	wpcomUndocumented.declineTransfer( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
