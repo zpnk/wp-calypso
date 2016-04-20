@@ -87,17 +87,6 @@ function UndocumentedSite( id, wpcom ) {
 	this._id = id;
 }
 
-UndocumentedSite.prototype.domains = function( callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/domains', function( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
 UndocumentedSite.prototype.postFormatsList = function( callback ) {
 	this.wpcom.req.get( '/sites/' + this._id + '/post-formats', { locale: i18n.getLocaleSlug() }, callback );
 };
