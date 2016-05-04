@@ -11,11 +11,15 @@ import classNames from 'classnames';
  */
 import Main from 'components/main';
 import Card from 'components/card';
+import Button from 'components/button';
 import HappinessSupport from 'components/happiness-support';
 import PremiumPlanDetails from 'my-sites/upgrades/checkout-thank-you/premium-plan-details';
 import BusinessPlanDetails from 'my-sites/upgrades/checkout-thank-you/business-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import {
+	getPlansBySite,
+	getCurrentPlan
+} from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import {
@@ -32,12 +36,42 @@ const PlanDetailsComponent = React.createClass( {
 		sitePlans: React.PropTypes.object.isRequired,
 		fetchPlans: React.PropTypes.func.isRequired
 	},
+
 	componentWillUpdate: function( props ) {
 		this.props.fetchPlans( props );
 	},
+
 	componentDidMount: function() {
 		this.props.fetchPlans();
 	},
+
+	getPurchaseInfo: function() {
+		const plan = this.props.currentPlan;
+
+		if ( ! plan ) {
+			return null;
+		}
+
+		const classes = classNames( 'current-plan__purchase-info', {
+			'is-expiring': plan.userFacingExpiryMoment < this.moment().add( 30, 'days' )
+		} );
+
+		console.log(plan);
+
+		return (
+			<div className={ classes }>
+				<span className="current-plan__expires-in">
+					{ this.translate( 'Expires on %s', {
+						args: plan.userFacingExpiryMoment.format( 'LL' )
+					} ) }
+				</span>
+				<Button compact>
+					{ this.translate( 'Renew Now' ) }
+				</Button>
+			</div>
+		);
+	},
+
 	render: function() {
 		const { hasLoadedFromServer } = this.props.sitePlans;
 		let title;
@@ -86,13 +120,17 @@ const PlanDetailsComponent = React.createClass( {
 								<h1 className={ classNames( { 'current-plan__header-heading': true, 'is-placeholder': ! hasLoadedFromServer } ) }>
 									{ title }
 								</h1>
-
 								<h2 className={ classNames( { 'current-plan__header-text': true, 'is-placeholder': ! hasLoadedFromServer } ) }>
 									{ tagLine }
 								</h2>
 							</div>
 						</div>
 					</div>
+					<Card compact>
+						{ this.getPurchaseInfo() }
+					</Card>
+				</Card>
+				<Card>
 					{ featuresList }
 				</Card>
 				<Card>
@@ -115,7 +153,8 @@ export default connect(
 	( state ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
-			sitePlans: getPlansBySite( state, getSelectedSite( state ) )
+			sitePlans: getPlansBySite( state, getSelectedSite( state ) ),
+			currentPlan: getCurrentPlan( state, getSelectedSite( state ).ID )
 		};
 	},
 	dispatch => ( {

@@ -65,3 +65,19 @@
 	font-size: 18px;
 	font-weight: 300;
 }
+
+.current-plan__purchase-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&.is-expiring {
+		.current-plan__expires-in {
+			color: $alert-red;
+		}
+	}
+}
+
+.current-plan__expires-in {
+	color: $gray;
+}
