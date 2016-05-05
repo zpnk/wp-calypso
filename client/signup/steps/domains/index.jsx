@@ -18,7 +18,9 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	signupUtils = require( 'signup/utils' );
+
+	signupUtils = require( 'signup/utils' ),
+	getUsernameSuggestion = require( 'lib/signup/step-actions' ).getUsernameSuggestion;
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
@@ -113,6 +115,11 @@ module.exports = React.createClass( {
 		}, this.getThemeArgs() ), [], { domainItem } );
 
 		this.goToNextStep( isPurchasingItem );
+
+		/**
+		 * Start the username suggestion process.
+		 */
+		getUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	},
 
 	submitPlansStepWithPremium() {
