@@ -9,6 +9,7 @@ var ReaderLikeButton = React.createClass( {
 		stats.recordAction( liked ? 'liked_post' : 'unliked_post' );
 		stats.recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
 		stats.recordTrack( liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked', {
+			context: this.props.fullPost ? 'full-post' : 'card',
 			blog_id: this.props.siteId,
 			post_id: this.props.postId
 		} );
