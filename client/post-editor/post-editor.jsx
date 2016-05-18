@@ -50,7 +50,7 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty, isEditedPostContentEmpty } from 'state/posts/selectors';
+import { getPostEdits, isEditedPostDirty, getEditedPostValue } from 'state/posts/selectors';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 
@@ -196,7 +196,7 @@ const PostEditor = React.createClass( {
 			loadingError: PostEditStore.getLoadingError(),
 			isDirty: PostEditStore.isDirty(),
 			isSaveBlocked: PostEditStore.isSaveBlocked(),
-			hasContent: PostEditStore.hasContent(),
+			hasContent: PostEditStore.hasContent( [ 'excerpt', 'content' ] ),
 			previewUrl: PostEditStore.getPreviewUrl(),
 			post: PostEditStore.get(),
 			isNew: PostEditStore.isNew(),
@@ -397,7 +397,7 @@ const PostEditor = React.createClass( {
 								isNew={ this.state.isNew }
 								isDirty={ this.state.isDirty || this.props.dirty }
 								isSaveBlocked={ this.state.isSaveBlocked }
-								hasContent={ this.state.hasContent || ! this.props.postContentEmpty }
+								hasContent={ this.state.hasContent || !! ( this.props.title && this.props.title.trim().length ) }
 								isSaving={ this.state.isSaving }
 								isPublishing={ this.state.isPublishing }
 								onSave={ this.onSave }
@@ -536,7 +536,7 @@ const PostEditor = React.createClass( {
 		actions.edit( edits );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
-		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
+		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent( [ 'excerpt', 'content' ] ) || ! this.state.post ) {
 			return;
 		}
 
@@ -897,7 +897,7 @@ export default connect(
 			showDrafts: isEditorDraftsVisible( state ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
-			postContentEmpty: isEditedPostContentEmpty( state, siteId, postId )
+			title: getEditedPostValue( state, siteId, postId, 'title' )
 		};
 	},
 	( dispatch ) => {
