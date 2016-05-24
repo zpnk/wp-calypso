@@ -114,6 +114,9 @@
 	}
 
 	.post__info {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
 		width: 100%;
 		font-size: (14 / 15) * 1em;
 		padding-top: (16 / 10) * 1rem;
@@ -127,7 +130,6 @@
 	}
 
 	.post-relative-time-status {
-		float: left;
 		margin: 0;
 		.noticon {
 			font-size: (16 / 14) * 1em;
@@ -143,7 +145,6 @@
 	}
 
 	.post__meta {
-		float: right;
 		margin: 0;
 		list-style: none;
 		box-sizing: border-box;
@@ -152,13 +153,14 @@
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
-			margin-left: (15 / 14) * 1em;
+			margin-right: (15 / 14) * 1em;
 			color: $gray;
-			vertical-align: top;
-			&:first-child {
-				margin-left: 0;
+			&:last-child {
+				margin-right: 0;
 			}
 			a {
+				display: flex;
+				align-items: center;
 				color: inherit;
 				&:before {
 					@extend %noticon;
@@ -170,17 +172,12 @@
 						color: lighten( $gray, 20% );
 					}
 				}
-				.gridicon{
-					position: relative;
-					top: 6px;
-				}
 				&:hover {
 					color: $blue-medium;
 				}
 			}
 			span {
-				display: inline-block;
-				margin: (1 / 14) * 1em 0 0 (3 / 14) * 1em;
+				margin-left: 8px;
 			}
 		}
 	}

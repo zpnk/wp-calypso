@@ -19,24 +19,27 @@ module.exports = React.createClass( {
 		post: React.PropTypes.object.isRequired,
 		includeNonDraftStatuses: React.PropTypes.bool,
 		link: React.PropTypes.string,
-		target: React.PropTypes.string
+		target: React.PropTypes.string,
+		iconSize: React.PropTypes.oneOf( [ 18, 24 ] ),
 	},
 
 	getDefaultProps: function() {
 		return {
 			includeNonDraftStatuses: false,
 			link: null,
-			target: null
+			target: null,
+			iconSize: 18
 		};
 	},
 
 	getRelativeTimeText: function() {
 		var status = this.props.post.status,
+			iconSize = this.props.iconSize,
 			time, timeReference;
 
 		if ( status === 'draft' || status === 'pending' ) {
 			time = this.props.post.modified;
-			timeReference = ( <small>{ this.translate( ' (last-modified)' ) }</small> );
+			timeReference = ( <small style={ { marginLeft: 2 } }>{ this.translate( ' (last-modified)' ) }</small> );
 		} else if ( status !== 'new' ) {
 			time = this.props.post.date;
 			timeReference = null;
@@ -46,11 +49,12 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return ( <span className="time"><Gridicon icon="time" size={ 18 } /><span className="time-text">{ this.moment( time ).fromNow() }</span>{ timeReference }</span> );
+		return ( <span className="time"><Gridicon icon="time" size={ iconSize } /><span className="time-text">{ this.moment( time ).fromNow() }{ timeReference }</span></span> );
 	},
 
 	getStatusText: function() {
 		var status = this.props.post.status,
+			iconSize = this.props.iconSize,
 			statusClassName = 'status',
 			statusIcon = 'aside',
 			statusText;
@@ -81,7 +85,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( statusText ) {
-			return ( <span className={ statusClassName }><Gridicon icon={ statusIcon } size={ 18 } /><span className="status-text">{ statusText }</span></span> );
+			return ( <span className={ statusClassName }><Gridicon icon={ statusIcon } size={ iconSize } /><span className="status-text">{ statusText }</span></span> );
 		}
 	},
 
