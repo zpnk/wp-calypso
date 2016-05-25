@@ -407,6 +407,11 @@ audio {
     clear: both;
 }
 
+.wpview-type-demo-shortcode {
+	text-align: center;
+	font-weight: bold;
+}
+
 .wpview-type-contact-form {
 	padding: 20px;
 	text-align: center;

@@ -10,6 +10,7 @@ import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-type
 import lastDraft from './last-draft/reducer';
 import media from './media/reducer';
 import contactForm from './contact-form/reducer';
+import demoShortcode from './demo-shortcode/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -50,5 +51,6 @@ export default combineReducers( {
 	showDrafts,
 	lastDraft,
 	media,
-	contactForm
+	contactForm,
+	demoShortcode
 } );
