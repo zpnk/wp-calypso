@@ -76,7 +76,7 @@
     "moment": "2.10.6",
     "morgan": "1.2.0",
     "ms": "0.7.1",
-    "node-sass": "3.4.2",
+    "node-sass": "3.7.0",
     "page": "1.6.4",
     "path-parser": "1.0.2",
     "percentage-regex": "3.0.0",
@@ -128,8 +128,8 @@
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": "5.11.1",
-    "npm": "3.8.6"
+    "node": "6.2.1",
+    "npm": "3.9.3"
   },
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",
