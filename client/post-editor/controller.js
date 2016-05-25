@@ -114,10 +114,9 @@ module.exports = {
 		const postID = getPostID( context );
 
 		function startEditing() {
-			const site = sites.getSite( route.getSiteFragment( context.path ) );
-
+			const siteId = getSelectedSiteId( context.store.getState() );
 			context.store.dispatch( setEditorPostId( postID ) );
-			context.store.dispatch( editPost( { type: postType }, site.ID, postID ) );
+			context.store.dispatch( editPost( { type: postType }, siteId, postID ) );
 
 			if ( maybeRedirect( context ) ) {
 				return;
@@ -135,7 +134,7 @@ module.exports = {
 			// in the view components
 			if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( site.ID, postID );
+				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				let postOptions = { type: postType };
@@ -151,28 +150,28 @@ module.exports = {
 				}
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingNew( site.ID, postOptions );
+				actions.startEditingNew( siteId, postOptions );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
 
-		if ( sites.initialized ) {
-			startEditing();
-		} else {
-			// The site selection flow in the siteSelection route middleware
-			// will cause the change handler here to be invoked before site is
-			// set in Redux store. To account for this, we continue to check
-			// state for site ID to have been set.
-			function startEditingOnSitesInitialized() {
-				if ( getSelectedSiteId( context.store.getState() ) ) {
-					startEditing();
-				} else {
-					sites.once( 'change', startEditingOnSitesInitialized );
-				}
+		// Before starting to edit, we want to be sure that we have a valid
+		// selected site to work with. Therefore, we wait on the following
+		// conditions:
+		//  - Sites have not yet been initialized (no localStorage available)
+		//  - Sites are initialized, but the site ID is unknown, so we wait for
+		//    the sites list to be refreshed (for example, if the user does not
+		//    have permission to view the site)
+		//  - Sites are initialized _and_ fetched, but the selected site has
+		//    not yet been selected, so is not available in global state yet
+		function startEditingOnSiteSelected() {
+			if ( getSelectedSiteId( context.store.getState() ) ) {
+				startEditing();
+			} else {
+				sites.once( 'change', startEditingOnSiteSelected );
 			}
-
-			sites.once( 'change', startEditingOnSitesInitialized );
 		}
+		startEditingOnSiteSelected();
 
 		renderEditor( context, postType );
 	},
