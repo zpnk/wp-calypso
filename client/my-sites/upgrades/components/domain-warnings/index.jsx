@@ -221,7 +221,7 @@ export default React.createClass( {
 				domain.googleAppsSubscription &&
 				domain.googleAppsSubscription.pendingUsers &&
 				domain.googleAppsSubscription.pendingUsers.length !== 0 );
-		return pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" domains={ pendingDomains } />;
+		return pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" domains={ pendingDomains } section="domain-management" />;
 	},
 
 	componentWillMount: function() {

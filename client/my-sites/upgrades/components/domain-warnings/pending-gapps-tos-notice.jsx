@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
@@ -14,8 +15,11 @@ const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="
 	strong = <strong />;
 
 const PendingGappsTosNotice = React.createClass( {
+	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
+
 	propTypes: {
-		domains: React.PropTypes.array.isRequired
+		domains: React.PropTypes.array.isRequired,
+		section: React.PropTypes.string.isRequired
 	},
 
 	getGappsLoginUrl( email, domain ) {
@@ -34,6 +38,12 @@ const PendingGappsTosNotice = React.createClass( {
 		}
 
 		return 'info';
+	},
+
+	generateLogInClickHandler( { domain, user, severity, isMultipleDomains } ) {
+		return () => {
+			this.recordEvent( 'pendingAccountLogInClick', { domain, user, severity, isMultipleDomains, section: this.props.section } );
+		};
 	},
 
 	oneDomainNotice() {
@@ -55,8 +65,11 @@ const PendingGappsTosNotice = React.createClass( {
 						components: { learnMoreLink, strong }
 					}
 				) }>
-				<NoticeAction href={ this.getGappsLoginUrl( users[0], domain ) } external>
-					{ this.translate( 'Log in' ) }
+				<NoticeAction
+					href={ this.getGappsLoginUrl( users[0], domain ) }
+					onClick={ this.generateLogInClickHandler( { domain, user: users[0], severity, isMultipleDomains: false } ) }
+					external>
+						{ this.translate( 'Log in' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -74,7 +87,13 @@ const PendingGappsTosNotice = React.createClass( {
 				<ul>{
 					this.props.domains.map( ( { name: domain, googleAppsSubscription: { pendingUsers: users } } ) => {
 						return <li key={ `pending-gapps-tos-acceptance-domain-${ domain }` }>
-							<strong>{ users.join( ', ' ) }</strong> <a href={ this.getGappsLoginUrl( users[0], domain ) } target="_blank">{ this.translate( 'Log in' ) }</a>
+						<strong>{ users.join( ', ' ) } </strong>
+							<a
+								href={ this.getGappsLoginUrl( users[0], domain ) }
+								onClick={ this.generateLogInClickHandler( { domain, user: users[0], severity, isMultipleDomains: true } ) }
+								target="_blank">
+									{ this.translate( 'Log in' ) }
+							</a>
 						</li>;
 					} )
 				}</ul>

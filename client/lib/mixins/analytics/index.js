@@ -525,6 +525,26 @@ const EVENTS = {
 						email
 					}
 				);
+			},
+
+			pendingAccountLogInClick( { domain, user, severity, isMultipleDomains, section } ) {
+				analytics.ga.recordEvent(
+					'Domain Management',
+					`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
+					'Domain Name',
+					domain
+				);
+
+				analytics.tracks.recordEvent(
+					'calypso_domain_management_google_apps_pending_account_log_in_click',
+					{
+						domain,
+						user,
+						severity,
+						isMultipleDomains,
+						section
+					}
+				);
 			}
 		},
 
