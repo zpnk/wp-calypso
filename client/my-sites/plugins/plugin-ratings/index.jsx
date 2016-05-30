@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 				<a className="plugin-ratings__rating-container" target="_blank"
 					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.slug ) }
 					href={ REVIEW_URL + this.props.slug }>
-					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s stars', { args: { ratingTier: ratingTier } } ) } </span>
+					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s star', '%(ratingTier)s stars', { count: ratingTier, args: { ratingTier: ratingTier } } ) } </span>
 					<span className="plugin_ratings__bar">
 						<ProgressBar value={ numberOfRatings }
 							total={ this.props.numRatings }
