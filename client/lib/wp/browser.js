@@ -13,7 +13,7 @@ import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
-import xhrErrorNormalizer from './handlers/http-envelope-normalizer';
+import xhrErrorNormalizer from './handlers/xhr-error-normalizer';
 import httpEnvelopeNormalizer from './handlers/http-envelope-normalizer';
 
 const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );

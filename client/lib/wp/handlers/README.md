@@ -1,8 +1,28 @@
 http-evelope-normalizer
 =======================
 
-This handler-wrapper catch errors from the server-side response generating an
-error object when the body has error information.
+The endpoints of the REST API of WordPress can change how the error is sent from server-side in the response through of the `http_envelope` parameter.
+
+> Some environments (like in-browser JavaScript or Flash) block or divert responses with a non-200 HTTP status code. Setting this parameter will force the HTTP status code to always be 200. The JSON response is wrapped in an "envelope" containing the "real" HTTP status code and headers.
+> It's defined FALSE as default but it is defined like TRUE in the rest-proxy which means that for us the default value is TRUE
+
+This wrapper looks for the error in the body response and if it is found will
+create an error object used as first parameter of the function callback.
+
+
+```es6
+wcom
+.site( 'free-testing-blog' )
+.adCreditVouchers()
+.assign( 'google-ad-credits' )
+.then( data => {
+	// ...
+} )
+.catch( error => {
+	console.error( 'voucher code can not be assigned to a free site' )
+} );
+```
+
 
 xhr-error-normalizer
 ====================

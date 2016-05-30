@@ -23,7 +23,7 @@ describe( 'index', function() {
 
 	before( function() {
 		mockery.registerMock( 'wpcom-xhr-request', testRequest );
-		xhr = require( 'lib/wpcom-xhr-wrapper' );
+		xhr = require( 'lib/wp/handlers/xhr-error-normalizer' );
 	} );
 
 	it( 'should still return a valid response', function( done ) {
