@@ -3,6 +3,7 @@
  */
 import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
+import wpcomProxyRequest from 'wpcom-proxy-request';
 const debug = debugFactory( 'calypso:wp' );
 
 /**
@@ -12,6 +13,7 @@ import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
+import httpEnevlopeNormalizer from './handlers/http-envelope-normalizer';
 
 const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
 let wpcom;
@@ -24,9 +26,13 @@ if ( config.isEnabled( 'oauth' ) ) {
 
 	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
 } else {
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( require( 'wpcom-proxy-request' ) )
-		: require( 'wpcom-proxy-request' );
+	let requestHandler = wpcomProxyRequest;
+
+	if ( addSyncHandlerWrapper ) {
+		requestHandler = new SyncHandler( wpcomProxyRequest );
+	}
+
+	requestHandler = httpEnevlopeNormalizer( requestHandler );
 
 	wpcom = wpcomUndocumented( requestHandler );
 
