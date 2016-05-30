@@ -13,26 +13,32 @@ import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
-import httpEnevlopeNormalizer from './handlers/http-envelope-normalizer';
+import xhrErrorNormalizer from './handlers/http-envelope-normalizer';
+import httpEnvelopeNormalizer from './handlers/http-envelope-normalizer';
 
 const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
-let wpcom;
+let wpcom, requestHandler;
 
 if ( config.isEnabled( 'oauth' ) ) {
 	const oauthToken = require( 'lib/oauth-token' );
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( require( 'lib/wpcom-xhr-wrapper' ) )
-		: require( 'lib/wpcom-xhr-wrapper' );
+
+	requestHandler = xhrErrorNormalizer;
+
+	if ( addSyncHandlerWrapper ) {
+		requestHandler = new SyncHandler( requestHandler );
+	}
+
+	requestHandler = httpEnvelopeNormalizer( requestHandler );
 
 	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
 } else {
-	let requestHandler = wpcomProxyRequest;
+	requestHandler = wpcomProxyRequest;
 
 	if ( addSyncHandlerWrapper ) {
 		requestHandler = new SyncHandler( wpcomProxyRequest );
 	}
 
-	requestHandler = httpEnevlopeNormalizer( requestHandler );
+	requestHandler = httpEnvelopeNormalizer( requestHandler );
 
 	wpcom = wpcomUndocumented( requestHandler );
 
@@ -55,15 +61,15 @@ if ( config.isEnabled( 'support-user' ) ) {
 	wpcom = wpcomSupport( wpcom );
 }
 
+// Inject localization helpers to `wpcom` instance
+wpcom = injectLocalization( wpcom );
+
 // expose wpcom global var only in development
 if ( 'development' === config( 'env' ) ) {
 	let wpcomPKG = require( 'wpcom/package' );
 	window.wpcom = wpcom;
 	window.wpcom.__version = wpcomPKG.version;
 }
-
-// Inject localization helpers to `wpcom` instance
-wpcom = injectLocalization( wpcom );
 
 /**
  * Expose `wpcom`
