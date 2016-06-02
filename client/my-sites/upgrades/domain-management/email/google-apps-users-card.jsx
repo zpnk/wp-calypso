@@ -28,14 +28,14 @@ const GoogleAppsUsers = React.createClass( {
 		user: React.PropTypes.object.isRequired
 	},
 
-	getDomains() {
+	getDomainsAsList() {
 		return this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
 	},
 
 	canAddUsers() {
-		return this.getDomains().some( domain =>
+		return this.getDomainsAsList().some( domain =>
 			domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
 		);
 	},
@@ -51,7 +51,7 @@ const GoogleAppsUsers = React.createClass( {
 	},
 
 	render() {
-		const pendingDomains = this.getDomains().filter( domain =>
+		const pendingDomains = this.getDomainsAsList().filter( domain =>
 			domain.googleAppsSubscription &&
 			domain.googleAppsSubscription.pendingUsers &&
 			domain.googleAppsSubscription.pendingUsers.length !== 0 );
