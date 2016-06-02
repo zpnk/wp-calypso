@@ -545,6 +545,23 @@ const EVENTS = {
 						section
 					}
 				);
+			},
+
+			showPendingAccountNotice( site, domainName ) {
+				const siteSlug = site && site.slug;
+				analytics.ga.recordEvent(
+					'Domain Management',
+					'Showed pending account notice',
+					siteSlug
+				);
+
+				analytics.tracks.recordEvent(
+					'calypso_domain_management_google_apps_pending_account_notice_show',
+					{
+						site: siteSlug,
+						domain_name: domainName
+					}
+				);
 			}
 		},
 

@@ -58,7 +58,7 @@ const GoogleAppsUsers = React.createClass( {
 
 		return (
 			<div>
-				{ pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" domains={ pendingDomains } section="google-apps" /> }
+				{ pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" site={ this.props.selectedSite } domains={ pendingDomains } section="google-apps" /> }
 
 				<SectionHeader
 					count={ this.props.googleAppsUsers.length }
