@@ -161,7 +161,9 @@ const LoggedInForm = React.createClass( {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		this.props.recordTracksEvent( 'jpc_auth_view' );
-		if ( ! this.props.isCalypsoStartedConnection ) {
+		debug( 'checking for calypso started connection', this.props.calypsoStartedConnection );
+		if ( ! this.props.calypsoStartedConnection ) {
+			debug( 'refetching sites on mount' );
 			this.props.requestSites();
 		}
 		if ( ! this.props.isAlreadyOnSitesList &&
@@ -261,9 +263,7 @@ const LoggedInForm = React.createClass( {
 
 	getButtonText() {
 		const { queryObject, isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
-
-		if ( ! this.props.isAlreadyOnSitesList &&
-			queryObject.already_authorized ) {
+		if ( ! this.props.isAlreadyOnSitesList && queryObject.already_authorized ) {
 			return this.translate( 'Return to your site' );
 		}
 
@@ -271,7 +271,7 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingSites() ) {
+		if ( this.props.isFetchingSites() && ! authorizeSuccess ) {
 			return this.translate( 'Preparing authorization' );
 		}
 
