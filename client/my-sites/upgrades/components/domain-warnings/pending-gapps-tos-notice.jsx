@@ -48,6 +48,24 @@ const PendingGappsTosNotice = React.createClass( {
 		return 'info';
 	},
 
+	getExclamation( severity ) {
+		const translationOptions = {
+			context: 'Beginning of Gapps pending account notice',
+			comment: 'Used as an exclamation in Gapps\' pending account notice'
+		};
+
+		switch ( severity ) {
+			case 'warning':
+				return this.translate( 'Attention!', translationOptions );
+
+			case 'error':
+				return this.translate( 'Urgent!', translationOptions );
+
+			default:
+				return this.translate( 'You\'re almost there!', translationOptions );
+		}
+	},
+
 	generateLogInClickHandler( { domain, user, severity, isMultipleDomains } ) {
 		return () => {
 			this.recordEvent( 'pendingAccountLogInClick', { domain, user, severity, isMultipleDomains, section: this.props.section } );
@@ -56,6 +74,7 @@ const PendingGappsTosNotice = React.createClass( {
 
 	oneDomainNotice() {
 		const severity = this.getNoticeSeverity(),
+			exclamation = this.getExclamation( severity ),
 			domain = this.props.domains[0].name,
 			users = this.props.domains[0].googleAppsSubscription.pendingUsers;
 
@@ -65,11 +84,11 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ this.translate(
-					'You\'re almost there! To activate your email {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More.{{/learnMoreLink}}',
-					'You\'re almost there! To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More.{{/learnMoreLink}}',
+					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					{
 						count: users.length,
-						args: { emails: users.join( ', ' ) },
+						args: { exclamation, emails: users.join( ', ' ) },
 						components: { learnMoreLink, strong }
 					}
 				) }>
@@ -84,14 +103,21 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 
 	multipleDomainsNotice() {
-		const severity = this.getNoticeSeverity();
+		const severity = this.getNoticeSeverity(),
+			exclamation = this.getExclamation( severity );
 
 		return (
 			<Notice
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
-				{ this.translate( 'You\'re almost there! To activate your new email addresses, please log in to Google Apps and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}.', { components: { learnMoreLink } } ) }
+				{ this.translate(
+					'%(exclamation)s To activate your new email addresses, please log in to Google Apps and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						args: { exclamation },
+						components: { learnMoreLink }
+					}
+				) }
 				<ul>{
 					this.props.domains.map( ( { name: domain, googleAppsSubscription: { pendingUsers: users } } ) => {
 						return <li key={ `pending-gapps-tos-acceptance-domain-${ domain }` }>
