@@ -155,6 +155,9 @@ const RegisterDomainStep = React.createClass( {
 			if ( queryObject ) {
 				this.showValidationErrorMessage( queryObject.query, domainError );
 			}
+		} else if ( error ) {
+			//unknown error
+			this.props.onDomainsAvailabilityChange( false );
 		}
 	},
 
@@ -288,8 +291,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	onSearch: function( searchQuery ) {
-		var suggestions = [],
-			domain = getFixedDomainSearch( searchQuery );
+		var domain = getFixedDomainSearch( searchQuery );
 
 		this.setState( { lastQuery: searchQuery }, this.save );
 
@@ -366,12 +368,13 @@ const RegisterDomainStep = React.createClass( {
 						} else if ( error && error.error ) {
 							error.code = error.error;
 							this.showValidationErrorMessage( domain, error );
+						} else if ( error ) {
+							//unknown error
+							this.props.onDomainsAvailabilityChange( false );
 						}
-
 						const analyticsResults = [ error.code || error.error || 'ERROR' + ( error.statusCode || '' ) ];
 						this.recordEvent( 'searchResultsReceive', domain, analyticsResults, timeDiff, -1, this.props.analyticsSection );
 						callback( error, null );
-
 					} );
 				}
 			],
@@ -610,7 +613,6 @@ const RegisterDomainStep = React.createClass( {
 			case 'server_error':
 				message = this.translate( 'Sorry but there was a problem processing your request. Please try again in a few minutes.' );
 				break;
-
 
 			default:
 				throw new Error( 'Unrecognized error code: ' + error.code );
