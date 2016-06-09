@@ -90,7 +90,7 @@ const WebPreview = React.createClass( {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
 		if ( this.props.showPreview ) {
-			document.documentElement.classList.add( 'no-scroll' );
+			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 	},
 
@@ -121,16 +121,16 @@ const WebPreview = React.createClass( {
 		}
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
-			document.documentElement.classList.add( 'no-scroll' );
+			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		} else {
 			window.removeEventListener( 'keydown', this.keyDown );
-			document.documentElement.classList.remove( 'no-scroll' );
+			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 		}
 	},
 
 	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.keyDown );
-		document.documentElement.classList.remove( 'no-scroll' );
+		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 	},
 
 	keyDown( event ) {
