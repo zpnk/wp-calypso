@@ -13,7 +13,9 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
-import { setFeaturedImage } from 'state/ui/editor/post/actions';
+// TODO: this works differently now in the editor
+//import { setFeaturedImage } from 'state/ui/editor/post/actions';
+const setFeaturedImage = () => null;
 
 const EditorFeaturedImagePreviewContainer = React.createClass( {
 	displayName: 'EditorFeaturedImagePreviewContainer',
