@@ -9,6 +9,7 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/selectors';
 
 /**
  * Returns the site object for the currently selected site.
@@ -23,16 +24,6 @@ export function getSelectedSite( state ) {
 	}
 
 	return getSite( state, siteId );
-}
-
-/**
- * Returns the currently selected site ID.
- *
- * @param  {Object}  state Global state tree
- * @return {?Number}       Selected site ID
- */
-export function getSelectedSiteId( state ) {
-	return state.ui.selectedSiteId;
 }
 
 /**

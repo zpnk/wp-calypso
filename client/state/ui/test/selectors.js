@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import {
 	getSelectedSite,
-	getSelectedSiteId,
 	getSectionName,
 	isSectionIsomorphic,
 } from '../selectors';
@@ -38,28 +37,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.eql( { ID: 2916284, name: 'WordPress.com Example Blog' } );
-		} );
-	} );
-
-	describe( '#getSelectedSiteId()', () => {
-		it( 'should return null if no site is selected', () => {
-			const selected = getSelectedSiteId( {
-				ui: {
-					selectedSiteId: null
-				}
-			} );
-
-			expect( selected ).to.be.null;
-		} );
-
-		it( 'should return ID for the selected site', () => {
-			const selected = getSelectedSiteId( {
-				ui: {
-					selectedSiteId: 2916284
-				}
-			} );
-
-			expect( selected ).to.eql( 2916284 );
 		} );
 	} );
 

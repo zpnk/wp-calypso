@@ -24,7 +24,8 @@ import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import JetpackSite from 'lib/site/jetpack';
 
 // Redux actions & selectors
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
