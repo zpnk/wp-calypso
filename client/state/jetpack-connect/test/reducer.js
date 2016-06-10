@@ -166,7 +166,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe.only( '#jetpackConnectAuthorize()', () => {
+	describe( '#jetpackConnectAuthorize()', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackConnectAuthorize( undefined, {} );
 			expect( state ).to.eql( {} );
