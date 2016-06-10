@@ -52,6 +52,8 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.isInstall ) );
+		case JETPACK_CONNECT_AUTHORIZE_COMPLETE:
+			return Object.assign( {}, omit( state, action.url.replace( /.*?:\/\//g, '' ) ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
 				return state;
