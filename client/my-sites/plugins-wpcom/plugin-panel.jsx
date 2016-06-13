@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import get from 'lodash/get';
 
 import Card from 'components/card';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSelectedSiteId } from 'state/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId
+} from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isPremium,

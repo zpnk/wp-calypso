@@ -8,7 +8,7 @@ import includes from 'lodash/includes';
  */
 import { DOCUMENT_HEAD_TITLE_SET, DOCUMENT_HEAD_UNREAD_COUNT_SET } from 'state/action-types';
 import { setTitle as legacySetTitle } from './actions';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

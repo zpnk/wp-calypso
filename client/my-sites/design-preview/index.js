@@ -17,8 +17,7 @@ import * as PreviewActions from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 

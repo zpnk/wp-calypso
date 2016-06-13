@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPostType } from 'state/post-types/selectors';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import EmptyContent from 'components/empty-content/empty-content';

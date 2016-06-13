@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQuery,
 	getSitePostsForQueryIgnoringPage

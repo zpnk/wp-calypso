@@ -43,7 +43,7 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' ),
 	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';

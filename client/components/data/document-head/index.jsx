@@ -16,7 +16,7 @@ import {
 	addDocumentHeadMeta as addMeta,
 	setDocumentHeadUnreadCount as setUnreadCount
 } from 'state/document-head/actions';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class DocumentHead extends Component {
 	componentWillMount() {

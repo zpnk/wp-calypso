@@ -32,7 +32,7 @@ import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
 import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';

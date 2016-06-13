@@ -9,7 +9,7 @@ import map from 'lodash/map';
  * Internal dependencies
  */
 import QueryTaxonomies from 'components/data/query-taxonomies';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';

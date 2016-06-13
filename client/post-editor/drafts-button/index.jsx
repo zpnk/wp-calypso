@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
 import Button from 'components/button';
 import Count from 'components/count';
 import QueryPostCounts from 'components/data/query-post-counts';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getAllPostCount } from 'state/posts/counts/selectors';
 

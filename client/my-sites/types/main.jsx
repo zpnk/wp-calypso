@@ -13,7 +13,7 @@ import DocumentHead from 'components/data/document-head';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
 function Types( { query, postType, postTypeSupported } ) {

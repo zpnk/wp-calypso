@@ -15,7 +15,7 @@ import MediaUtils from 'lib/media/utils';
 import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorFeaturedImagePreview = React.createClass( {
 	propTypes: {

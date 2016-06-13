@@ -21,7 +21,7 @@ var actions = require( 'lib/posts/actions' ),
 	user = require( 'lib/user' )(),
 	analytics = require( 'lib/analytics' );
 import { setEditorPostId } from 'state/ui/editor/actions';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 

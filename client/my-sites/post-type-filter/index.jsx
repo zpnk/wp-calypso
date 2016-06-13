@@ -10,7 +10,7 @@ import includes from 'lodash/includes';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getAllPostCounts } from 'state/posts/counts/selectors';
 import UrlSearch from 'lib/mixins/url-search';

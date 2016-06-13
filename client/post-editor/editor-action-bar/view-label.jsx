@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { decodeEntities } from 'lib/formatting';
 import { getEditedPost } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';

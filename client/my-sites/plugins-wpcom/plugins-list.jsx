@@ -4,7 +4,7 @@ import noop from 'lodash/noop';
 
 import HeaderCake from 'components/header-cake';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSelectedSiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 import StandardPluginsPanel from './standard-plugins-panel';
