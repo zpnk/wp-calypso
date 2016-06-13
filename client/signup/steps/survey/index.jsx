@@ -31,14 +31,15 @@ export default React.createClass( {
 		return {
 			surveySiteType: 'site',
 			isOneStep: isSurveyOneStep()
-		}
+		};
 	},
 
 	getInitialState() {
 		return {
 			stepOne: null,
-			verticalList: verticals.get()
-		}
+			verticalList: verticals.get(),
+			surveyFirstQuestion: null
+		};
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -46,7 +47,7 @@ export default React.createClass( {
 			event.preventDefault();
 			event.stopPropagation();
 			this.handleNextStep( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ stepTwoClickHandler }>
 				<label className="survey-step__label">{ vertical.label }</label>
@@ -59,12 +60,13 @@ export default React.createClass( {
 		const stepOneClickHandler = ( event ) => {
 			event.preventDefault();
 			event.stopPropagation();
+			this.setState( { surveyFirstQuestion: vertical.value } );
 			if ( this.props.isOneStep ) {
-				this.handleNextStep( vertical )
+				this.handleNextStep( vertical );
 				return;
 			}
 			this.showStepTwo( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
@@ -147,7 +149,7 @@ export default React.createClass( {
 				category_label: label
 			} );
 		}
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value, surveyFirstQuestion: this.state.surveyFirstQuestion } );
 		this.props.goToNextStep();
 	}
 } );

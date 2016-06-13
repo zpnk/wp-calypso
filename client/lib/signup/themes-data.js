@@ -5,7 +5,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Baskerville',
@@ -13,7 +13,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Big Brother',
@@ -21,7 +21,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.1.1' ]
 	},
 	{
 		name: 'Button',
@@ -29,7 +29,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.9' ]
 	},
 	{
 		name: 'Cubic',
@@ -37,7 +37,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Dyad',
@@ -45,7 +45,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Ecto',
@@ -53,7 +53,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.1.1' ]
 	},
 	{
 		name: 'Edin',
@@ -61,7 +61,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Franklin',
@@ -69,7 +69,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7' ]
 	},
 	{
 		name: 'Gateway',
@@ -77,7 +77,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Gazette',
@@ -85,7 +85,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Goran',
@@ -93,7 +93,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Harmonic',
@@ -101,7 +101,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Hemingway Rewritten',
@@ -109,15 +109,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		verticals: []
-	},
-	{
-		name: 'Independent Publisher',
-		slug: 'independent-publisher',
-		repo: 'pub',
-		fallback: false,
-		design: '',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.7', 'a8c.1.1' ]
 	},
 	{
 		name: 'Libre',
@@ -125,7 +117,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.1.1' ]
 	},
 	{
 		name: 'Libretto',
@@ -133,7 +125,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.1.1' ]
 	},
 	{
 		name: 'Motif',
@@ -141,7 +133,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Penscratch',
@@ -149,7 +141,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.1.1' ]
 	},
 	{
 		name: 'Pictorico',
@@ -157,7 +149,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Pique',
@@ -165,15 +157,15 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Publication',
 		slug: 'publication',
 		repo: 'pub',
 		fallback: true,
-		design: '',
-		verticals: []
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
 	},
 	{
 		name: 'Rebalance',
@@ -181,7 +173,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Revelar',
@@ -189,7 +181,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Rowling',
@@ -197,7 +189,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Sapor',
@@ -205,7 +197,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.7', 'a8c.9' ]
 	},
 	{
 		name: 'Sela',
@@ -213,7 +205,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Sequential',
@@ -221,7 +213,7 @@ export let themes = [
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		verticals: []
+		verticals: [ 'a8c.1', 'a8c.3', 'a8c.5', 'a8c.7', 'a8c.9', 'a8c.1.1' ]
 	},
 	{
 		name: 'Twenty Sixteen',
@@ -229,6 +221,190 @@ export let themes = [
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		verticals: []
+		verticals: [ 'a8c.1.1', 'a8c.7', 'a8c.5', 'a8c.3', 'a8c.1' ]
 	},
+	{
+		name: 'Scratchpad',
+		slug: 'scratchpad',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.9' ]
+	},
+	{
+		name: 'Nucleare',
+		slug: 'nucleare',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.5', 'a8c.7', 'a8c.9' ]
+	},
+	{
+		name: 'Coherent',
+		slug: 'coherent',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.9' ]
+	},
+	{
+		name: 'Sobe',
+		slug: 'sobe',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.9' ]
+	},
+	{
+		name: 'Kelly',
+		slug: 'kelly',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.7', 'a8c.9' ]
+	},
+	{
+		name: 'Resonar',
+		slug: 'resonar',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.7', 'a8c.9' ]
+	},
+	{
+		name: 'Lovecraft',
+		slug: 'lovecraft',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.9' ]
+	},
+	{
+		name: 'Ryu',
+		slug: 'ryu',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1.1' ]
+	},
+	{
+		name: 'Escutcheon',
+		slug: 'escutcheon',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1.1' ]
+	},
+	{
+		name: 'Scrawl',
+		slug: 'scrawl',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1.1' ]
+	},
+	{
+		name: 'Colinear',
+		slug: 'colinear',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7' ]
+	},
+	{
+		name: 'Colinear',
+		slug: 'colinear',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7' ]
+	},
+	{
+		name: 'Lyretail',
+		slug: 'lyretail',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.7' ]
+	},
+	{
+		name: 'Cearuno',
+		slug: 'cerauno',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5' ]
+	},
+	{
+		name: 'Plane',
+		slug: 'plane',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5' ]
+	},
+	{
+		name: 'Editor',
+		slug: 'editor',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5' ]
+	},
+	{
+		name: 'Satellite',
+		slug: 'satellite',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.3', 'a8c.5' ]
+	},
+	{
+		name: 'Afterlight',
+		slug: 'afterlight',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	},
+	{
+		name: 'Boardalk',
+		slug: 'boardwalk',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	},
+	{
+		name: 'Intergalactic',
+		slug: 'intergalactic',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	},
+	{
+		name: 'Radcliffe',
+		slug: 'radcliffe',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	},
+	{
+		name: 'Adaption',
+		slug: 'adaption',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	},
+	{
+		name: 'Tonal',
+		slug: 'tonal',
+		repo: 'pub',
+		fallback: false,
+		design: 'blog',
+		verticals: [ 'a8c.1' ]
+	}
 ];

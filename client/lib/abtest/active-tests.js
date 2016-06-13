@@ -110,4 +110,14 @@ module.exports = {
 		defaultVariation: 'enabled',
 		allowExistingUsers: false,
 	},
+	verticalThemes: {
+		datestamp: '20160614',
+		variations: {
+			original: 25,
+			verticalThemes: 25,
+			notTested: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false,
+	},
 };
