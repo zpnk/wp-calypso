@@ -83,16 +83,14 @@ The root module of the `state` directory exports a single reducer function. We l
 client/state/
 ├── index.js
 ├── action-types.js
+├── selectors/
 └── { subject }/
     ├── actions.js
     ├── reducer.js
-    ├── selectors.js
     ├── schema.js
-    ├── README.md
     └── test/
         ├── actions.js
-        ├── reducer.js
-        └── selectors.js
+        └── reducer.js
 ```
 
 For example, the reducer responsible for maintaining the `state.sites` key within the global state can be found in `client/state/sites/reducer.js`. It's quite common that the subject reducer is itself a combined reducer. Just as it helps to split the global state into subdirectories responsible for their own part of the tree, as a subject grows, you may find that it's easier to maintain pieces as nested subdirectories. This ease of composability is one of Redux's strengths.
@@ -256,6 +254,16 @@ let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items
 ```
 
 You'll note in this example that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
+
+Much like action types, because selectors operate on the entire global state object, we've chosen to place them one-per-file under the `state/selectors` directory. Not only does this reflect their global nature, it removes uncertainty on where selectors are to be found or created by providing a single location for them to exist.
+
+When using selectors, you can import directly from `state/selectors`. For example:
+
+```js
+import { getSelectedSite } from 'state/selectors';
+```
+
+In this example, the logic for the selector exists at the file `state/selectors/get-selected-site.js`. When creating a selector, you should also include its default function export in the list of exports in `state/selectors/index.js`.
 
 It's important that selectors always be pure functions, meaning that the function should always return the same result when passed identical arguments in sequence. There should be no side-effects of calling a selector. For example, in a selector you should never trigger an AJAX request or assign values to variables defined outside the scope of the function.
 
