@@ -215,6 +215,13 @@ const PostEditor = React.createClass( {
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 	},
 
+	componentWillUpdate( nextProps, nextState ) {
+		const { isNew, savedPost } = nextState;
+		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
+			nextProps.receivePost( savedPost );
+		}
+	},
+
 	componentDidMount: function() {
 		debug( 'PostEditor react component mounted.' );
 		// if content is passed in, e.g., through url param
@@ -801,6 +808,9 @@ const PostEditor = React.createClass( {
 		if ( post.ID !== this.props.postId ) {
 			this.props.setEditorPostId( post.ID );
 		}
+
+		// Receive updated post into state
+		this.props.receivePost( post );
 
 		// make sure the history entry has the post ID in it, but don't dispatch
 		page.replace(
