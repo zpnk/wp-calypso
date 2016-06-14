@@ -11,6 +11,7 @@ import PlanFeaturesHeader from '../header';
 import PlanFeaturesItem from '../item';
 import PlanFeaturesItemList from '../list';
 import PlanFeaturesFooter from '../footer';
+import PlanFeatures from '../';
 import { plansList, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 export default React.createClass( {
@@ -43,6 +44,13 @@ export default React.createClass( {
 				<h2>
 					<a href="/devdocs/app-components/plan-features">Plan Features</a>
 				</h2>
+				<PlanFeatures
+					current
+					title={ plansList[ PLAN_FREE ].getTitle() }
+					planType={ PLAN_FREE }
+					price={ priceFree }
+					billingTimeFrame={ 'for life' }
+				/>
 				<div>
 					<PlanFeaturesHeader
 						current
@@ -50,6 +58,8 @@ export default React.createClass( {
 						planType={ PLAN_FREE }
 						price={ priceFree }
 						billingTimeFrame={ 'for life' }
+						description={ 'Get a free blog and be on your way to publishing your first post in less' +
+							' than five minutes.' }
 					/>
 					<PlanFeaturesItemList>
 						<PlanFeaturesItem>Free site</PlanFeaturesItem>
@@ -58,12 +68,6 @@ export default React.createClass( {
 						<PlanFeaturesItem>3GB of storage</PlanFeaturesItem>
 						<PlanFeaturesItem>Community Support</PlanFeaturesItem>
 					</PlanFeaturesItemList>
-					<PlanFeaturesFooter
-						current
-						description={ 'Get a free blog and be on your way to publishing your first post in less' +
-							' than five minutes.' }
-					/>
-					<br />
 				</div>
 				<div>
 					<PlanFeaturesHeader
