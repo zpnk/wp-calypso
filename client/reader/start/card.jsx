@@ -9,7 +9,6 @@ import classnames from 'classnames';
 // Internal dependencies
 import Card from 'components/card';
 import StartPostPreview from './post-preview';
-import StartCardHero from './card-hero';
 import StartCardHeader from './card-header';
 import StartCardFooter from './card-footer';
 import { recordRecommendationInteraction } from 'state/reader/start/actions';
@@ -38,7 +37,6 @@ const StartCard = React.createClass( {
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHero siteId={ siteId } postId={ postId } />
 				<StartCardHeader siteId={ siteId } />
 				{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
 				<StartCardFooter siteId={ siteId } />
