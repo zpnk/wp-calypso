@@ -18,7 +18,8 @@ import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import {
 	isFreeJetpackPlan,
-	isJetpackPlan
+	isJetpackPlan,
+	isMonthly
 } from 'lib/products-values';
 import {
 	featuresList,
@@ -136,10 +137,18 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpac
 
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
-			if ( showJetpackFreePlan ) {
-				return isJetpackPlan( plan );
+			if ( 'monthly' === intervalType ) {
+				if ( showJetpackFreePlan ) {
+					return isJetpackPlan( plan ) && isMonthly( plan );
+				}
+				return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && isMonthly( plan );
 			}
-			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
+
+			if ( showJetpackFreePlan ) {
+				return isJetpackPlan( plan ) && !isMonthly( plan );
+			}
+
+			return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && !isMonthly( plan );
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
@@ -157,3 +166,15 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpac
 export const isGoogleVouchersEnabled = () => {
 	return ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
 };
+
+export function plansLink( url, site, intervalType ) {
+	if ( 'monthly' === intervalType ) {
+		url += '/monthly';
+	}
+
+	if ( site ) {
+		url += '/' + site.slug;
+	}
+
+	return url;
+}
