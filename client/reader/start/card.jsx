@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import Card from 'components/card';
 import StartPostPreview from './post-preview';
 import StartCardHeader from './card-header';
-import StartCardFooter from './card-footer';
 import { recordRecommendationInteraction } from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 
@@ -39,7 +38,6 @@ const StartCard = React.createClass( {
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
 				<StartCardHeader siteId={ siteId } />
 				{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
-				<StartCardFooter siteId={ siteId } />
 			</Card>
 		);
 	}
