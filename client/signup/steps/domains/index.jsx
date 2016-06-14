@@ -104,6 +104,23 @@ module.exports = React.createClass( {
 		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
 	},
 
+	goToNextStep( isPurchasingItem ) {
+		if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' || ! isPurchasingItem ) {
+			this.props.goToNextStep();
+			return;
+		}
+
+		SignupActions.submitSignupStep( {
+			processingMessage: this.translate( 'Free plan selected' ),
+			stepName: 'plans',
+			stepSectionName: this.props.stepSectionName,
+			cartItem: null
+		}, [], { cartItem: null } );
+
+		const plansIndex = this.props.steps.indexOf( 'plans' );
+		this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
+	},
+
 	submitWithDomain: function( googleAppsCartItem ) {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
@@ -127,7 +144,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
-		this.props.goToNextStep();
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
@@ -144,7 +161,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
-		this.props.goToNextStep();
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	handleSave: function( sectionName, state ) {
