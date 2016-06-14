@@ -24,7 +24,6 @@ export default React.createClass( {
 	displayName: 'StatsInsights',
 
 	propTypes: {
-		allTimeList: PropTypes.object.isRequired,
 		commentFollowersList: PropTypes.object.isRequired,
 		commentsList: PropTypes.object.isRequired,
 		emailFollowersList: PropTypes.object.isRequired,
@@ -41,7 +40,6 @@ export default React.createClass( {
 
 	render() {
 		const {
-			allTimeList,
 			commentFollowersList,
 			commentsList,
 			emailFollowersList,
@@ -86,7 +84,7 @@ export default React.createClass( {
 						path={ '/stats/day' }
 						title={ this.translate( 'Today\'s Stats' ) }
 					/>
-					<AllTime allTimeList={ allTimeList } />
+					<AllTime />
 					<MostPopular insightsList={ insightsList } />
 					<DomainTip siteId={ site ? site.ID : 0 } event="stats_insights_domain" />
 					<div className="stats-nonperiodic has-recent">
