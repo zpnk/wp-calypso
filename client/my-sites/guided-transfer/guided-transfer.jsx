@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import HostSelect from './host-select';
 
 export default React.createClass( {
 	displayName: 'GuidedTransfer',
@@ -23,7 +24,18 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<div className="guided-transfer">
-				<HeaderCake onClick={ this.showExporter } isCompact={ true }>{ this.translate( 'Guided Transfer' ) }</HeaderCake>
+				<div className="guided-transfer__header-nav">
+					<HeaderCake
+						onClick={ this.showExporter }
+						isCompact={ true }
+					>
+							{ this.translate( 'Guided Transfer' ) }
+					</HeaderCake>
+				</div>
+
+				<div className="guided-transfer__content">
+					<HostSelect />
+				</div>
 			</div>
 		);
 	}
