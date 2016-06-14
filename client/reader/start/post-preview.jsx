@@ -29,7 +29,8 @@ const StartPostPreview = React.createClass( {
 		}
 		return (
 			<article className="reader-start-post-preview">
-				<span className="reader-start-post-preview__popular">Popular from this site</span>
+				<div className="reader-start-post-preview__featured-label has-image">Featured Post</div>
+				<div className="reader-start-post-preview__featured-image is-dark"></div>
 				<div className="reader-start-post-preview__post-content">
 					<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ post.title }</a></h1>
 					<div className="reader-start-post-preview__byline">
