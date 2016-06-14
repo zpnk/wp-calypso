@@ -132,7 +132,7 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
 
-export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan ) {
+export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan ) {
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
 	return plans.filter( function( plan ) {

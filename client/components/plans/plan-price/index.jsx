@@ -25,7 +25,7 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			months = this.isJetpackMonthlyPlan( plan ) ? 1 : 12;
+			months = isJetpackMonthlyPlan( plan ) ? 1 : 12;
 
 			// could get $5.95, A$4.13, ¥298, €3,50, etc…
 			const getCurrencySymbol = price => /(\D+)\d+/.exec( price )[ 1 ];
@@ -65,7 +65,7 @@ const PlanPrice = React.createClass( {
 		if ( ! plan ) {
 			periodLabel = '';
 		} else if ( plan.raw_price > 0 ) {
-			if ( this.isJetpackMonthlyPlan( plan ) ) {
+			if ( isJetpackMonthlyPlan( plan ) ) {
 				periodLabel = this.translate( 'per month, billed monthly' );
 			} else {
 				periodLabel = this.translate( 'per month, billed yearly' );
