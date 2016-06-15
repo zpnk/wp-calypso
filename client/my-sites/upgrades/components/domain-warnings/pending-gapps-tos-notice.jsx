@@ -18,16 +18,13 @@ const PendingGappsTosNotice = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
+		siteSlug: React.PropTypes.string.isRequired,
 		domains: React.PropTypes.array.isRequired,
 		section: React.PropTypes.string.isRequired
 	},
 
 	componentDidMount() {
-		this.recordEvent( 'showPendingAccountNotice', this.props.site, this.props.selectedDomainName );
+		this.recordEvent( 'showPendingAccountNotice', this.props.siteSlug, this.props.selectedDomainName );
 	},
 
 	getGappsLoginUrl( email, domain ) {

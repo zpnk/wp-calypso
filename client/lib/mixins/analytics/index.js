@@ -547,8 +547,7 @@ const EVENTS = {
 				);
 			},
 
-			showPendingAccountNotice( site, domainName ) {
-				const siteSlug = site && site.slug;
+			showPendingAccountNotice( siteSlug, domainName ) {
 				analytics.ga.recordEvent(
 					'Domain Management',
 					'Showed pending account notice',
@@ -558,7 +557,7 @@ const EVENTS = {
 				analytics.tracks.recordEvent(
 					'calypso_domain_management_google_apps_pending_account_notice_show',
 					{
-						site: siteSlug,
+						site_slug: siteSlug,
 						domain_name: domainName
 					}
 				);
