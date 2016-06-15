@@ -527,30 +527,32 @@ const EVENTS = {
 				);
 			},
 
-			pendingAccountLogInClick( { domain, user, severity, isMultipleDomains, section } ) {
+			pendingAccountLogInClick( { siteSlug, domainName, user, severity, isMultipleDomains, section } ) {
 				analytics.ga.recordEvent(
 					'Domain Management',
 					`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
 					'Domain Name',
-					domain
+					domainName
 				);
 
 				analytics.tracks.recordEvent(
 					'calypso_domain_management_google_apps_pending_account_log_in_click',
 					{
-						domain,
+						site_slug: siteSlug,
+						domain_name: domainName,
 						user,
 						severity,
-						isMultipleDomains,
+						is_multiple_domains: isMultipleDomains,
 						section
 					}
 				);
 			},
 
-			showPendingAccountNotice( siteSlug, domainName ) {
+			showPendingAccountNotice( { siteSlug, severity, isMultipleDomains, section } ) {
 				analytics.ga.recordEvent(
 					'Domain Management',
 					'Showed pending account notice',
+					'Site',
 					siteSlug
 				);
 
@@ -558,7 +560,9 @@ const EVENTS = {
 					'calypso_domain_management_google_apps_pending_account_notice_show',
 					{
 						site_slug: siteSlug,
-						domain_name: domainName
+						severity,
+						is_multiple_domains: isMultipleDomains,
+						section
 					}
 				);
 			}

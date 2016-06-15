@@ -24,7 +24,14 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.recordEvent( 'showPendingAccountNotice', this.props.siteSlug, this.props.selectedDomainName );
+		this.recordEvent( 'showPendingAccountNotice',
+			{
+				siteSlug: this.props.siteSlug,
+				severity: this.getNoticeSeverity(),
+				isMultipleDomains: this.props.domains.length > 1,
+				section: this.props.section
+			}
+		);
 	},
 
 	getGappsLoginUrl( email, domain ) {
@@ -63,16 +70,16 @@ const PendingGappsTosNotice = React.createClass( {
 		}
 	},
 
-	generateLogInClickHandler( { domain, user, severity, isMultipleDomains } ) {
+	generateLogInClickHandler( { domainName, user, severity, isMultipleDomains } ) {
 		return () => {
-			this.recordEvent( 'pendingAccountLogInClick', { domain, user, severity, isMultipleDomains, section: this.props.section } );
+			this.recordEvent( 'pendingAccountLogInClick', { siteSlug: this.props.siteSlug, domainName, user, severity, isMultipleDomains, section: this.props.section } );
 		};
 	},
 
 	oneDomainNotice() {
 		const severity = this.getNoticeSeverity(),
 			exclamation = this.getExclamation( severity ),
-			domain = this.props.domains[0].name,
+			domainName = this.props.domains[0].name,
 			users = this.props.domains[0].googleAppsSubscription.pendingUsers;
 
 		return (
@@ -90,8 +97,8 @@ const PendingGappsTosNotice = React.createClass( {
 					}
 				) }>
 				<NoticeAction
-					href={ this.getGappsLoginUrl( users[0], domain ) }
-					onClick={ this.generateLogInClickHandler( { domain, user: users[0], severity, isMultipleDomains: false } ) }
+					href={ this.getGappsLoginUrl( users[0], domainName ) }
+					onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: false } ) }
 					external>
 						{ this.translate( 'Log in' ) }
 				</NoticeAction>
@@ -116,12 +123,12 @@ const PendingGappsTosNotice = React.createClass( {
 					}
 				) }
 				<ul>{
-					this.props.domains.map( ( { name: domain, googleAppsSubscription: { pendingUsers: users } } ) => {
-						return <li key={ `pending-gapps-tos-acceptance-domain-${ domain }` }>
+					this.props.domains.map( ( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
+						return <li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 						<strong>{ users.join( ', ' ) } </strong>
 							<a
-								href={ this.getGappsLoginUrl( users[0], domain ) }
-								onClick={ this.generateLogInClickHandler( { domain, user: users[0], severity, isMultipleDomains: true } ) }
+								href={ this.getGappsLoginUrl( users[0], domainName ) }
+								onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: true } ) }
 								target="_blank">
 									{ this.translate( 'Log in' ) }
 							</a>
