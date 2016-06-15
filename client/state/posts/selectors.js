@@ -30,6 +30,18 @@ export function getPost( state, globalId ) {
 }
 
 /**
+ * Returns a normalized post object by its global ID.
+ *
+ * @param  {Object} state    Global state tree
+ * @param  {String} globalId Post global ID
+ * @return {Object}          Post object
+ */
+export const getNormalizedPost = createSelector(
+	( state, globalId ) => runFastRules( state.posts.items[ globalId ] ),
+	( state ) => state.posts.items
+);
+
+/**
  * Returns an array of post objects by site ID.
  *
  * @param  {Object} state  Global state tree
@@ -147,19 +159,14 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+	const manager = state.posts.queries[ siteId ];
+	if ( ! manager ) {
 		return null;
 	}
 
-	let posts = state.posts.queries[ siteId ].getItemsIgnoringPage( query );
-
-	// Normalize each post object
-	const normalizedPosts = posts.map( ( post ) => {
-		const normalizedPost = runFastRules( post );
-		return Object.assign( {}, normalizedPost );
+	return manager.getItemsIgnoringPage( query ).map( ( post ) => {
+		return getNormalizedPost( state, post.global_ID );
 	} );
-
-	return normalizedPosts;
 }
 
 /**
