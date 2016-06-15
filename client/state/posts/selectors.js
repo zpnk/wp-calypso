@@ -160,7 +160,7 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
+	if ( ! manager || ! manager.getItemsIgnoringPage( query ) ) {
 		return null;
 	}
 
