@@ -52,7 +52,7 @@ export const getPlan = createSelector(
  */
 export function getPlanPriceObject( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
-	if ( ! plan || ! plan.formatted_price || ! plan.raw_price ) {
+	if ( ! plan || ! plan.formatted_price || ! plan.hasOwnProperty( 'raw_price' ) ) {
 		return null;
 	}
 	// could get $5.95, A$4.13, ¥298, €3,50, etc…

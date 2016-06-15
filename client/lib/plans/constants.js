@@ -1,6 +1,10 @@
 /** @ssr-ready **/
 
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
+import filter from 'lodash/filter';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -117,4 +121,10 @@ export const getPlanObject = planName => {
 	} );
 
 	return objectPlan;
+};
+
+export const getPlanFeaturesObject = planName => {
+	return filter( featuresList, obj =>
+		obj.plans.indexOf( planName ) !== -1
+	);
 };
