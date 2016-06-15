@@ -121,7 +121,11 @@ export default React.createClass( {
 	render: function() {
 		var name = this.getProductName();
 		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
-			name += ' - ' + this.translate( 'annual subscription' );
+			if ( isMonthly( this.props.cartItem ) ) {
+				name += ' - ' + this.translate( 'monthly subscription' );
+			} else {
+				name += ' - ' + this.translate( 'annual subscription' );
+			}
 		}
 
 		return (
