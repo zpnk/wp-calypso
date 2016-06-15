@@ -13,8 +13,9 @@ import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
-import TokenField from 'components/token-field';
+import MetaTitleEditor from 'components/seo/meta-title-editor';
 import { getSiteSlug } from 'state/sites/selectors';
+
 
 class SeoAccordion extends Component {
 	constructor() {
@@ -49,7 +50,7 @@ class SeoAccordion extends Component {
 							) }
 						</InfoPopover>
 					</span>
-					<TokenField value={ sampleChips } disabled={ true } />
+					<MetaTitleEditor disabled={ true } />
 				</AccordionSection>
 				<AccordionSection>
 					<span className="editor-drawer__label-text">
