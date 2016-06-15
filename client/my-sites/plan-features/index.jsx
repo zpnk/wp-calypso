@@ -44,8 +44,8 @@ class PlanFeatures extends Component {
 				/>
 				<PlanFeaturesItemList>
 					{
-						features.map( ( feature ) =>
-							<PlanFeaturesItem>{ feature.getTitle() }</PlanFeaturesItem>
+						features.map( ( feature, index ) =>
+							<PlanFeaturesItem key={ index }>{ feature.getTitle() }</PlanFeaturesItem>
 						)
 					}
 				</PlanFeaturesItemList>
@@ -57,14 +57,14 @@ class PlanFeatures extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
-	
+
 	return {
 		planName: ownProps.plan,
 		current: getCurrentPlan( state, sitesFactory().getSelectedSite() ),
 		popular: ownProps.plan === PLAN_PREMIUM,
 		features: getPlanFeaturesObject( ownProps.plan ),
 		description: plansList[ ownProps.plan ].getDescription(),
-		planPrice: getPlanPriceObject( state, planProductId ),
+		planPrice: getPlanPriceObject( state, planProductId, true /* TODO: add from abtest */ ),
 		billingTimeFrame: getPlan( state, planProductId ).bill_period_label
 	};
 } )( PlanFeatures );
