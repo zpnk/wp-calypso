@@ -5,6 +5,7 @@
  */
 import i18n from 'i18n-calypso';
 import filter from 'lodash/filter';
+import sortBy from 'lodash/sortBy';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -74,88 +75,99 @@ const allPlans = [
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getTitle: () => i18n.translate( 'Google Analytics' ),
+		order: 9,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
 		getTitle: () => i18n.translate( 'Unlimited Storage' ),
+		order: 4,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getTitle: () => i18n.translate( 'Custom Domain' ),
+		order: 2,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		order: 3,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getTitle: () => i18n.translate( 'VideoPress' ),
+		order: 8,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_CUSTOM_DESIGN ]: {
 		getTitle: () => i18n.translate( 'Custom Design' ),
+		order: 7,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
 		getTitle: () => i18n.translate( 'No Ads' ),
+		order: 6,
 		plans: allPaidPlans
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
-		getTitle: () => i18n.translate( 'Live Chat Support' ),
-		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
 		getTitle: () => i18n.translate( 'Advertising Credit' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. Offer valid in US and Canada.' ),
+		order: 10,
 		plans: allPaidPlans
 	},
 
 	[ WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
+		order: 11,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_FREE_SITE ]: {
 		getTitle: () => i18n.translate( 'Free site' ),
+		order: 1,
 		plans: allPlans
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
 		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
+		order: 2,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
 		getTitle: () => i18n.translate( 'Hundreds of free themes' ),
+		order: 3,
 		plans: [ PLAN_FREE, PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
 		getTitle: () => i18n.translate( '3GB of storage' ),
+		order: 4,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
 		getTitle: () => i18n.translate( '13GB of storage' ),
+		order: 4,
 		plans: [ PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Community support' ),
+		order: 5,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Email and live chat support' ),
+		order: 5,
 		plans: allPaidPlans
 	}
 };
@@ -172,7 +184,9 @@ export const getPlanObject = planName => {
 };
 
 export const getPlanFeaturesObject = planName => {
-	return filter( featuresList, obj =>
+	const planFeatures = filter( featuresList, obj =>
 		obj.plans.indexOf( planName ) !== -1
 	);
+
+	return sortBy( planFeatures, 'order' );
 };
