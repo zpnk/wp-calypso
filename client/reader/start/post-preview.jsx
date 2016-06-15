@@ -44,14 +44,18 @@ const StartPostPreview = React.createClass( {
 			};
 		}
 
+		const articleClasses = classNames( 'reader-start-post-preview', {
+			'is-photo': post.excerpt.length < 1
+		} );
+
 		// Only apply has-image class if we have a featured image
 		const labelClasses = classNames( 'reader-start-post-preview__featured-label', {
 			'has-image': !! headerImageUrl
 		} );
 
 		return (
-			<article className="reader-start-post-preview">
-				<div className={ labelClasses }>Featured Post</div>
+			<article className={ articleClasses }>
+				<div className={ labelClasses }>{ this.translate( 'Featured Post' ) }</div>
 				<div className="reader-start-post-preview__featured-image is-dark" style={ heroStyle }></div>
 				<div className="reader-start-post-preview__post-content">
 					<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ post.title }</a></h1>
