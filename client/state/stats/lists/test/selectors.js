@@ -10,6 +10,7 @@ import {
 	getSiteStatsMaxPostsByDay,
 	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
+	getSiteStatsInsightsData,
 	getSiteStatsPostsCountByDay,
 	isRequestingSiteStatsForQuery
 } from '../selectors';
@@ -18,6 +19,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSiteStatsPostStreakData.memoizedSelector.cache.clear();
 		getSiteStatsMaxPostsByDay.memoizedSelector.cache.clear();
+		getSiteStatsInsightsData.memoizedSelector.cache.clear();
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
@@ -248,6 +250,48 @@ describe( 'selectors', () => {
 			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' }, '2016-05-24' );
 
 			expect( stats ).to.eql( 2 );
+		} );
+	} );
+
+	describe( 'getSiteStatsInsightsData()', () => {
+		it( 'should return an empty object if no matching results exist', () => {
+			const stats = getSiteStatsInsightsData( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				}
+			}, 2916284, {} );
+
+			expect( stats ).to.eql( {} );
+		} );
+
+		it( 'should return properly formatted data if matching data exists', () => {
+			const stats = getSiteStatsInsightsData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsInsights: {
+									'[]': {
+										highest_hour: 11,
+										highest_day_percent: 10,
+										highest_day_of_week: 6,
+										highest_hour_percent: 10
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( stats ).to.eql( {
+				day: 'Sunday',
+				hour: '11:00 AM',
+				hour_percent: 10,
+				percent: 10
+			} );
 		} );
 	} );
 } );

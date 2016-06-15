@@ -122,7 +122,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			followList,
 			allTimeList,
-			insightsList,
 			commentsList,
 			tagsList,
 			publicizeList,
@@ -171,7 +170,6 @@ module.exports = {
 			? site.slug : route.getSiteFragment( context.path );
 
 		allTimeList = new StatsList( { siteID: siteId, statType: 'stats', domain: siteDomain } );
-		insightsList = new StatsList( { siteID: siteId, statType: 'statsInsights', domain: siteDomain } );
 		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
 		tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
 		publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: siteDomain } );
@@ -187,7 +185,6 @@ module.exports = {
 					site: site,
 					followList: followList,
 					allTimeList: allTimeList,
-					insightsList: insightsList,
 					commentsList: commentsList,
 					tagsList: tagsList,
 					publicizeList: publicizeList,

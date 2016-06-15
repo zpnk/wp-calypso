@@ -119,3 +119,41 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
 	return data[ date ] || null;
 }
 
+/**
+ * Returns a parsed object of statsInsights data for a given site, or default "empty" object
+ * if no statsStreak data has been received for that site.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @return {Object}           Parsed Insights Data
+ */
+export const getSiteStatsInsightsData = createSelector(
+	( state, siteId ) => {
+		const response = {};
+		const insightsData = getSiteStatsForQuery( state, siteId, 'statsInsights', {} );
+
+		if ( insightsData &&
+			( insightsData.highest_day_of_week || 0 === insightsData.highest_day_of_week )
+		) {
+			const { highest_hour, highest_day_percent, highest_day_of_week, highest_hour_percent } = insightsData;
+
+			// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
+			let dayOfWeek = highest_day_of_week + 1;
+			if ( dayOfWeek > 6 ) {
+				dayOfWeek = 0;
+			}
+
+			response.day = i18n.moment().day( dayOfWeek ).format( 'dddd' );
+			response.percent = Math.round( highest_day_percent );
+			response.hour = i18n.moment().hour( highest_hour ).startOf( 'hour' ).format( 'LT' );
+			response.hour_percent = Math.round( highest_hour_percent );
+		}
+
+		return response;
+	},
+	( state, siteId ) => getSiteStatsForQuery( state, siteId, 'statsInsights', {} ),
+	( state, siteId ) => {
+		return [ siteId, 'statsInsights' ].join();
+	}
+);
+
