@@ -15,6 +15,11 @@ const debug = require( 'debug' )( 'test-runner' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	chalk = require( 'chalk' );
 
+/**
+ * Internal dependencies
+ */
+const boot = require( './boot-test' );
+
 program
 	.usage( '[options] [files]' )
 	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' )
@@ -71,17 +76,6 @@ let getTestFiles = () => {
 };
 
 const getMocha = function() {
-	/* These internal dependencies are not at the top of the file
-	 * because we need to re-require them every time we invalidate the cache.
-	 *
-	 * We invalidate the cache because Mocha has trouble running a test-suite
-	 * more than once:  https://github.com/mochajs/mocha/issues/995
-	 */
-	Object.keys( require.cache ).forEach( ( key ) => {
-		delete require.cache[ key ];
-	} );
-	const boot = require( './boot-test' );
-
 	const mocha = new Mocha( {
 		ui: 'bdd',
 		reporter: program.reporter
@@ -112,11 +106,7 @@ const runMocha = () => {
 
 	runner = getMocha().run( ( failures ) => {
 		runner = null;
-
-		// Inform CI of failures
-		process.on( 'exit', () => {
-			process.exit( failures ); //eslint-disable-line no-process-exit
-		} );
+		process.exitCode = failures
 	} );
 };
 
@@ -135,6 +125,11 @@ if ( program.watch ) {
 			let abortedCheck = setInterval( () => {
 				if ( runner == null ) {
 					clearInterval( abortedCheck );
+
+					// Must purge the cache in case any files have been modified
+					Object.keys( require.cache ).forEach( ( key ) => {
+						delete require.cache[ key ];
+					} );
 					runMocha();
 				}
 			}, 25 );
