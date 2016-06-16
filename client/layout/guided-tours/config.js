@@ -10,6 +10,7 @@ import { getSectionName, getSelectedSite, isPreviewShowing } from 'state/ui/sele
 import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 
 function sectionVisitedForFirstTime( sectionName, state ) {
+	console.log( 'sectionVisitedForFirstTime' );
 	return getSectionName( state ) === sectionName;
 }
 
@@ -17,6 +18,8 @@ function getAll() {
 	return {
 		main: {
 			version: '201600601',
+			description: 'Welcome tour -- get to know the most basic Calypso menu items.',
+			showInContext: state => sectionVisitedForFirstTime( 'reader', state ),
 			init: {
 				text: i18n.translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, and give you some ideas for what to do next.", {
 					components: {

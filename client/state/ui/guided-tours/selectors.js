@@ -38,10 +38,21 @@ const tourCandidates = [
 
 const findEligibleTour = createSelector(
 		state => {
-			let tourName;
-			tourCandidates.some( ( { name, test } ) => {
-				if ( getTourTriggers( state ).some( test ) ) {
-					tourName = name;
+			let allTours = guidedToursConfig.getAll();
+			allTours = Object.keys( allTours ).map( ( key ) => {
+				const tour = allTours[ key ];
+				return {
+					name: key,
+					...tour,
+				};
+			} );
+			console.log( allTours );
+			let tourName = false;
+
+			allTours.some( ( tour ) => {
+				console.log( 'testing tour: ', tour );
+				if ( tour.showInContext( state ) ) {
+					tourName = tour.name;
 					return true;
 				}
 			} );
@@ -64,6 +75,13 @@ export const getGuidedTourState = createSelector(
 			console.log( 'found', tour );
 		}
 
+		if ( tour ) {
+			shouldReallyShow = true;
+		} else {
+			console.log( 'no tour -- returning early' );
+			return tourState;
+		}
+
 		const tourConfig = getToursConfig( tour );
 		const stepConfig = tourConfig[ stepName ] || false;
 		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
@@ -73,10 +91,27 @@ export const getGuidedTourState = createSelector(
 			shouldReallyShow
 		);
 
+		console.log( 'shouldShow, tour', shouldShow, tour );
+
+		/*
+			so we get a tour, but only *after* this snippet below in boot has run
+			(also we use the query string there)
+			it's probably bad form and / or impossible anywhere to dispatch the action
+			directly from here I suppose?
+		*/
+		// if ( config.isEnabled( 'guided-tours' ) && tour && ! context.query.s ) {
+		// 	context.store.dispatch( showGuidedTour( {
+		// 		shouldShow: true,
+		// 		shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
+		// 		tour: context.query.tour,
+		// 	} ) );
+		// }
+
 		return Object.assign( {}, tourState, {
 			stepConfig,
 			nextStepConfig,
 			shouldShow,
+			tour,
 		} );
 	},
 	state => [
