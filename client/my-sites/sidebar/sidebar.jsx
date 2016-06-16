@@ -163,6 +163,7 @@ module.exports = React.createClass( {
 				className={ this.itemLinkClass( '/ads', 'rads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
+				tooltip={ true }
 				icon="speaker" />
 		);
 	},
@@ -197,6 +198,7 @@ module.exports = React.createClass( {
 				onNavigate={ this.onNavigate }
 				icon="themes"
 				preloadSectionName="themes"
+				tooltip={ true }
 			>
 				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
 					{ this.translate( 'Customize' ) }
@@ -238,7 +240,8 @@ module.exports = React.createClass( {
 				link={ menusLink }
 				onNavigate={ this.onNavigate }
 				icon="menus"
-				preloadSectionName="menus" />
+				preloadSectionName="menus"
+				tooltip={ true } />
 		);
 	},
 
@@ -273,6 +276,7 @@ module.exports = React.createClass( {
 				onNavigate={ this.onNavigate }
 				icon="plugins"
 				preloadSectionName="plugins"
+				tooltip={ true }
 			>
 				<SidebarButton href={ addPluginsLink }>
 					{ this.translate( 'Add' ) }
@@ -314,6 +318,7 @@ module.exports = React.createClass( {
 				onNavigate={ this.onNavigate }
 				icon="globe"
 				preloadSectionName="upgrades"
+				tooltip={ true }
 			>
 				<SidebarButton href={ addDomainLink }>
 					{ this.translate( 'Add' ) }
@@ -414,7 +419,8 @@ module.exports = React.createClass( {
 				link={ sharingLink }
 				onNavigate={ this.onNavigate }
 				icon="share"
-				preloadSectionName="sharing" />
+				preloadSectionName="sharing"
+				tooltip={ true } />
 		);
 	},
 
@@ -453,6 +459,7 @@ module.exports = React.createClass( {
 				onNavigate={ this.onNavigate }
 				icon="user"
 				preloadSectionName="people"
+				tooltip={ true }
 			>
 				<SidebarButton href={ addPeopleLink }>
 					{ this.translate( 'Add' ) }
@@ -484,7 +491,8 @@ module.exports = React.createClass( {
 				link={ siteSettingsLink }
 				onNavigate={ this.onNavigate }
 				icon="cog"
-				preloadSectionName="settings" />
+				preloadSectionName="settings"
+				tooltip={ true } />
 		);
 	},
 

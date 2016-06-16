@@ -145,6 +145,7 @@ const PublishMenu = React.createClass( {
 				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
+				tooltip={ true }
 			>
 				<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
 					{ this.translate( 'Add' ) }
