@@ -35,7 +35,7 @@ export default React.createClass( {
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
 				externalUrl={ this.props.theme.demo_uri } >
-				<Button primary
+				<Button
 					onClick={ this.onButtonClick }
 					>{ this.props.buttonLabel }</Button>
 			</WebPreview>
