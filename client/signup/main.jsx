@@ -39,6 +39,7 @@ import SignupProcessingScreen from 'signup/processing-screen';
 import SignupProcessingScreenI18n from 'signup/processing-screen-i18n'; // Temporary, for i18n to pick up
 import utils from './utils';
 import { currentUserHasFlag } from 'state/current-user/selectors';
+import { DWPO } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 
 /**
@@ -365,5 +366,5 @@ const Signup = React.createClass( {
 } );
 
 export default connect( state => ( {
-	domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' )
+	domainsWithPlansOnly: currentUserHasFlag( state, DWPO )
 } ) )( Signup );
