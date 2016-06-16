@@ -16,8 +16,13 @@ export default React.createClass( {
 	render: function() {
 		let hasRegions = this.props.children.some( el => el.type === SidebarRegion );
 
+		const classes = classNames( 'sidebar', this.props.className, {
+			'has-regions': hasRegions,
+			'is-collapsed': true
+		} );
+
 		return (
-			<ul className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) } onClick={ this.props.onClick } data-tip-target="sidebar">
+			<ul className={ classes } onClick={ this.props.onClick } data-tip-target="sidebar">
 				{ this.props.children }
 			</ul>
 		);

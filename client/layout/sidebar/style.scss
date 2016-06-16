@@ -397,3 +397,41 @@ a.sidebar__button {
 		-webkit-overflow-scrolling: touch;
 	}
 }
+
+.sidebar.is-collapsed,
+.wp-secondary .site-selector {
+	width: 66px;
+
+	.sidebar__menu {
+		border-bottom: 1px solid lighten( $gray, 25% );
+	}
+
+	.sidebar__menu .gridicon {
+		position: static;
+	}
+
+	.site {
+		display: block;
+	}
+
+	.site__content,
+	.sidebar__menu a {
+		padding: 16px;
+		justify-content: center;
+		width: auto;
+	}
+
+	.site-icon {
+		margin: 0;
+	}
+
+	.menu-link-text,
+	.sidebar__heading,
+	.current-site .site__info,
+	.current-site .site__toggle-more-options,
+	.plan-name,
+	.sidebar__button,
+	.current-site__switch-sites .button span {
+		display: none;
+	}
+}
